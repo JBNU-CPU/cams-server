@@ -1,6 +1,6 @@
-package com.cpu.cams.user.entity;
+package com.cpu.cams.attendence.entity;
 
-public enum AttendanceState {
+public enum AttendanceStatus {
     PRESENT, // 출석
     LATE,   // 지각
     ABSENT, // 결석

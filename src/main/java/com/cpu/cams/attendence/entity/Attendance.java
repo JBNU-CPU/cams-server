@@ -1,6 +1,6 @@
-package com.cpu.cams.user.entity;
+package com.cpu.cams.attendence.entity;
 
-import com.cpu.cams.activity.entity.ActivitySession;
+import com.cpu.cams.activity.entity.ActivityParticipant;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -15,15 +15,15 @@ public class Attendance {
     /* 복합 PK의 FK 매핑 */
     @MapsId("sessionId")
     @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "session_id")
-    private ActivitySession session;
+    private Session session;
 
     @MapsId("participantId")
     @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "participant_id")
     private ActivityParticipant participant;
 
     @Enumerated(EnumType.STRING)
-    private AttendanceState state;
+    private AttendanceStatus state;
 
     @CreationTimestamp
-    private LocalDateTime checkedAt;
+    private LocalDateTime attendanceTime;
 }

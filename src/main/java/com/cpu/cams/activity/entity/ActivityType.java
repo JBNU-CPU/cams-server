@@ -1,6 +1,9 @@
 package com.cpu.cams.activity.entity;
 
 public enum ActivityType {
-    ACADEMY,
+    SESSION,
+    STUDY,
+    PROJECT,
+    MEETING,
     GENERAL
 }

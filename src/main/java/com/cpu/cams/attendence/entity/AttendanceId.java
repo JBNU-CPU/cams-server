@@ -1,4 +1,4 @@
-package com.cpu.cams.user.entity;
+package com.cpu.cams.attendence.entity;
 
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;

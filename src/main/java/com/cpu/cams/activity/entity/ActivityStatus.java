@@ -1,6 +1,6 @@
 package com.cpu.cams.activity.entity;
 
-public enum Status {
+public enum ActivityStatus {
     NOT_STARTED,
     STARTED,
     ENDED,

@@ -1,5 +1,6 @@
 package com.cpu.cams.activity.entity;
 
+import com.cpu.cams.attendence.entity.Session;
 import com.cpu.cams.user.entity.User;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -40,7 +41,7 @@ public class Activity {
     private String notes;
 
     @Column(nullable = false)
-    private Status status;
+    private ActivityStatus activityStatus;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -57,5 +58,8 @@ public class Activity {
     private List<EventSchedule> eventSchedules = new ArrayList<>();
 
     @OneToMany(mappedBy = "activity", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ActivitySession> sessions = new ArrayList<>();
+    private List<Session> sessions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "activity", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Curriculum> curriculums = new ArrayList<>(); // 커리큘럼 또는 프로그램
 }
