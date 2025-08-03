@@ -9,8 +9,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/admin")
 public class AdminController {
 
+    // 활동 승인 / 미승인
     @PostMapping("/activities/{activityId}")
     public String updateActivityApprovalStatus(@PathVariable Long activityId) {
+        return "OK";
+    }
+
+    // 유저 승인 / 미승인
+    @PostMapping("/users/{userId}")
+    public String updateUserApprovalStatus(@PathVariable Long userId) {
         return "OK";
     }
 }

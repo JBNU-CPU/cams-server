@@ -25,5 +25,5 @@ public class Attendance {
     private AttendanceStatus state;
 
     @CreationTimestamp
-    private LocalDateTime checkedAt;
+    private LocalDateTime attendanceTime;
 }
