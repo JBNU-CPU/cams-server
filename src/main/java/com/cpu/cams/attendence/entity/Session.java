@@ -1,9 +1,10 @@
-package com.cpu.cams.activity.entity;
+package com.cpu.cams.attendence.entity;
 
+import com.cpu.cams.activity.entity.Activity;
 import jakarta.persistence.*;
 
 @Entity
-public class ActivitySession {
+public class Session {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

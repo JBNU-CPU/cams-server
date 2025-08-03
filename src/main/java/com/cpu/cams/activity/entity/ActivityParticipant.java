@@ -1,6 +1,6 @@
-package com.cpu.cams.user.entity;
+package com.cpu.cams.activity.entity;
 
-import com.cpu.cams.activity.entity.Activity;
+import com.cpu.cams.user.entity.User;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
