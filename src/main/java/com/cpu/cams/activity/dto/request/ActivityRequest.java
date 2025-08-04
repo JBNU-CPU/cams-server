@@ -1,11 +1,11 @@
 package com.cpu.cams.activity.dto.request;
 
 import com.cpu.cams.activity.entity.ActivityType;
-import com.cpu.cams.activity.entity.RecurringSchedule;
+import lombok.Getter;
 
 import java.util.Map;
-import java.util.Objects;
 
+@Getter
 public class ActivityRequest {
 
     private String title;
@@ -15,7 +15,7 @@ public class ActivityRequest {
     private Integer maxParticipants;
     private String location;
     private String notes;
-    private Map<String, Objects> recurringSchedule;
-    private Map<String, Objects> eventSchedule;
-    private Map<String, Objects> curriculums;
+    private Map<String, Object> recurringSchedule;
+    private Map<String, Object> eventSchedule;
+    private Map<String, Object> curriculums;
 }

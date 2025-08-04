@@ -1,16 +1,22 @@
 package com.cpu.cams.activity.controller;
 
 import com.cpu.cams.activity.dto.request.ActivityRequest;
+import com.cpu.cams.activity.service.ActivityService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/activities")
+@RequiredArgsConstructor
 public class ActivityController {
+
+    private final ActivityService activityService;
 
     // 개설하기
     @PostMapping
     public String createActivity(@RequestBody ActivityRequest activityRequest) {
         // todo: 포인트 지급 로직
+        activityService.createActivity(activityRequest);
         return "OK";
     }
 
