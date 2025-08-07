@@ -1,5 +1,6 @@
 package com.cpu.cams.activity.entity;
 
+import com.cpu.cams.activity.dto.response.EventScheduleDTO;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -23,4 +24,15 @@ public class EventSchedule {
     private LocalDateTime startDateTime;
     private LocalDateTime endDateTime;
 
+    public void setActivity(Activity activity) {
+        this.activity = activity;
+        activity.getEventSchedules().add(this);
+    }
+    public static EventSchedule create(EventScheduleDTO eventScheduleDTO, Activity activity) {
+        EventSchedule eventSchedule = new EventSchedule();
+        eventSchedule.startDateTime = eventScheduleDTO.getStartDateTime();
+        eventSchedule.endDateTime = eventScheduleDTO.getEndDateTime();
+        eventSchedule.setActivity(activity);
+        return eventSchedule;
+    }
 }

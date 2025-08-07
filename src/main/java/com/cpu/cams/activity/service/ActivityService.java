@@ -2,13 +2,21 @@ package com.cpu.cams.activity.service;
 
 import com.cpu.cams.activity.dto.request.ActivityRequest;
 import com.cpu.cams.activity.dto.response.ActivityResponse;
+import com.cpu.cams.activity.dto.response.CurriculumDTO;
+import com.cpu.cams.activity.dto.response.EventScheduleDTO;
+import com.cpu.cams.activity.dto.response.RecurringScheduleDTO;
 import com.cpu.cams.activity.entity.Activity;
+import com.cpu.cams.activity.entity.Curriculum;
+import com.cpu.cams.activity.entity.EventSchedule;
+import com.cpu.cams.activity.entity.RecurringSchedule;
 import com.cpu.cams.activity.repository.ActivityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -21,9 +29,29 @@ public class ActivityService {
     public void createActivity(ActivityRequest activityRequest) {
 
         Activity activity = Activity.createActivity(activityRequest);
+
+        List<RecurringScheduleDTO> recurringSchedules = activityRequest.getRecurringSchedules();
+
+        for (RecurringScheduleDTO recurringSchedule : recurringSchedules) {
+            RecurringSchedule schedule = RecurringSchedule.create(recurringSchedule, activity);
+        }
+
+        List<EventScheduleDTO> eventSchedules = activityRequest.getEventSchedule();
+
+        for (EventScheduleDTO eventSchedule : eventSchedules) {
+            EventSchedule schedule = EventSchedule.create(eventSchedule, activity);
+        }
+
+        List<CurriculumDTO> curriculums = activityRequest.getCurriculums();
+
+        for (CurriculumDTO curriculum : curriculums) {
+            Curriculum curri = Curriculum.create(curriculum, activity);
+        }
+
+
+
         activityRepository.save(activity);
 
-        // todo: 포인트 지급 로직
     }
 
 
@@ -37,6 +65,7 @@ public class ActivityService {
                     //.createdBy(activity.getCreatedBy().getName())
                     .recurringSchedules(ActivityResponse.convertRecurringSchedules(activity.getRecurringSchedules()))
                     .eventSchedules(ActivityResponse.convertEventSchedules(activity.getEventSchedules()))
+                    .curriculums(ActivityResponse.convertCurriculums(activity.getCurriculums()))
                     .maxParticipants(activity.getMaxParticipants())
                     .participantCount(activity.getParticipantCount())
                     .activityType(activity.getActivityType().name())

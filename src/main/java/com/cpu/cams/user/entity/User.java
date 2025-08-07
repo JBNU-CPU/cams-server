@@ -47,8 +47,4 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<Point> pointList = new ArrayList<>();
-
-    public User(String username) {
-        this.username = username;
-    }
 }

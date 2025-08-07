@@ -1,8 +1,11 @@
 package com.cpu.cams.activity.entity;
 
+import com.cpu.cams.activity.dto.response.CurriculumDTO;
 import jakarta.persistence.*;
+import lombok.Getter;
 
 @Entity
+@Getter
 public class Curriculum {
 
     @Id
@@ -19,4 +22,20 @@ public class Curriculum {
     private String title;
 
     private String description;
+
+    // 연관관계 편의 메서드
+    public void setActivity(Activity activity) {
+        this.activity = activity;
+        activity.getCurriculums().add(this);
+    }
+
+    public static Curriculum create(CurriculumDTO curriculumDTO, Activity activity) {
+        Curriculum curriculum = new Curriculum();
+        curriculum.sequence = curriculumDTO.getSequence();
+        curriculum.title = curriculumDTO.getTitle();
+        curriculum.description = curriculumDTO.getDescription();
+        curriculum.setActivity(activity);
+        return curriculum;
+    }
+
 }

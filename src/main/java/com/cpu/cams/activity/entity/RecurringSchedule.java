@@ -1,10 +1,13 @@
 package com.cpu.cams.activity.entity;
 
+import com.cpu.cams.activity.dto.response.RecurringScheduleDTO;
 import jakarta.persistence.*;
 import lombok.Getter;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
+import java.util.List;
+import java.util.Map;
 
 @Entity @Getter
 public class RecurringSchedule {
@@ -21,4 +24,19 @@ public class RecurringSchedule {
     private DayOfWeek weekday;
     private LocalTime startTime;
     private LocalTime endTime;
+
+    public void setAcitivity(Activity activity) {
+        this.activity = activity;
+        activity.getRecurringSchedules().add(this);
+    }
+
+    public static RecurringSchedule create(RecurringScheduleDTO recurringScheduleDTO, Activity activity) {
+        RecurringSchedule recurringSchedule = new RecurringSchedule();
+        recurringSchedule.weekday = recurringScheduleDTO.getDayOfWeek();
+        recurringSchedule.startTime = recurringScheduleDTO.getStartTime();
+        recurringSchedule.endTime = recurringScheduleDTO.getEndTime();
+        recurringSchedule.setAcitivity(activity);
+        return recurringSchedule;
+    }
+
 }
