@@ -6,6 +6,7 @@ import com.cpu.cams.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -16,6 +17,7 @@ import java.util.Map;
 import java.util.Objects;
 
 @Entity
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Activity {
     @Id
@@ -33,6 +35,7 @@ public class Activity {
     private String goal;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private ActivityType activityType;
 
     @Column(nullable = false)
@@ -48,6 +51,7 @@ public class Activity {
     private String notes;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private ActivityStatus activityStatus = ActivityStatus.NOT_STARTED;
 
     @CreationTimestamp
@@ -55,7 +59,7 @@ public class Activity {
 
     /* --- 관계 --- */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "created_by") // todo: nullable = false
+    @JoinColumn(name = "created_by")
     private User createdBy;
 
     @OneToMany(mappedBy = "activity", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -71,28 +75,35 @@ public class Activity {
     private List<Curriculum> curriculums = new ArrayList<>(); // 커리큘럼 또는 프로그램
 
 
-    public static Activity createActivity(ActivityRequestDto activityRequestDto) {
+    public static Activity createActivity(ActivityRequest activityRequest) {
         Activity activity = new Activity();
-        activity.title = activityRequestDto.title;
-        activity.description = activityRequestDto.description;
-        activity.goal = activityRequestDto.goal;
-        activity.activityType = activityRequestDto.activityType;
-        activity.maxParticipants = activityRequestDto.maxParticipants;
-        activity.location = activityRequestDto.location;
-        activity.notes = activityRequestDto.notes;
-
+        activity.title = activityRequest.getTitle();
+        activity.description = activityRequest.getDescription();
+        activity.goal = activityRequest.getGoal();
+        activity.activityType = activityRequest.getActivityType();
+        activity.maxParticipants = activityRequest.getMaxParticipants();
+        activity.location = activityRequest.getLocation();
+        activity.notes = activityRequest.getNotes();
+        // todo: recurringSchedule, eventSchedule, curriculums 추가
         return activity;
     }
 
-    @Builder
-    public static class ActivityRequestDto {
-        private String title;
-        private String description;
-        private String goal;
-        private ActivityType activityType;
-        private Integer maxParticipants;
-        private String location;
-        private String notes;
+    public Activity updateActivity(ActivityRequest activityRequest) {
+        this.title = activityRequest.getTitle();
+        this.description = activityRequest.getDescription();
+        this.goal = activityRequest.getGoal();
+        this.activityType = activityRequest.getActivityType();
+        this.maxParticipants = activityRequest.getMaxParticipants();
+        this.location = activityRequest.getLocation();
+        this.notes = activityRequest.getNotes();
+        // todo: recurringSchedule, eventSchedule, curriculums 추가
+        return this;
+    }
+
+    public Activity updateActivityStatus(String activityStatus) {
+        ActivityStatus status = ActivityStatus.valueOf(activityStatus);
+        this.activityStatus = status;
+        return this;
     }
 }
 

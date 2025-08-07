@@ -1,6 +1,8 @@
 package com.cpu.cams.user.dto.response;
 
+import com.cpu.cams.activity.dto.response.EventScheduleDTO;
 import com.cpu.cams.activity.dto.response.ParticipantsResponse;
+import com.cpu.cams.activity.dto.response.RecurringScheduleDTO;
 import com.cpu.cams.activity.entity.ActivityStatus;
 
 import java.time.DayOfWeek;
@@ -22,16 +24,4 @@ public class MyParticipantsActivitiesResponse {
     private List<RecurringScheduleDTO> recurringSchedules;
     private List<EventScheduleDTO> eventSchedules;
     private List<ParticipantsResponse> participants;
-
-    private class RecurringScheduleDTO {
-        private DayOfWeek dayOfWeek;
-        private LocalTime startTime;
-        private LocalTime endTime;
-    }
-
-    private class EventScheduleDTO {
-        private LocalDateTime startDateTime;
-        private LocalDateTime endDateTime;
-    }
-
 }
