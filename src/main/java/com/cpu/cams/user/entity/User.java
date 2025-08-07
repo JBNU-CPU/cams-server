@@ -2,13 +2,14 @@ package com.cpu.cams.user.entity;
 
 import com.cpu.cams.point.entity.Point;
 import jakarta.persistence.*;
+import lombok.Getter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
+@Entity @Getter
 @Table(name = "users")
 public class User {
 
@@ -46,4 +47,8 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<Point> pointList = new ArrayList<>();
+
+    public User(String username) {
+        this.username = username;
+    }
 }

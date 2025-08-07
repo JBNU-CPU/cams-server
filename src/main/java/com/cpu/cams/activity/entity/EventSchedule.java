@@ -1,12 +1,14 @@
 package com.cpu.cams.activity.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Entity
+@Getter
 public class EventSchedule {
 
     @Id

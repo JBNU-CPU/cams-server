@@ -1,11 +1,12 @@
 package com.cpu.cams.activity.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 
-@Entity
+@Entity @Getter
 public class RecurringSchedule {
 
     @Id
