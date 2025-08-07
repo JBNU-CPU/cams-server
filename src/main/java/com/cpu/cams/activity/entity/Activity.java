@@ -84,8 +84,6 @@ public class Activity {
         activity.maxParticipants = activityRequest.getMaxParticipants();
         activity.location = activityRequest.getLocation();
         activity.notes = activityRequest.getNotes();
-
-        // todo: recurringSchedule, eventSchedule, curriculums 추가
         return activity;
     }
 
@@ -97,6 +95,7 @@ public class Activity {
         this.maxParticipants = activityRequest.getMaxParticipants();
         this.location = activityRequest.getLocation();
         this.notes = activityRequest.getNotes();
+
         // todo: recurringSchedule, eventSchedule, curriculums 추가
         return this;
     }

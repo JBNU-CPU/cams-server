@@ -94,7 +94,25 @@ public class ActivityService {
 
     public Long updateActivity(Long activityId, ActivityRequest activityRequest) {
         Activity activity = activityRepository.findById(activityId).orElseThrow(() -> new RuntimeException("에러"));
+
         activity.updateActivity(activityRequest);
+
+        List<RecurringScheduleDTO> newSchedule = activityRequest.getRecurringSchedules();
+        List<RecurringSchedule> originalSchedule = activity.getRecurringSchedules();
+
+        for (int i = 0; i < newSchedule.size(); i++) {
+            RecurringSchedule schedule = originalSchedule.get(i);
+            schedule.update(newSchedule.get(i));
+        }
+
+//        activity.getRecurringSchedules().forEach(recurringSchedule -> {
+//
+//            activityRequest.getRecurringSchedules().forEach(recurringScheduleDTO -> {
+//                RecurringSchedule update = recurringSchedule.update(recurringScheduleDTO);
+//            });
+////            recurringSchedule.update(new RecurringScheduleDTO(recurringSchedule.getWeekday(), recurringSchedule.getStartTime(), recurringSchedule.getEndTime()));
+//        });
+
 
         return activity.getId();
     }

@@ -35,4 +35,10 @@ public class EventSchedule {
         eventSchedule.setActivity(activity);
         return eventSchedule;
     }
+
+    public EventSchedule update(EventScheduleDTO eventScheduleDTO) {
+        this.startDateTime = eventScheduleDTO.getStartDateTime();
+        this.endDateTime = eventScheduleDTO.getEndDateTime();
+        return this;
+    }
 }

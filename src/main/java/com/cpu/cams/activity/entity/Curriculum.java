@@ -38,4 +38,10 @@ public class Curriculum {
         return curriculum;
     }
 
+    public Curriculum update(CurriculumDTO curriculumDTO) {
+        this.sequence = curriculumDTO.getSequence();
+        this.title = curriculumDTO.getTitle();
+        this.description = curriculumDTO.getDescription();
+        return this;
+    }
 }

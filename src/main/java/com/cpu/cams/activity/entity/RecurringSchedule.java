@@ -39,4 +39,11 @@ public class RecurringSchedule {
         return recurringSchedule;
     }
 
+    public RecurringSchedule update(RecurringScheduleDTO recurringScheduleDTO) {
+        this.weekday = recurringScheduleDTO.getDayOfWeek();
+        this.startTime = recurringScheduleDTO.getStartTime();
+        this.endTime = recurringScheduleDTO.getEndTime();
+        return this;
+    }
+
 }
