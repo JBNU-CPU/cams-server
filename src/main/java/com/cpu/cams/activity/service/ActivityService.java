@@ -33,19 +33,19 @@ public class ActivityService {
         List<RecurringScheduleDTO> recurringSchedules = activityRequest.getRecurringSchedules();
 
         for (RecurringScheduleDTO recurringSchedule : recurringSchedules) {
-            RecurringSchedule schedule = RecurringSchedule.create(recurringSchedule, activity);
+            RecurringSchedule.create(recurringSchedule, activity);
         }
 
         List<EventScheduleDTO> eventSchedules = activityRequest.getEventSchedule();
 
         for (EventScheduleDTO eventSchedule : eventSchedules) {
-            EventSchedule schedule = EventSchedule.create(eventSchedule, activity);
+            EventSchedule.create(eventSchedule, activity);
         }
 
         List<CurriculumDTO> curriculums = activityRequest.getCurriculums();
 
         for (CurriculumDTO curriculum : curriculums) {
-            Curriculum curri = Curriculum.create(curriculum, activity);
+            Curriculum.create(curriculum, activity);
         }
 
 
@@ -97,22 +97,27 @@ public class ActivityService {
 
         activity.updateActivity(activityRequest);
 
-        List<RecurringScheduleDTO> newSchedule = activityRequest.getRecurringSchedules();
-        List<RecurringSchedule> originalSchedule = activity.getRecurringSchedules();
+        // 자식 엔티티들을 업데이트합니다.
+        // orphanRemoval=true 옵션 덕분에, 컬렉션을 clear하고 새로 추가하면
+        // JPA가 알아서 기존 자식들을 DELETE하고 새로운 자식들을 INSERT합니다.
 
-        for (int i = 0; i < newSchedule.size(); i++) {
-            RecurringSchedule schedule = originalSchedule.get(i);
-            schedule.update(newSchedule.get(i));
+        // --- 반복 일정 (Recurring Schedules) ---
+        activity.getRecurringSchedules().clear();
+        for (RecurringScheduleDTO recurringSchedule : activityRequest.getRecurringSchedules()) {
+            RecurringSchedule.create(recurringSchedule, activity);
         }
 
-//        activity.getRecurringSchedules().forEach(recurringSchedule -> {
-//
-//            activityRequest.getRecurringSchedules().forEach(recurringScheduleDTO -> {
-//                RecurringSchedule update = recurringSchedule.update(recurringScheduleDTO);
-//            });
-////            recurringSchedule.update(new RecurringScheduleDTO(recurringSchedule.getWeekday(), recurringSchedule.getStartTime(), recurringSchedule.getEndTime()));
-//        });
+        // --- 이벤트 일정 (Event Schedules) ---
+        activity.getEventSchedules().clear();
+        for (EventScheduleDTO eventSchedule : activityRequest.getEventSchedule()) {
+            EventSchedule.create(eventSchedule, activity);
+        }
 
+        // --- 커리큘럼 (Curriculums) ---
+        activity.getCurriculums().clear();
+        for (CurriculumDTO curriculum : activityRequest.getCurriculums()) {
+            Curriculum.create(curriculum, activity);
+        }
 
         return activity.getId();
     }
