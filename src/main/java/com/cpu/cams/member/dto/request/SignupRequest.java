@@ -1,5 +1,8 @@
 package com.cpu.cams.member.dto.request;
 
+import lombok.Getter;
+
+@Getter
 public class SignupRequest {
     private String username;
     private String password;

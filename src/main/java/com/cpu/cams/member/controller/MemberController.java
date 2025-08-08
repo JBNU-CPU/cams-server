@@ -24,8 +24,7 @@ public class MemberController {
     // 회원가입
     @PostMapping
     public ResponseEntity<Long> signup(@RequestBody SignupRequest signupRequest) {
-        Long memberId = 1L;
-
+        Long memberId = memberService.signup(signupRequest);
         return ResponseEntity.ok().body(memberId);
     }
 
