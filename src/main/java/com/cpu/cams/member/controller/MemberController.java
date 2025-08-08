@@ -4,15 +4,11 @@ import com.cpu.cams.member.dto.request.ProfileRequest;
 import com.cpu.cams.member.dto.request.ResetPasswordRequest;
 import com.cpu.cams.member.dto.request.SignupRequest;
 import com.cpu.cams.member.dto.request.WithdrawalRequest;
-import com.cpu.cams.member.dto.response.MyBuildActivitiesResponse;
-import com.cpu.cams.member.dto.response.MyParticipantsActivitiesResponse;
 import com.cpu.cams.member.dto.response.ProfileResponse;
 import com.cpu.cams.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor

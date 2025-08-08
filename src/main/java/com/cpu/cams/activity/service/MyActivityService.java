@@ -1,7 +1,6 @@
 package com.cpu.cams.activity.service;
 
 import com.cpu.cams.activity.dto.response.ActivityResponse;
-import com.cpu.cams.activity.entity.Activity;
 import com.cpu.cams.activity.repository.ActivityRepository;
 import com.cpu.cams.member.entity.Member;
 import com.cpu.cams.member.repository.MemberRepository;
@@ -21,18 +20,18 @@ public class MyActivityService {
         this.memberRepository = memberRepository;
     }
 
-    public Page<ActivityResponse> getMyBuildActivities(int page, int size) {
+    public Page<ActivityResponse> getMyCreateActivities(int page, int size) {
         // todo: memberId security 에서 불러오기
         Long memberId = 1L;
         Member member = memberRepository.findById(memberId).orElse(null);
 
-        Page<ActivityResponse> myBuildActivities = activityRepository.findMyBuildActivityByCreatedBy(PageRequest.of(page, size), member).map(
+        Page<ActivityResponse> myCreateActivities = activityRepository.findMyCreateActivityByCreatedBy(PageRequest.of(page, size), member).map(
                 activity -> {
                     return ActivityResponse.builder()
                             .id(activity.getId())
                             .title(activity.getTitle())
                             .description(activity.getDescription())
-                            //.createdBy(activity.getCreatedBy().getName())
+                            .createdBy(activity.getCreatedBy().getName())
                             .recurringSchedules(ActivityResponse.convertRecurringSchedules(activity.getRecurringSchedules()))
                             .eventSchedules(ActivityResponse.convertEventSchedules(activity.getEventSchedules()))
                             .curriculums(ActivityResponse.convertCurriculums(activity.getCurriculums()))
@@ -45,6 +44,32 @@ public class MyActivityService {
         );
 
 
-        return myBuildActivities;
+        return myCreateActivities;
+    }
+
+    public Page<ActivityResponse> getMyParticipateActivities(int page, int size) {
+
+        // todo: memberId security 에서 불러오기
+        Long memberId = 1L;
+        Member member = memberRepository.findById(memberId).orElse(null);
+
+        Page<ActivityResponse> myParticipateActivities = activityRepository.findMyParticipateActivitiesByMember(member, PageRequest.of(page, size)).map(
+                activity -> {
+                    return ActivityResponse.builder()
+                            .id(activity.getId())
+                            .title(activity.getTitle())
+                            .description(activity.getDescription())
+                            .createdBy(activity.getCreatedBy().getName())
+                            .recurringSchedules(ActivityResponse.convertRecurringSchedules(activity.getRecurringSchedules()))
+                            .eventSchedules(ActivityResponse.convertEventSchedules(activity.getEventSchedules()))
+                            .curriculums(ActivityResponse.convertCurriculums(activity.getCurriculums()))
+                            .maxParticipants(activity.getMaxParticipants())
+                            .participantCount(activity.getParticipantCount())
+                            .activityType(activity.getActivityType().name())
+                            .activityStatus(activity.getActivityStatus().name())
+                            .build();
+                }
+        );
+        return myParticipateActivities;
     }
 }

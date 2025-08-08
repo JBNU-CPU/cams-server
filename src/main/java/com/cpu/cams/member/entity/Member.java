@@ -1,6 +1,7 @@
 package com.cpu.cams.member.entity;
 
 import com.cpu.cams.activity.entity.Activity;
+import com.cpu.cams.activity.entity.ActivityParticipant;
 import com.cpu.cams.member.dto.request.SignupRequest;
 import com.cpu.cams.point.entity.Point;
 import jakarta.persistence.*;
@@ -53,6 +54,9 @@ public class Member {
 
     @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Activity> createdActivities = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true) //todo: cascade 관련 문제 알아보기
+    private List<ActivityParticipant> participatedActivities = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Point> pointList = new ArrayList<>();
