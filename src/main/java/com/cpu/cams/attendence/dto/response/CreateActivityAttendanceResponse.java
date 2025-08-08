@@ -4,7 +4,7 @@ import com.cpu.cams.activity.entity.ActivityType;
 
 import java.util.List;
 
-public class BuildActivityAttendanceResponse {
+public class CreateActivityAttendanceResponse {
     private Long activityId;
     private String activityTitle;
     private Integer totalSessions; // 전체 회차 수

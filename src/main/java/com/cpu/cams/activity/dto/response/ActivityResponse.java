@@ -17,7 +17,7 @@ public class ActivityResponse {
     private Long id;
     private String title;
     private String description;
-    //private String createdBy;
+    private String createdBy;
     private List<RecurringScheduleDTO> recurringSchedules;
     private List<EventScheduleDTO> eventSchedules;
     private List<CurriculumDTO> curriculums;

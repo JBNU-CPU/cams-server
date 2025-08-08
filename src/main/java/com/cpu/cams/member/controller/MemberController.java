@@ -4,15 +4,11 @@ import com.cpu.cams.member.dto.request.ProfileRequest;
 import com.cpu.cams.member.dto.request.ResetPasswordRequest;
 import com.cpu.cams.member.dto.request.SignupRequest;
 import com.cpu.cams.member.dto.request.WithdrawalRequest;
-import com.cpu.cams.member.dto.response.MyBuildActivitiesResponse;
-import com.cpu.cams.member.dto.response.MyParticipantsActivitiesResponse;
 import com.cpu.cams.member.dto.response.ProfileResponse;
 import com.cpu.cams.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,34 +20,24 @@ public class MemberController {
     // 회원가입
     @PostMapping
     public ResponseEntity<Long> signup(@RequestBody SignupRequest signupRequest) {
-        Long memberId = 1L;
-
+        Long memberId = memberService.signup(signupRequest);
         return ResponseEntity.ok().body(memberId);
     }
 
     // 비밀번호 찾기
     @PostMapping("/password")
     public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) {
+        // todo : 이메일 인증으로 구현
         return ResponseEntity.status(200).body("성공");
     }
 
     // 회원 탈퇴
     @DeleteMapping("/{memberId}")
     public ResponseEntity<?> deleteMemberInfo(@RequestBody WithdrawalRequest withdrawalRequest) {
+        // todo : 이메일 인증으로 구현
         return ResponseEntity.status(200).body("성공");
     }
 
-    // 내가 개설한 활동 조회
-    @GetMapping("/me/build-activity")
-    public List<MyBuildActivitiesResponse> getMyBuildActivities() {
-        return List.of(new MyBuildActivitiesResponse());
-    }
-
-    // 내가 참여한 활동 조회
-    @GetMapping("/me/participate-activity")
-    public List<MyParticipantsActivitiesResponse> getMyParticipateActivities() {
-        return List.of(new MyParticipantsActivitiesResponse());
-    }
 
     // 내 프로필 조회
     @GetMapping("/me")

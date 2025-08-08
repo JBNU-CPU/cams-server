@@ -1,7 +1,7 @@
 package com.cpu.cams.attendence.controller;
 
 import com.cpu.cams.activity.entity.ActivityStatus;
-import com.cpu.cams.attendence.dto.response.BuildActivityAttendanceResponse;
+import com.cpu.cams.attendence.dto.response.CreateActivityAttendanceResponse;
 import com.cpu.cams.attendence.dto.response.ParticipantsActivityAttendanceResponse;
 import com.cpu.cams.attendence.entity.AttendanceStatus;
 import org.springframework.web.bind.annotation.*;
@@ -40,8 +40,8 @@ public class AttendanceController {
     }
     
     // 리더 : 내가 개설한 활동 전체 출결 데이터 조회하기
-    @GetMapping("/me/build")
-    public List<BuildActivityAttendanceResponse> getAllAttendances() {
-        return List.of(new BuildActivityAttendanceResponse());
+    @GetMapping("/me/create")
+    public List<CreateActivityAttendanceResponse> getAllAttendances() {
+        return List.of(new CreateActivityAttendanceResponse());
     }
 }
