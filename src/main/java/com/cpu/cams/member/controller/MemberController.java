@@ -31,26 +31,17 @@ public class MemberController {
     // 비밀번호 찾기
     @PostMapping("/password")
     public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) {
+        // todo : 이메일 인증으로 구현
         return ResponseEntity.status(200).body("성공");
     }
 
     // 회원 탈퇴
     @DeleteMapping("/{memberId}")
     public ResponseEntity<?> deleteMemberInfo(@RequestBody WithdrawalRequest withdrawalRequest) {
+        // todo : 이메일 인증으로 구현
         return ResponseEntity.status(200).body("성공");
     }
 
-    // 내가 개설한 활동 조회
-    @GetMapping("/me/build-activity")
-    public List<MyBuildActivitiesResponse> getMyBuildActivities() {
-        return List.of(new MyBuildActivitiesResponse());
-    }
-
-    // 내가 참여한 활동 조회
-    @GetMapping("/me/participate-activity")
-    public List<MyParticipantsActivitiesResponse> getMyParticipateActivities() {
-        return List.of(new MyParticipantsActivitiesResponse());
-    }
 
     // 내 프로필 조회
     @GetMapping("/me")

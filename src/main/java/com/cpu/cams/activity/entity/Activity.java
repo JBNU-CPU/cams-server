@@ -60,6 +60,9 @@ public class Activity {
     private Member createdBy;
 
     @OneToMany(mappedBy = "activity", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ActivityParticipant> participants = new ArrayList<>();
+
+    @OneToMany(mappedBy = "activity", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RecurringSchedule> recurringSchedules = new ArrayList<>();
 
     @OneToMany(mappedBy = "activity", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -71,8 +74,13 @@ public class Activity {
     @OneToMany(mappedBy = "activity", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Curriculum> curriculums = new ArrayList<>(); // 커리큘럼 또는 프로그램
 
+    public void addCreatedBy(Member member) {
+        member.getCreatedActivities().add(this);
+        this.createdBy = member;
+    }
 
-    public static Activity createActivity(ActivityRequest activityRequest) {
+
+    public static Activity create(ActivityRequest activityRequest, Member member) {
         Activity activity = new Activity();
         activity.title = activityRequest.getTitle();
         activity.description = activityRequest.getDescription();
@@ -81,6 +89,7 @@ public class Activity {
         activity.maxParticipants = activityRequest.getMaxParticipants();
         activity.location = activityRequest.getLocation();
         activity.notes = activityRequest.getNotes();
+        activity.addCreatedBy(member);
         return activity;
     }
 

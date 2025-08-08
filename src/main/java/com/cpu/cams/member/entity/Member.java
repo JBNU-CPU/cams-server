@@ -1,5 +1,6 @@
 package com.cpu.cams.member.entity;
 
+import com.cpu.cams.activity.entity.Activity;
 import com.cpu.cams.member.dto.request.SignupRequest;
 import com.cpu.cams.point.entity.Point;
 import jakarta.persistence.*;
@@ -50,7 +51,10 @@ public class Member {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Activity> createdActivities = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Point> pointList = new ArrayList<>();
 
     public static Member create(SignupRequest signupRequest) {
@@ -66,4 +70,6 @@ public class Member {
         //todo: pointList 추가
         return member;
     }
+
+
 }
