@@ -20,9 +20,9 @@ public class SessionController {
     }
 
     // 내가 신청한 활동 중 세션이 열린 활동 리스트 조회
-    // 1. userid -> activity_partipants에서 activity조회해서 그 중에 session이 start인걸 조회한다~ 리턴값으로는 activity, session 둘 다 줘야 한다.
-    @GetMapping("/{userId}/open-session")
-    public List<OpenSessionResponse> getOpenSessionList(@PathVariable String userId) {
+    // 1. memberId -> activity_partipants에서 activity조회해서 그 중에 session이 start인걸 조회한다~ 리턴값으로는 activity, session 둘 다 줘야 한다.
+    @GetMapping("/{memberId}/open-session")
+    public List<OpenSessionResponse> getOpenSessionList(@PathVariable String memberId) {
         return List.of(new OpenSessionResponse());
     }
 

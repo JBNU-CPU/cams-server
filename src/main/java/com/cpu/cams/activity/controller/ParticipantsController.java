@@ -16,8 +16,8 @@ public class ParticipantsController {
     }
 
     // 신청자 삭제
-    @DeleteMapping("/{userId}")
-    public String deleteParticipant(@PathVariable Long activityId, @PathVariable Long userId) {
+    @DeleteMapping("/{memberId}")
+    public String deleteParticipant(@PathVariable Long activityId, @PathVariable Long memberId) {
         return "OK";
     }
 

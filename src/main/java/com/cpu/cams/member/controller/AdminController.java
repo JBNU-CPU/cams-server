@@ -1,4 +1,4 @@
-package com.cpu.cams.user.controller;
+package com.cpu.cams.member.controller;
 
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,8 +16,8 @@ public class AdminController {
     }
 
     // 유저 승인 / 미승인
-    @PostMapping("/users/{userId}")
-    public String updateUserApprovalStatus(@PathVariable Long userId) {
+    @PostMapping("/members/{memberId}")
+    public String updateMemberApprovalStatus(@PathVariable Long memberId) {
         return "OK";
     }
 }

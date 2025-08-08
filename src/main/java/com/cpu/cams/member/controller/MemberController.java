@@ -1,33 +1,32 @@
-package com.cpu.cams.user.controller;
+package com.cpu.cams.member.controller;
 
-import com.cpu.cams.user.dto.request.ProfileRequest;
-import com.cpu.cams.user.dto.request.ResetPasswordRequest;
-import com.cpu.cams.user.dto.request.SignupRequest;
-import com.cpu.cams.user.dto.request.WithdrawalRequest;
-import com.cpu.cams.user.dto.response.MyBuildActivitiesResponse;
-import com.cpu.cams.user.dto.response.MyParticipantsActivitiesResponse;
-import com.cpu.cams.user.dto.response.ProfileResponse;
+import com.cpu.cams.member.dto.request.ProfileRequest;
+import com.cpu.cams.member.dto.request.ResetPasswordRequest;
+import com.cpu.cams.member.dto.request.SignupRequest;
+import com.cpu.cams.member.dto.request.WithdrawalRequest;
+import com.cpu.cams.member.dto.response.MyBuildActivitiesResponse;
+import com.cpu.cams.member.dto.response.MyParticipantsActivitiesResponse;
+import com.cpu.cams.member.dto.response.ProfileResponse;
+import com.cpu.cams.member.service.MemberService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/user")
-public class UserController {
+@RequiredArgsConstructor
+@RequestMapping("/api/member")
+public class MemberController {
+
+    private final MemberService memberService;
 
     // 회원가입
     @PostMapping
-    public ResponseEntity<?> signup(@RequestBody SignupRequest signupRequest) {
+    public ResponseEntity<Long> signup(@RequestBody SignupRequest signupRequest) {
         Long memberId = 1L;
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(memberId)
-                .toUri();
-        return ResponseEntity.created(location).body("회원 가입 성공");
+
+        return ResponseEntity.ok().body(memberId);
     }
 
     // 비밀번호 찾기
@@ -37,8 +36,8 @@ public class UserController {
     }
 
     // 회원 탈퇴
-    @DeleteMapping("/{userId}")
-    public ResponseEntity<?> deleteUserInfo(@RequestBody WithdrawalRequest withdrawalRequest) {
+    @DeleteMapping("/{memberId}")
+    public ResponseEntity<?> deleteMemberInfo(@RequestBody WithdrawalRequest withdrawalRequest) {
         return ResponseEntity.status(200).body("성공");
     }
 

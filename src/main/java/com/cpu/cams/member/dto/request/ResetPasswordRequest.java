@@ -1,4 +1,4 @@
-package com.cpu.cams.user.dto.request;
+package com.cpu.cams.member.dto.request;
 
 public class ResetPasswordRequest {
     private String username;

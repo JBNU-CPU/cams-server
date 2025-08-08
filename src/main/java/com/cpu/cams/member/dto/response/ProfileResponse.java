@@ -1,4 +1,4 @@
-package com.cpu.cams.user.dto.response;
+package com.cpu.cams.member.dto.response;
 
 public class ProfileResponse {
 

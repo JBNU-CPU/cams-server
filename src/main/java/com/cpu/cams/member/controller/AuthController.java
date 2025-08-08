@@ -1,4 +1,4 @@
-package com.cpu.cams.user.controller;
+package com.cpu.cams.member.controller;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;

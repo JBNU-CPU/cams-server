@@ -1,4 +1,4 @@
-package com.cpu.cams.user.entity;
+package com.cpu.cams.member.entity;
 
 import com.cpu.cams.point.entity.Point;
 import jakarta.persistence.*;
@@ -10,12 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity @Getter
-@Table(name = "users")
-public class User {
+public class Member {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
+    @Column(name = "member_id")
     private Long id;
 
     @Column(unique = true, nullable = false)
@@ -45,6 +44,6 @@ public class User {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "member")
     private List<Point> pointList = new ArrayList<>();
 }
