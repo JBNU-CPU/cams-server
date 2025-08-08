@@ -1,5 +1,6 @@
 package com.cpu.cams.activity.dto.response;
 
+import com.cpu.cams.activity.entity.Curriculum;
 import com.cpu.cams.activity.entity.EventSchedule;
 import com.cpu.cams.activity.entity.RecurringSchedule;
 import lombok.Builder;
@@ -19,6 +20,7 @@ public class ActivityResponse {
     //private String createdBy;
     private List<RecurringScheduleDTO> recurringSchedules;
     private List<EventScheduleDTO> eventSchedules;
+    private List<CurriculumDTO> curriculums;
     private Integer participantCount;
     private Integer maxParticipants;
     private String activityType;
@@ -42,6 +44,15 @@ public class ActivityResponse {
                     return new EventScheduleDTO(eventSchedule.getStartDateTime(), eventSchedule.getEndDateTime());
                 }).toList();
         return eventScheduleDTOS;
+    }
+
+    public static List<CurriculumDTO> convertCurriculums(List<Curriculum> curriculums) {
+
+        List<CurriculumDTO> curriculumDTOS = curriculums.stream().
+                map(curriculum -> {
+                    return new CurriculumDTO(curriculum.getSequence(), curriculum.getTitle(), curriculum.getDescription());
+                }).toList();
+        return curriculumDTOS;
     }
 
 }

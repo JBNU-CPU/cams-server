@@ -1,12 +1,14 @@
 package com.cpu.cams.activity.dto.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
+@NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
+@Builder
 public class EventScheduleDTO {
     private LocalDateTime startDateTime;
     private LocalDateTime endDateTime;
