@@ -1,6 +1,6 @@
 package com.cpu.cams.announcement.entity;
 
-import com.cpu.cams.user.entity.User;
+import com.cpu.cams.member.entity.Member;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -19,7 +19,7 @@ public class Announcement {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by", nullable = false)
-    private User createdBy;
+    private Member createdBy;
 
     @CreationTimestamp
     private LocalDateTime createdAt;

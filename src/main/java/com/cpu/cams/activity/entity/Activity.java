@@ -2,10 +2,9 @@ package com.cpu.cams.activity.entity;
 
 import com.cpu.cams.activity.dto.request.ActivityRequest;
 import com.cpu.cams.attendence.entity.Session;
-import com.cpu.cams.user.entity.User;
+import com.cpu.cams.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -13,8 +12,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 @Entity
 @Getter
@@ -60,7 +57,7 @@ public class Activity {
     /* --- 관계 --- */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by")
-    private User createdBy;
+    private Member createdBy;
 
     @OneToMany(mappedBy = "activity", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RecurringSchedule> recurringSchedules = new ArrayList<>();

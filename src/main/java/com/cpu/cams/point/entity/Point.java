@@ -1,6 +1,6 @@
 package com.cpu.cams.point.entity;
 
-import com.cpu.cams.user.entity.User;
+import com.cpu.cams.member.entity.Member;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -14,8 +14,8 @@ public class Point {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
 
     @Enumerated(EnumType.STRING)
     private PointType type;

@@ -13,7 +13,7 @@ public class BuildActivityAttendanceResponse {
     private List<WeeklySummary> weeklySummaries;
 
     private class ParticipantSummary{
-        private Long userId;
+        private Long memberId;
         private String name;         // 김철수
         private int attendanceCount; // 출석 횟수
         private int lateCount;       // 지각 횟수

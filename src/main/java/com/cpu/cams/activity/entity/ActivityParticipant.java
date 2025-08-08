@@ -1,6 +1,6 @@
 package com.cpu.cams.activity.entity;
 
-import com.cpu.cams.user.entity.User;
+import com.cpu.cams.member.entity.Member;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -17,8 +17,8 @@ public class ActivityParticipant {
     @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "activity_id", nullable = false)
     private Activity activity;
 
-    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
 
     @CreationTimestamp
     private LocalDateTime joinedAt;

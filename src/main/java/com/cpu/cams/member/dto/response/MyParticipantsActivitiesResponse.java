@@ -1,13 +1,10 @@
-package com.cpu.cams.user.dto.response;
+package com.cpu.cams.member.dto.response;
 
 import com.cpu.cams.activity.dto.response.EventScheduleDTO;
 import com.cpu.cams.activity.dto.response.ParticipantsResponse;
 import com.cpu.cams.activity.dto.response.RecurringScheduleDTO;
 import com.cpu.cams.activity.entity.ActivityStatus;
 
-import java.time.DayOfWeek;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 
 public class MyParticipantsActivitiesResponse {

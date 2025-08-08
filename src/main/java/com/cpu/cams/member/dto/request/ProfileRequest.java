@@ -1,8 +1,6 @@
-package com.cpu.cams.user.dto.request;
+package com.cpu.cams.member.dto.request;
 
-public class SignupRequest {
-    private String username;
-    private String password;
+public class ProfileRequest {
     private String name;
     private String email;
     private String phone;
