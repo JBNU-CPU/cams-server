@@ -1,5 +1,6 @@
 package com.cpu.cams.activity.service;
 
+import com.cpu.cams.activity.dto.response.ParticipantsResponse;
 import com.cpu.cams.activity.entity.Activity;
 import com.cpu.cams.activity.entity.ActivityParticipant;
 import com.cpu.cams.activity.repository.ActivityParticipantRepository;
@@ -7,9 +8,10 @@ import com.cpu.cams.activity.repository.ActivityRepository;
 import com.cpu.cams.member.entity.Member;
 import com.cpu.cams.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 @Service
 @Transactional
@@ -20,13 +22,54 @@ public class ParticipantsService {
     private final MemberRepository memberRepository;
     private final ActivityRepository activityRepository;
 
+    // 활동 참가 신청하기
     public void addParticipant(Long activityId) {
         Long memberId = 1L;
         // todo: 레포지토리로 불러오는게 맞니? MemberService에 함수 만들고 서비스로 불러오는게 맞니?
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new RuntimeException("멤버없음"));
         Activity activity = activityRepository.findById(activityId).orElseThrow(() -> new RuntimeException("활동 없음"));
+
+        // 중복 참가 방지
+        if(activityParticipantRepository.existsByMember(member)){
+            throw new RuntimeException("당신 중복 참가자임");
+        }
+
         ActivityParticipant.create(activity, member);
 
-
     }
+
+    // 활동 참가자 목록 조회하기
+    public Page<ParticipantsResponse> getActivityParticipants(Long activityId){
+        Long leaderId = 1l; // todo: 현재 사용자 즉 api 보낸 사람이 이 활동을 만든 사람이 맞는지 확인 작업 추가
+        Activity activity = activityRepository.findById(activityId).orElseThrow(() -> new RuntimeException("활동 없음"));
+
+        PageRequest pageRequest = PageRequest.of(0, 3);
+        Page<ActivityParticipant> participants = activityParticipantRepository.findByActivity(activity, pageRequest);
+
+        Page<ParticipantsResponse> result = participants.map(participant ->
+                ParticipantsResponse.builder()
+                        .name(participant.getMember().getName())
+                        .email(participant.getMember().getEmail())
+                        .phone(participant.getMember().getPhone())
+                        .joindAt(participant.getJoinedAt())
+                        .build()
+        );
+
+        return result;
+    }
+
+    // 활동 신청자 삭제하기
+    public void deleteParticipant(Long activityId, Long participantId){
+        Long leaderId = 1l; // todo: 현재 사용자 즉 api 보낸 사람이 이 활동을 만든 사람이 맞는지 확인 작업 추가
+
+        // 멤버가 실제 참가했었는지 확인
+        ActivityParticipant participant = activityParticipantRepository.findById(participantId).orElseThrow(() -> new RuntimeException("신청자가 아닙니다"));
+        if(participant.getActivity().getId() != activityId){
+            throw new RuntimeException("이 활동에 참가한 멤버가 아닙니다");
+        }
+
+        activityParticipantRepository.delete(participant);
+    }
+
+
 }

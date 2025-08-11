@@ -84,9 +84,9 @@ public class ActivityService {
         return activities;
     }
 
-    // 개별 활동 조회
+    // 활동 세부 정보 조회
     public ActivityResponse getActivity(Long activityId) {
-        Activity activity = activityRepository.findById(activityId).orElseThrow(() -> new RuntimeException("에러"));
+        Activity activity = activityRepository.findById(activityId).orElseThrow(() -> new RuntimeException("운동 없음"));
         return ActivityResponse.builder()
                 .id(activity.getId())
                 .title(activity.getTitle())
@@ -102,7 +102,7 @@ public class ActivityService {
     }
 
     public Long updateActivity(Long activityId, ActivityRequest activityRequest) {
-        Activity activity = activityRepository.findById(activityId).orElseThrow(() -> new RuntimeException("에러"));
+        Activity activity = activityRepository.findById(activityId).orElseThrow(() -> new RuntimeException("운동 없음"));
 
         activity.updateActivity(activityRequest);
 
