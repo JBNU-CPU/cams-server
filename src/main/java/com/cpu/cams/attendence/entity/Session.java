@@ -2,11 +2,12 @@ package com.cpu.cams.attendence.entity;
 
 import com.cpu.cams.activity.entity.Activity;
 import jakarta.persistence.*;
+import lombok.Getter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.List;
 
-@Entity
+@Entity @Getter
 public class Session {
 
     @Id
@@ -22,6 +23,8 @@ public class Session {
 
     @Column(nullable = false)
     private String attendancesCode;
+
+    // == 연관관계 == //
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "activity_id", nullable = false)
