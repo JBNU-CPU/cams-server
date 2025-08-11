@@ -42,7 +42,7 @@ public class ParticipantsService {
 
     // 활동 참가자 목록 조회하기
     public Page<ParticipantsResponse> getParticipantActivities(Long activityId){
-        Long memberId = 1l;
+        Long memberId = 1l; // todo: 현재 사용자 즉 api 보낸 사람이 이 활동을 만든 사람이 맞는지 확인 작업 추가
         Activity activity = activityRepository.findById(activityId).orElseThrow(() -> new RuntimeException("활동 없음"));
 
         PageRequest pageRequest = PageRequest.of(0, 3);
