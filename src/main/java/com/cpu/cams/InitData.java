@@ -5,7 +5,7 @@ import com.cpu.cams.activity.dto.response.RecurringScheduleDTO;
 import com.cpu.cams.activity.entity.Activity;
 import com.cpu.cams.activity.entity.ActivityType;
 import com.cpu.cams.activity.service.ActivityService;
-import com.cpu.cams.activity.service.ParticipantsService;
+import com.cpu.cams.activity.service.ParticipantService;
 import com.cpu.cams.member.dto.request.SignupRequest;
 import com.cpu.cams.member.service.MemberService;
 import jakarta.annotation.PostConstruct;
@@ -22,12 +22,12 @@ public class InitData {
 
     private final MemberService memberService;
     private final ActivityService activityService;
-    private final ParticipantsService participantsService;
+    private final ParticipantService participantService;
 
-    public InitData(MemberService memberService, ActivityService activityService, ParticipantsService participantsService) {
+    public InitData(MemberService memberService, ActivityService activityService, ParticipantService participantService) {
         this.memberService = memberService;
         this.activityService = activityService;
-        this.participantsService = participantsService;
+        this.participantService = participantService;
     }
 
     @PostConstruct
@@ -56,11 +56,11 @@ public class InitData {
         activityService.updateStatus(1L, "STARTED");
 
         // test1 테스트활동1, 테스트활동2 참가
-        participantsService.addParticipant(activity1.getId(), member2Id);
-        participantsService.addParticipant(activity2.getId(), member2Id);
+        participantService.addParticipant(activity1.getId(), member2Id);
+        participantService.addParticipant(activity2.getId(), member2Id);
 
         // test2 테스트활동1 참가
-        participantsService.addParticipant(activity1.getId(), member3Id);
+        participantService.addParticipant(activity1.getId(), member3Id);
 
     }
 }
