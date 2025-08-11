@@ -1,6 +1,6 @@
 package com.cpu.cams.activity.service;
 
-import com.cpu.cams.activity.dto.response.ParticipantsResponse;
+import com.cpu.cams.activity.dto.response.ParticipantResponse;
 import com.cpu.cams.activity.entity.Activity;
 import com.cpu.cams.activity.entity.ActivityParticipant;
 import com.cpu.cams.activity.repository.ActivityParticipantRepository;
@@ -13,13 +13,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.stream.Stream;
-
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class ParticipantsService {
+public class ParticipantService {
 
     private final ActivityParticipantRepository activityParticipantRepository;
     private final MemberRepository memberRepository;
@@ -47,15 +44,15 @@ public class ParticipantsService {
     }
 
     // 활동 참가자 목록 조회하기
-    public Page<ParticipantsResponse> getActivityParticipants(Long activityId){
+    public Page<ParticipantResponse> getActivityParticipants(Long activityId){
         Long leaderId = 1l; // todo: 현재 사용자 즉 api 보낸 사람이 이 활동을 만든 사람이 맞는지 확인 작업 추가
         Activity activity = activityRepository.findById(activityId).orElseThrow(() -> new RuntimeException("활동 없음"));
 
         PageRequest pageRequest = PageRequest.of(0, 3);
         Page<ActivityParticipant> participants = activityParticipantRepository.findByActivity(activity, pageRequest);
 
-        Page<ParticipantsResponse> result = participants.map(participant ->
-                ParticipantsResponse.builder()
+        Page<ParticipantResponse> result = participants.map(participant ->
+                ParticipantResponse.builder()
                         .name(participant.getMember().getName())
                         .email(participant.getMember().getEmail())
                         .phone(participant.getMember().getPhone())

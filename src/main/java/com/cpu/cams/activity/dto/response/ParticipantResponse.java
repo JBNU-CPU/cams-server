@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Builder
-public class ParticipantsResponse {
+public class ParticipantResponse {
     private String name; // 참가자 이름
     private String email; // 참가자 이메일
     private String phone; // 참가자 번호

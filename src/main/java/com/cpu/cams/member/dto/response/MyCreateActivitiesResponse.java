@@ -1,6 +1,6 @@
 package com.cpu.cams.member.dto.response;
 
-import com.cpu.cams.activity.dto.response.ParticipantsResponse;
+import com.cpu.cams.activity.dto.response.ParticipantResponse;
 import com.cpu.cams.activity.entity.ActivityStatus;
 
 import java.time.DayOfWeek;
@@ -19,7 +19,7 @@ public class MyCreateActivitiesResponse {
     // recurringSchedules 또는 eventSchedules 하나만 넘어가도록
     private List<RecurringScheduleDTO> recurringSchedules;
     private List<EventScheduleDTO> eventSchedules;
-    private List<ParticipantsResponse> participantes;
+    private List<ParticipantResponse> participantes;
     private ActivityStatus activityStatus;
 
     private class RecurringScheduleDTO {
