@@ -20,14 +20,15 @@ public class ParticipantsController {
     @GetMapping
     public ResponseEntity<Page<ParticipantsResponse>> getParticipants(@PathVariable Long activityId) {
 
-        Page<ParticipantsResponse> result = participantsService.getParticipantActivities(activityId);
+        Page<ParticipantsResponse> result = participantsService.getActivityParticipants(activityId);
 
         return ResponseEntity.ok(result);
     }
 
     // 신청자 삭제
-    @DeleteMapping("/{memberId}")
-    public String deleteParticipant(@PathVariable Long activityId, @PathVariable Long memberId) {
+    @DeleteMapping("/{participantId}")
+    public String deleteParticipant(@PathVariable Long activityId, @PathVariable Long participantId) {
+        participantsService.deleteParticipant(activityId, participantId);
         return "OK";
     }
 

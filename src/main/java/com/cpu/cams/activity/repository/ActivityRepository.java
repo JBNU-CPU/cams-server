@@ -28,4 +28,6 @@ public interface ActivityRepository extends JpaRepository<Activity, Long> {
     where ap.member = :member
 """)
     Page<Activity> findMyParticipateActivitiesByMember(@Param("member")Member member, Pageable pageable);
+
+
 }

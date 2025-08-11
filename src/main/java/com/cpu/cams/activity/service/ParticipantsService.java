@@ -13,8 +13,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -41,8 +39,8 @@ public class ParticipantsService {
     }
 
     // 활동 참가자 목록 조회하기
-    public Page<ParticipantsResponse> getParticipantActivities(Long activityId){
-        Long memberId = 1l; // todo: 현재 사용자 즉 api 보낸 사람이 이 활동을 만든 사람이 맞는지 확인 작업 추가
+    public Page<ParticipantsResponse> getActivityParticipants(Long activityId){
+        Long leaderId = 1l; // todo: 현재 사용자 즉 api 보낸 사람이 이 활동을 만든 사람이 맞는지 확인 작업 추가
         Activity activity = activityRepository.findById(activityId).orElseThrow(() -> new RuntimeException("활동 없음"));
 
         PageRequest pageRequest = PageRequest.of(0, 3);
@@ -58,6 +56,19 @@ public class ParticipantsService {
         );
 
         return result;
+    }
+
+    // 활동 신청자 삭제하기
+    public void deleteParticipant(Long activityId, Long participantId){
+        Long leaderId = 1l; // todo: 현재 사용자 즉 api 보낸 사람이 이 활동을 만든 사람이 맞는지 확인 작업 추가
+
+        // 멤버가 실제 참가했었는지 확인
+        ActivityParticipant participant = activityParticipantRepository.findById(participantId).orElseThrow(() -> new RuntimeException("신청자가 아닙니다"));
+        if(participant.getActivity().getId() != activityId){
+            throw new RuntimeException("이 활동에 참가한 멤버가 아닙니다");
+        }
+
+        activityParticipantRepository.delete(participant);
     }
 
 
