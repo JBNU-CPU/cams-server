@@ -30,9 +30,6 @@ public class Session {
 
     @Column(nullable = false)
     private Boolean openAttendance; // 출석 열렸는지 확인
-    
-    @Enumerated() // todo: 이거해야함
-    private ActivityStatus activityStatus;
 
     // == 연관관계 == //
     @ManyToOne(fetch = FetchType.LAZY)
@@ -54,9 +51,8 @@ public class Session {
         session.addActivity(activity);
         session.sessionNumber = sessionNumber;
         session.description = description;
-        session.attendancesCode = attendancesCode;
-        session.openAttendance = false;
-
+        session.attendancesCode = attendancesCode; // 클라이언트에서 생성되고 보내진 출석 코드
+        session.openAttendance = true; // 세션 생성 시 바로 출석 오픈
         return session;
     }
 
