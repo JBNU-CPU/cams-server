@@ -2,7 +2,7 @@ package com.cpu.cams.attendence.service;
 
 import com.cpu.cams.activity.entity.Activity;
 import com.cpu.cams.activity.repository.ActivityRepository;
-import com.cpu.cams.attendence.SessionRepository;
+import com.cpu.cams.attendence.repository.SessionRepository;
 import com.cpu.cams.attendence.dto.request.SessionRequest;
 import com.cpu.cams.attendence.dto.response.OpenSessionResponse;
 import com.cpu.cams.attendence.entity.Attendance;
@@ -17,7 +17,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class SessionService {
 
     private final ActivityRepository activityRepository;
@@ -54,6 +54,24 @@ public class SessionService {
                             .build());
         return openSessionList;
     }
-    
-    // 출석하기
+
+    // 출석 마감 여부 수정 -> 세션 상태 변경
+    public Long toggleOpenAttendance(Long sessionId) {
+
+        Session session = sessionRepository.findById(sessionId).orElseThrow(() -> new RuntimeException("세션이 없어요"));
+        session.toggleDoneStatus();
+
+        return session.getId();
+    }
+
+    // 출석 코드 변경
+    public Long updateAttendanceCode(Long sessionId, String attendanceCode) {
+
+        Session session = sessionRepository.findById(sessionId).orElseThrow(() -> new RuntimeException("세션이 없어요"));
+        session.changeCode(attendanceCode);
+        return session.getId();
+    }
+
+
+
 }

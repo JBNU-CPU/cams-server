@@ -2,9 +2,9 @@ package com.cpu.cams.attendence.controller;
 
 import com.cpu.cams.attendence.dto.response.CreateActivityAttendanceResponse;
 import com.cpu.cams.attendence.dto.response.ParticipantActivityAttendanceResponse;
-import com.cpu.cams.attendence.entity.AttendanceStatus;
 import com.cpu.cams.attendence.service.AttendanceService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +24,7 @@ public class AttendanceController {
 
         Long attendanceId = attendanceService.attendance(sessionId, activityParticipantId, attendancesCode);
         //todo: 포인트 지급 로직
+        //todo: Session이 닫힌 상태면 출석 불가능하게
         return ResponseEntity.ok().body(attendanceId);
     }
 
@@ -38,13 +39,18 @@ public class AttendanceController {
     
     // 내 출결 조회하기
     @GetMapping("/me")
-    public List<ParticipantActivityAttendanceResponse> getMyAttendances() {
-        return List.of(new ParticipantActivityAttendanceResponse());
+    public ResponseEntity<Page<ParticipantActivityAttendanceResponse>> getMyAttendances() {
+        Page<ParticipantActivityAttendanceResponse> result = attendanceService.getMyAttendances();
+
+        return ResponseEntity.ok().body(result);
     }
-    
-    // 리더 : 내가 개설한 활동 전체 출결 데이터 조회하기
-    @GetMapping("/me/create")
-    public List<CreateActivityAttendanceResponse> getAllAttendances() {
-        return List.of(new CreateActivityAttendanceResponse());
-    }
+
+    // todo:
+    // 내가 개설한 활동 전체 출결 데이터 조회하기
+//    @GetMapping("/me/create")
+//    public List<CreateActivityAttendanceResponse> getAllAttendances() {
+//        // todo: 리더인지 확인
+//        attendanceService.getMyCreateActivityAttendances();
+//        return List.of(new CreateActivityAttendanceResponse());
+//    }
 }

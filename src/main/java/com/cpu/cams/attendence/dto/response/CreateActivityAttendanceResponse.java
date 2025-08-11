@@ -1,9 +1,11 @@
 package com.cpu.cams.attendence.dto.response;
 
 import com.cpu.cams.activity.entity.ActivityType;
+import lombok.Getter;
 
 import java.util.List;
 
+@Getter
 public class CreateActivityAttendanceResponse {
     private Long activityId;
     private String activityTitle;
@@ -12,7 +14,8 @@ public class CreateActivityAttendanceResponse {
     private List<ParticipantSummary> participants;
     private List<WeeklySummary> weeklySummaries;
 
-    private class ParticipantSummary{
+    // 참여자 출석 현황
+    public class ParticipantSummary{
         private Long memberId;
         private String name;         // 김철수
         private int attendanceCount; // 출석 횟수
@@ -22,6 +25,7 @@ public class CreateActivityAttendanceResponse {
         private int attendanceRate = (attendanceCount + lateCount) * 100 / totalSessions;;  // 출석률 (백분율)
     }
 
+    // 주차별 출석 현황
     private class WeeklySummary{
         private int sessionNumber;   // 1주차 → 1
         private int attendanceCount;

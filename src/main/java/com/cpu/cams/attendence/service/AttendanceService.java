@@ -1,19 +1,28 @@
 package com.cpu.cams.attendence.service;
 
+import com.cpu.cams.activity.entity.Activity;
 import com.cpu.cams.activity.repository.ActivityParticipantRepository;
-import com.cpu.cams.attendence.SessionRepository;
+import com.cpu.cams.attendence.dto.response.CreateActivityAttendanceResponse;
+import com.cpu.cams.attendence.repository.SessionRepository;
+import com.cpu.cams.attendence.dto.response.ParticipantActivityAttendanceResponse;
 import com.cpu.cams.attendence.entity.Attendance;
 import com.cpu.cams.attendence.entity.AttendanceStatus;
 import com.cpu.cams.attendence.entity.Session;
 import com.cpu.cams.attendence.repository.AttendanceRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class AttendanceService {
 
     private final SessionRepository sessionRepository;
@@ -43,4 +52,18 @@ public class AttendanceService {
         return attendance.getId();
     }
 
+    public Page<ParticipantActivityAttendanceResponse> getMyAttendances() {
+
+        Long memberId = 2L;
+        Page<ParticipantActivityAttendanceResponse> myAttendances = attendanceRepository.findMyAttendances(memberId, PageRequest.of(0, 10));
+        return myAttendances;
+    }
+
+    //todo:
+//    public void getMyCreateActivityAttendances() {
+//        System.out.println("ddddddd");
+//        Long memberId = 1L;
+//        Activity myCreateActivityAttendances = attendanceRepository.findMyCreateActivityAttendances(memberId, PageRequest.of(0, 10));
+//        log.info("myCreateActivityAttendances: {}", myCreateActivityAttendances);
+//    }
 }
