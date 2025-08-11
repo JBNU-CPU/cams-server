@@ -4,6 +4,7 @@ import com.cpu.cams.activity.entity.Activity;
 import com.cpu.cams.activity.entity.ActivityParticipant;
 import com.cpu.cams.member.dto.request.SignupRequest;
 import com.cpu.cams.point.entity.Point;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

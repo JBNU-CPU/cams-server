@@ -56,11 +56,11 @@ public class InitData {
         activityService.updateStatus(1L, "STARTED");
 
         // test1 테스트활동1, 테스트활동2 참가
-        participantsService.addParticipant(activity1.getId(), member1Id);
-        participantsService.addParticipant(activity2.getId(), member1Id);
+        participantsService.addParticipant(activity1.getId(), member2Id);
+        participantsService.addParticipant(activity2.getId(), member2Id);
 
         // test2 테스트활동1 참가
-        participantsService.addParticipant(activity1.getId(), member2Id);
+        participantsService.addParticipant(activity1.getId(), member3Id);
 
     }
 }

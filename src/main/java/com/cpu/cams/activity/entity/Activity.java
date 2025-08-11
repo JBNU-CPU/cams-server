@@ -3,6 +3,7 @@ package com.cpu.cams.activity.entity;
 import com.cpu.cams.activity.dto.request.ActivityRequest;
 import com.cpu.cams.attendence.entity.Session;
 import com.cpu.cams.member.entity.Member;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -47,6 +48,7 @@ public class Activity {
     @Column(nullable = true)
     private String notes;
 
+    // 활동 신청 시작 전, 신청 진행 중, 신청 마감
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private ActivityStatus activityStatus = ActivityStatus.NOT_STARTED;
