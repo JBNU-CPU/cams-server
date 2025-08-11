@@ -20,12 +20,6 @@ public class AttendanceController {
         return "OK";
     }
 
-    // 출석 마감 여부 수정 -> 세션 상태 변경
-    @PutMapping("/{sessionId}")
-    public String updateSessionStatus(@PathVariable String sessionId, @RequestBody ActivityStatus activityStatus) {
-        return "OK";
-    }
-
     // 지각/결석/출석 여부 업데이트
     @PutMapping("/{sessionId}/{participantsId}")
     public String updateAttendancesStatus(@PathVariable String sessionId, @PathVariable String participantsId, @RequestBody AttendanceStatus attendanceStatus) {

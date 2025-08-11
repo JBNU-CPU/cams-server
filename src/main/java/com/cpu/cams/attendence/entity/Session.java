@@ -1,12 +1,13 @@
 package com.cpu.cams.attendence.entity;
 
 import com.cpu.cams.activity.entity.Activity;
+import com.cpu.cams.activity.entity.ActivityStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity @Getter
@@ -28,15 +29,18 @@ public class Session {
     private String attendancesCode; // 출석 코드
 
     @Column(nullable = false)
-    private Boolean isDone; // 출석 마감 여부
+    private Boolean openAttendance; // 출석 열렸는지 확인
+    
+    @Enumerated() // todo: 이거해야함
+    private ActivityStatus activityStatus;
 
     // == 연관관계 == //
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "activity_id", nullable = false)
     private Activity activity;
 
-    @OneToMany(mappedBy = "session")
-    private List<Attendance> attendances;
+    @OneToMany(mappedBy = "session", cascade = CascadeType.ALL)
+    private List<Attendance> attendances = new ArrayList<>();
 
     // == 연관관계 편의 메서드 == //
     public void addActivity(Activity activity){
@@ -51,7 +55,7 @@ public class Session {
         session.sessionNumber = sessionNumber;
         session.description = description;
         session.attendancesCode = attendancesCode;
-        session.isDone = false;
+        session.openAttendance = false;
 
         return session;
     }
@@ -59,7 +63,7 @@ public class Session {
     // == 비즈니스 로직 == //
     // 출석 마감 여부 변경
     public void toggleDoneStatus(){
-        this.isDone = !this.isDone;
+        this.openAttendance = !this.openAttendance;
     }
 
     public void changeCode(String attendancesCode){

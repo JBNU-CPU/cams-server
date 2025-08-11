@@ -41,10 +41,11 @@ public class Attendance {
     }
 
     // == 생성자 메서드 == //
-    public static Attendance create(Session session, AttendanceStatus status, ActivityParticipant participant){
+    public static Attendance create(Session session, ActivityParticipant participant){
         Attendance attendance = new Attendance();
+        attendance.id = new AttendanceId(session.getId(), participant.getId());
         attendance.creatPK(session, participant);
-        attendance.status = status;
+        attendance.status = AttendanceStatus.ABSENT; // 처음 생성 될때는 결석으로 처리
 
         return attendance;
     }

@@ -1,29 +1,44 @@
 package com.cpu.cams.attendence.controller;
 
+import com.cpu.cams.activity.entity.ActivityStatus;
 import com.cpu.cams.attendence.dto.request.SessionRequest;
-import com.cpu.cams.attendence.dto.response.OpenSessionResponse;
+import com.cpu.cams.attendence.entity.Session;
+import com.cpu.cams.attendence.service.SessionService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/session")
 public class SessionController {
 
+    private final SessionService sessionService;
+
     // 세션 생성
     @PostMapping("/{activityId}")
-    public String createAttendance(@PathVariable Long activityId, @RequestBody SessionRequest sessionRequest) {
+    public ResponseEntity<Long> createAttendance(@PathVariable Long activityId, @RequestBody SessionRequest sessionRequest) {
 
-        // TODO 세션에 따른 모든 참여 학생 attendance 객체 생성
+        Long sessionId = sessionService.createSession(activityId, sessionRequest);
 
-        return "OK"; // 출석 코드 응답
+        return ResponseEntity.ok(sessionId); // 출석 코드 응답
     }
 
     // 내가 신청한 활동 중 세션이 열린 활동 리스트 조회
-    // 1. memberId -> activity_partipants에서 activity조회해서 그 중에 session이 start인걸 조회한다~ 리턴값으로는 activity, session 둘 다 줘야 한다.
+    // todo: memberId 안건네줘도 되지않나?
     @GetMapping("/{memberId}/open-session")
-    public List<OpenSessionResponse> getOpenSessionList(@PathVariable String memberId) {
-        return List.of(new OpenSessionResponse());
+    public ResponseEntity<Page<Session>> getOpenSessionList(@PathVariable Long memberId) {
+
+        Page<Session> result = sessionService.findOpenSessionList(memberId);
+
+        return ResponseEntity.ok(result);
+    }
+
+    // 출석 마감 여부 수정 -> 세션 상태 변경
+    @PutMapping("/{sessionId}")
+    public String updateSessionStatus(@PathVariable String sessionId, @RequestBody ActivityStatus activityStatus) {
+        return "OK";
     }
 
 }
