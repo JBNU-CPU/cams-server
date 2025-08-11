@@ -1,5 +1,6 @@
 package com.cpu.cams.activity.entity;
 
+import com.cpu.cams.attendence.entity.Attendance;
 import com.cpu.cams.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -8,6 +9,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -27,6 +30,9 @@ public class ActivityParticipant {
 
     @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "member_id", nullable = false)
     private Member member;
+
+    @OneToMany(mappedBy = "participant", cascade = CascadeType.ALL)
+    private List<Attendance> attendances = new ArrayList<>();
 
 
     // == 연관관계 편의 메서드 == //

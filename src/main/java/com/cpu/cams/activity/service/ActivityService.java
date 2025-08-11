@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +29,7 @@ public class ActivityService {
     private final MemberRepository memberRepository;
 
     // 개설하기
-    public void createActivity(ActivityRequest activityRequest) {
+    public Activity createActivity(ActivityRequest activityRequest) {
 
         //todo: 시큐리티에서 사용자 정보 가져오기
         Long memberId = 1l;
@@ -55,9 +54,7 @@ public class ActivityService {
             Curriculum.create(curriculum, activity);
         }
 
-
-
-        activityRepository.save(activity);
+        return activityRepository.save(activity);
 
     }
     
