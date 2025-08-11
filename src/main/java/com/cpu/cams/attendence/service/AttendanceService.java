@@ -1,13 +1,16 @@
 package com.cpu.cams.attendence.service;
 
 import com.cpu.cams.activity.repository.ActivityParticipantRepository;
-import com.cpu.cams.attendence.SessionRepository;
+import com.cpu.cams.attendence.repository.SessionRepository;
+import com.cpu.cams.attendence.dto.response.ParticipantActivityAttendanceResponse;
 import com.cpu.cams.attendence.entity.Attendance;
 import com.cpu.cams.attendence.entity.AttendanceStatus;
 import com.cpu.cams.attendence.entity.Session;
 import com.cpu.cams.attendence.repository.AttendanceRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 
@@ -43,4 +46,10 @@ public class AttendanceService {
         return attendance.getId();
     }
 
+    public Page<ParticipantActivityAttendanceResponse> getMyAttences() {
+
+        Long memberId = 2L;
+        Page<ParticipantActivityAttendanceResponse> myAttendances = attendanceRepository.findMyAttendances(memberId, PageRequest.of(0, 10));
+        return myAttendances;
+    }
 }

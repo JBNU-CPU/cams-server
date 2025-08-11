@@ -2,9 +2,9 @@ package com.cpu.cams.attendence.controller;
 
 import com.cpu.cams.attendence.dto.response.CreateActivityAttendanceResponse;
 import com.cpu.cams.attendence.dto.response.ParticipantActivityAttendanceResponse;
-import com.cpu.cams.attendence.entity.AttendanceStatus;
 import com.cpu.cams.attendence.service.AttendanceService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,8 +38,10 @@ public class AttendanceController {
     
     // 내 출결 조회하기
     @GetMapping("/me")
-    public List<ParticipantActivityAttendanceResponse> getMyAttendances() {
-        return List.of(new ParticipantActivityAttendanceResponse());
+    public ResponseEntity<Page<ParticipantActivityAttendanceResponse>> getMyAttendances() {
+        Page<ParticipantActivityAttendanceResponse> result = attendanceService.getMyAttences();
+
+        return ResponseEntity.ok().body(result);
     }
     
     // 리더 : 내가 개설한 활동 전체 출결 데이터 조회하기

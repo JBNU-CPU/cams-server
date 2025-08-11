@@ -2,7 +2,7 @@ package com.cpu.cams.attendence.service;
 
 import com.cpu.cams.activity.entity.Activity;
 import com.cpu.cams.activity.repository.ActivityRepository;
-import com.cpu.cams.attendence.SessionRepository;
+import com.cpu.cams.attendence.repository.SessionRepository;
 import com.cpu.cams.attendence.dto.request.SessionRequest;
 import com.cpu.cams.attendence.dto.response.OpenSessionResponse;
 import com.cpu.cams.attendence.entity.Attendance;

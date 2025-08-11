@@ -1,4 +1,4 @@
-package com.cpu.cams.attendence;
+package com.cpu.cams.attendence.repository;
 
 import com.cpu.cams.attendence.entity.Session;
 import org.springframework.data.domain.Page;
