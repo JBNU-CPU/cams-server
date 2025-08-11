@@ -4,11 +4,13 @@ import com.cpu.cams.activity.dto.response.CurriculumDTO;
 import com.cpu.cams.activity.dto.response.EventScheduleDTO;
 import com.cpu.cams.activity.dto.response.RecurringScheduleDTO;
 import com.cpu.cams.activity.entity.ActivityType;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.List;
 
 @Getter
+@AllArgsConstructor
 public class ActivityRequest {
 
     private String title;
