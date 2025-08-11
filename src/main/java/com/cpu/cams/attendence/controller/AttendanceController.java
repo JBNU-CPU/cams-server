@@ -24,6 +24,7 @@ public class AttendanceController {
 
         Long attendanceId = attendanceService.attendance(sessionId, activityParticipantId, attendancesCode);
         //todo: 포인트 지급 로직
+        //todo: Session이 닫힌 상태면 출석 불가능하게
         return ResponseEntity.ok().body(attendanceId);
     }
 

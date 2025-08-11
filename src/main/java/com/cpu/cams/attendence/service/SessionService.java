@@ -55,6 +55,16 @@ public class SessionService {
         return openSessionList;
     }
 
+    // 출석 마감 여부 수정 -> 세션 상태 변경
+    public Long toggleOpenAttendance(Long sessionId) {
+
+        Session session = sessionRepository.findById(sessionId).orElseThrow(() -> new RuntimeException("세션이 없어요"));
+        session.toggleDoneStatus();
+
+        return session.getId();
+    }
+
+    // 출석 코드 변경
     public Long updateAttendanceCode(Long sessionId, String attendanceCode) {
 
         Session session = sessionRepository.findById(sessionId).orElseThrow(() -> new RuntimeException("세션이 없어요"));
@@ -62,5 +72,6 @@ public class SessionService {
         return session.getId();
     }
 
-    // 출석하기
+
+
 }

@@ -62,10 +62,11 @@ public class Session {
         this.openAttendance = !this.openAttendance;
     }
 
+    // 출석 코드 변경
     public void changeCode(String attendancesCode){
         this.attendancesCode = attendancesCode;
     }
-
+    
 
 
 }
