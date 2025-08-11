@@ -4,7 +4,7 @@ import com.cpu.cams.attendence.entity.AttendanceStatus;
 
 import java.time.LocalDateTime;
 
-public class ParticipantsActivityAttendanceResponse {
+public class ParticipantActivityAttendanceResponse {
 
     private String activityTitle;
     private Integer sessionNumber;
