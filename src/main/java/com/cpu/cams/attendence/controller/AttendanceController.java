@@ -39,14 +39,17 @@ public class AttendanceController {
     // 내 출결 조회하기
     @GetMapping("/me")
     public ResponseEntity<Page<ParticipantActivityAttendanceResponse>> getMyAttendances() {
-        Page<ParticipantActivityAttendanceResponse> result = attendanceService.getMyAttences();
+        Page<ParticipantActivityAttendanceResponse> result = attendanceService.getMyAttendances();
 
         return ResponseEntity.ok().body(result);
     }
-    
-    // 리더 : 내가 개설한 활동 전체 출결 데이터 조회하기
-    @GetMapping("/me/create")
-    public List<CreateActivityAttendanceResponse> getAllAttendances() {
-        return List.of(new CreateActivityAttendanceResponse());
-    }
+
+    // todo:
+    // 내가 개설한 활동 전체 출결 데이터 조회하기
+//    @GetMapping("/me/create")
+//    public List<CreateActivityAttendanceResponse> getAllAttendances() {
+//        // todo: 리더인지 확인
+//        attendanceService.getMyCreateActivityAttendances();
+//        return List.of(new CreateActivityAttendanceResponse());
+//    }
 }

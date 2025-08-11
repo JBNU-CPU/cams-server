@@ -17,7 +17,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class SessionService {
 
     private final ActivityRepository activityRepository;
@@ -54,6 +54,13 @@ public class SessionService {
                             .build());
         return openSessionList;
     }
-    
+
+    public Long updateAttendanceCode(Long sessionId, String attendanceCode) {
+
+        Session session = sessionRepository.findById(sessionId).orElseThrow(() -> new RuntimeException("세션이 없어요"));
+        session.changeCode(attendanceCode);
+        return session.getId();
+    }
+
     // 출석하기
 }

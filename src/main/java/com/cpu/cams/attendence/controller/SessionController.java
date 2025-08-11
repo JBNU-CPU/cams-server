@@ -42,4 +42,11 @@ public class SessionController {
         return "OK";
     }
 
+    // 출석 코드 변경
+    @PutMapping("/{sessionId}/attendance-code")
+    public ResponseEntity<Long> updateAttendanceCode(@PathVariable Long sessionId, @RequestParam String attendanceCode) {
+        Long id = sessionService.updateAttendanceCode(sessionId, attendanceCode);
+        return ResponseEntity.ok(id);
+    }
+
 }
