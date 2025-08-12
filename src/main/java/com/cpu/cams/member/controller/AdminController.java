@@ -1,5 +1,8 @@
 package com.cpu.cams.member.controller;
 
+import com.cpu.cams.member.entity.Role;
+import com.cpu.cams.member.service.AdminService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -11,6 +14,12 @@ import java.util.Iterator;
 @RestController
 @RequestMapping("/api/admin")
 public class AdminController {
+
+    private final AdminService adminService;
+
+    public AdminController(AdminService adminService) {
+        this.adminService = adminService;
+    }
 
     @GetMapping
     // 테스트
@@ -28,13 +37,17 @@ public class AdminController {
 
     // 활동 승인 / 미승인
     @PostMapping("/activities/{activityId}")
-    public String updateActivityApprovalStatus(@PathVariable Long activityId) {
-        return "OK";
+    public ResponseEntity<Boolean> updateActivityApprovalStatus(@PathVariable Long activityId) {
+
+        boolean approvalStatus = adminService.updateActivityApprovalStatus(activityId);
+        return ResponseEntity.ok().body(approvalStatus);
     }
 
     // 유저 승인 / 미승인
     @PostMapping("/members/{memberId}")
-    public String updateMemberApprovalStatus(@PathVariable Long memberId) {
-        return "OK";
+    public ResponseEntity<Role> updateMemberApprovalStatus(@PathVariable Long memberId, @RequestParam String role) {
+
+        Role updateMemberRole = adminService.updateMemberRole(memberId, role);
+        return ResponseEntity.ok().body(updateMemberRole);
     }
 }

@@ -84,5 +84,10 @@ public class Member {
         return member;
     }
 
+    // 멤버 권한 변경
+    public Role updateMemberRole(String role) {
+        this.role = Role.valueOf(role);
+        return this.role;
+    }
 
 }
