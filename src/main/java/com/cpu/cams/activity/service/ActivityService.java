@@ -15,6 +15,7 @@ import com.cpu.cams.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,8 +33,9 @@ public class ActivityService {
     public Activity createActivity(ActivityRequest activityRequest) {
 
         //todo: 시큐리티에서 사용자 정보 가져오기
-        Long memberId = 1l;
-        Member findMember = memberRepository.findById(memberId).orElseThrow(() -> new RuntimeException("멤버없음"));
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        Member findMember = memberRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("멤버없음"));
         Activity activity = Activity.create(activityRequest, findMember);
 
         List<RecurringScheduleDTO> recurringSchedules = activityRequest.getRecurringSchedules();

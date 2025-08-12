@@ -70,9 +70,17 @@ public class Member {
         member.email = signupRequest.getEmail();
         member.phone = signupRequest.getPhone();
         member.department = signupRequest.getDepartment();
-        member.role = Role.ROLE_USER;
+        member.role = Role.ROLE_ADMIN;
         member.cohort = signupRequest.getCohort();
         //todo: pointList 추가
+        return member;
+    }
+
+    // 시큐리티 세션 등록 용 Member 객체 생성
+    public static Member create(String username, String role) {
+        Member member = new Member();
+        member.username = username;
+        member.role = Role.valueOf(role);
         return member;
     }
 

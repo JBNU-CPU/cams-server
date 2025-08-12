@@ -12,7 +12,7 @@
 -[] Refactor : 코드 리펙토링
 
 ### 반영 브랜치
-ex) feat/login -> dev
+ex) feat/login -> main
 
 ### 변경 사항
 ex) 로그인 시, 구글 소셜 로그인 기능을 추가했습니다.
