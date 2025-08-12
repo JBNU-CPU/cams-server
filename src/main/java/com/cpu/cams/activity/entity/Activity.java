@@ -48,6 +48,10 @@ public class Activity {
     @Column(nullable = true)
     private String notes;
 
+    // 활동 승인 상태 (승인, 미승인)
+    @Column(nullable = false)
+    private Boolean isApproved = false;
+
     // 활동 신청 시작 전, 신청 진행 중, 신청 마감
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -112,6 +116,11 @@ public class Activity {
         ActivityStatus status = ActivityStatus.valueOf(activityStatus);
         this.activityStatus = status;
         return this;
+    }
+
+    public boolean updateActivityApprovalStatus() {
+        this.isApproved = !this.isApproved;
+        return this.isApproved;
     }
 }
 
