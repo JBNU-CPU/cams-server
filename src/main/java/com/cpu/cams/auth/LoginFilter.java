@@ -80,7 +80,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
 
         //응답 설정
-        response.setHeader("access", access);
+        response.setHeader("Authorization", "Bearer " + access);
         response.addCookie(createCookie("refresh", refresh));
         response.setStatus(HttpStatus.OK.value());
     }
@@ -107,9 +107,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private void addRefreshEntity(String username, String refresh, Long expiredMs) {
 
         Date date = new Date(System.currentTimeMillis() + expiredMs);
-
         Refresh createdRefresh = Refresh.create(username, refresh, date.toString());
-
         refreshRepository.save(createdRefresh);
     }
 }
