@@ -39,6 +39,12 @@ public class NotificationController {
             emitter.completeWithError(e);
         });
 
+        try {
+            emitter.send(SseEmitter.event().name("connect").data("SSE stream connected."));
+        } catch (Exception e) {
+            emitter.completeWithError(e);
+        }
+
         // 사용자 인증 확인
         if (userDetails == null) {
             emitter.complete();

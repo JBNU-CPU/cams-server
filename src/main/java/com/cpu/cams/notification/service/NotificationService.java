@@ -32,7 +32,7 @@ public class NotificationService {
     public void markAsRead(Long notificationId) {
         Notification notification = notificationRepository.findById(notificationId)
                 .orElseThrow(() -> new RuntimeException("알림을 찾을 수 없습니다."));
-        notification.updateIsRead(false);
+        notification.updateIsRead(true);
         notificationRepository.save(notification);
     }
 
