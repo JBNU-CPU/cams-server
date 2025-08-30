@@ -31,7 +31,7 @@ public class AnnouncementController {
     @GetMapping()
     public ResponseEntity<Page<AnnouncementResponse>> getAnnouncementList(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "2") int size
+            @RequestParam(defaultValue = "5") int size
     ){
         Page<AnnouncementResponse> announcements = announcementService.getAnnouncements(page, size);
 
@@ -50,14 +50,15 @@ public class AnnouncementController {
     @PutMapping("/{announcementId}")
     public void updateAnnouncement(
             @PathVariable Long announcementId,
-            @RequestBody AnnouncementRequest announcementRequest
+            @RequestBody AnnouncementRequest announcementRequest,
+            @AuthenticationPrincipal UserDetails userDetails
     ){
-        announcementService.updateAnnouncement(announcementId, announcementRequest);
+        announcementService.updateAnnouncement(announcementId, announcementRequest, userDetails.getUsername());
     }
 
     // 공지 삭제
     @DeleteMapping("/{announcementId}")
-    public void deleteAnnouncement(@PathVariable Long announcementId) {
-        announcementService.deleteAnnouncement(announcementId);
+    public void deleteAnnouncement(@PathVariable Long announcementId, @AuthenticationPrincipal UserDetails userDetails) {
+        announcementService.deleteAnnouncement(announcementId, userDetails.getUsername());
     }
 }
