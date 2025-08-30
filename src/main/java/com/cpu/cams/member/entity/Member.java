@@ -43,6 +43,9 @@ public class Member {
     @Column(nullable = false)
     private String department;
 
+    @Column
+    private Integer totalPoints = 0;
+
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -72,7 +75,6 @@ public class Member {
         member.department = signupRequest.getDepartment();
         member.role = Role.ROLE_ADMIN;
         member.cohort = signupRequest.getCohort();
-        //todo: pointList 추가
         return member;
     }
 
@@ -88,6 +90,10 @@ public class Member {
     public Role updateMemberRole(String role) {
         this.role = Role.valueOf(role);
         return this.role;
+    }
+
+    public void updateTotalPoints(Integer pointAmount) {
+        this.totalPoints = this.totalPoints + pointAmount;
     }
 
 }

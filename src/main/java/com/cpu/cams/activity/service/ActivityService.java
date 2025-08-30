@@ -65,6 +65,7 @@ public class ActivityService {
         pointRequest.setDescription(activity.getTitle() + " 개설");
         pointRequest.setAmount(100);
         Point point = Point.create(pointRequest, findMember);
+        findMember.updateTotalPoints(100);
         pointRepository.save(point);
 
         return activityRepository.save(activity);
