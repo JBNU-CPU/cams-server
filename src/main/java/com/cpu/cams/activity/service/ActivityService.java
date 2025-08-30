@@ -18,6 +18,8 @@ import com.cpu.cams.point.dto.request.PointRequest;
 import com.cpu.cams.point.entity.Point;
 import com.cpu.cams.point.entity.PointType;
 import com.cpu.cams.point.repository.PointRepository;
+import com.cpu.cams.test.NotificationPayload;
+import com.cpu.cams.test.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -35,6 +37,7 @@ public class ActivityService {
     private final ActivityRepository activityRepository;
     private final MemberRepository memberRepository;
     private final PointRepository pointRepository;
+    private final NotificationService notificationService;
 
     // 개설하기
     public Long createActivity(ActivityRequest activityRequest, String username) {
@@ -71,6 +74,10 @@ public class ActivityService {
 
         Point point = Point.create(pointRequest, findMember);
         pointRepository.save(point);
+
+        // 전체 공지
+        NotificationPayload notificationPayload = new NotificationPayload("활동", activityRequest.getTitle() + " 개설!!", "~~~링크 참조");
+        notificationService.broadcastToAll(notificationPayload);
 
         return activity.getId();
     }
@@ -151,6 +158,7 @@ public class ActivityService {
         return activity.getId();
     }
 
+    // 활동 신청 마감
     public String updateStatus(Long activityId, String status, CustomUserDetails userDetails) {
         if (!isOwnerOrAdmin(userDetails, activityId)) {
             throw new AccessDeniedException("상태 변경 권한이 없습니다.");

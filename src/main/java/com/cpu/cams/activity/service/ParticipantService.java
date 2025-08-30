@@ -9,6 +9,8 @@ import com.cpu.cams.member.dto.response.CustomUserDetails;
 import com.cpu.cams.member.entity.Member;
 import com.cpu.cams.member.repository.MemberRepository;
 import com.cpu.cams.member.service.MemberService;
+import com.cpu.cams.test.NotificationPayload;
+import com.cpu.cams.test.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +26,7 @@ public class ParticipantService {
     private final MemberRepository memberRepository;
     private final ActivityRepository activityRepository;
     private final MemberService memberService;
+    private final NotificationService notificationService;
 
     // 활동 참가 신청하기
     public void addParticipant(Long activityId, String username) {
@@ -39,6 +42,11 @@ public class ParticipantService {
         }
 
         ActivityParticipant.create(activity, member);
+
+        NotificationPayload notificationPayload = new NotificationPayload("참가 신청", member.getUsername() + "님이 "+activity.getTitle() + " 활동을 참가하고 싶어합니다", "~~~링크 참조");
+
+        // 팀장에게 알림
+        notificationService.createAndSend(activity.getCreatedBy().getId(), notificationPayload);
 
     }
 

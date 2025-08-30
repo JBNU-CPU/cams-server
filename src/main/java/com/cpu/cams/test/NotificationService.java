@@ -35,6 +35,7 @@ public class NotificationService {
         String emitterId = UUID.randomUUID().toString();
         emitterRepo.save(userId, emitterId, emitter);
 
+        // 클린업
         emitter.onCompletion(() -> emitterRepo.remove(userId, emitterId));
         emitter.onTimeout(() -> emitterRepo.remove(userId, emitterId));
         emitter.onError(e -> emitterRepo.remove(userId, emitterId));
@@ -42,7 +43,7 @@ public class NotificationService {
         // 0) 첫 핸드셰이크
         try {
             emitter.send(SseEmitter.event()
-                    .id("init-" + System.currentTimeMillis())
+//                    .id("init-" + System.currentTimeMillis())
                     .name("init")
                     .data("connected"));
         } catch (IOException e) {
@@ -51,21 +52,52 @@ public class NotificationService {
             return emitter;
         }
 
-        // 1) 미읽음 알림 선푸시
-        List<Notification> unread = notificationRepo
-                .findAllByUserIdAndReadAtIsNullOrderByCreatedAtAsc(userId);
-        for (Notification n : unread) {
+        // 1) lastEventId 이후 “세션 상 놓친 것” (read 여부 무관)
+        List<Notification> missed = List.of();
+        if (lastEventId != null && lastEventId.matches("\\d+")) {
+            long lastId = Long.parseLong(lastEventId);
+            missed = notificationRepo.findAllByUserIdAndIdGreaterThanOrderByIdAsc(userId, lastId);
+        }
+
+        // 2) 미읽음(backlog)
+        List<Notification> unread =
+                notificationRepo.findAllByUserIdAndReadAtIsNullOrderByCreatedAtAsc(userId);
+
+        // 3) 합치고 id 오름차순 + 중복 제거
+        var merged = java.util.stream.Stream.concat(missed.stream(), unread.stream())
+                .collect(java.util.stream.Collectors.toMap(
+                        Notification::getId,
+                        n -> n,
+                        (a,b) -> a, // 동일 id면 한 번만
+                        java.util.TreeMap::new // key(=id) 오름차순 유지
+                ))
+                .values();
+
+        // 4) 전송
+        for (Notification n : merged) {
             try {
                 emitter.send(SseEmitter.event()
                         .id(n.getId().toString())
                         .name(EVENT_NAME)
                         .data(NotificationResponse.from(n)));
-            } catch (IOException e) {
-                log.warn("Failed to send unread notification id={} to user={}", n.getId(), userId);
-            }
+            } catch (IOException ignore) {}
         }
 
-        // lastEventId 기반 재전송은 여기서 필요 시 구현 (옵션)
+
+//        // 1) 미읽음 알림 선푸시
+//        List<Notification> unread = notificationRepo
+//                .findAllByUserIdAndReadAtIsNullOrderByCreatedAtAsc(userId);
+//        for (Notification n : unread) {
+//            try { // 읽지않은 알림들 보내주기
+//                emitter.send(SseEmitter.event()
+//                        .id(n.getId().toString())
+//                        .name(EVENT_NAME)
+//                        .data(NotificationResponse.from(n)));
+//            } catch (IOException e) {
+//                log.warn("Failed to send unread notification id={} to user={}", n.getId(), userId);
+//            }
+//        }
+
 
         return emitter;
     }
