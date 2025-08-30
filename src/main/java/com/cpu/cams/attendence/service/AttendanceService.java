@@ -23,8 +23,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 
 @Service
@@ -87,10 +86,90 @@ public class AttendanceService {
     }
 
     //todo:
-//    public void getMyCreateActivityAttendances() {
-//        System.out.println("ddddddd");
-//        Long memberId = 1L;
-//        Activity myCreateActivityAttendances = attendanceRepository.findMyCreateActivityAttendances(memberId, PageRequest.of(0, 10));
-//        log.info("myCreateActivityAttendances: {}", myCreateActivityAttendances);
-//    }
+    public List<CreateActivityAttendanceResponse> getMyCreateActivityAttendances() {
+
+        // String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        String username = "init1";
+        Member findMember = memberRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("멤버없음"));
+        List<Activity> activities = activityRepository.findByCreatedBy(findMember);
+
+        List<CreateActivityAttendanceResponse> result = new ArrayList<>();
+        List<CreateActivityAttendanceResponse.WeeklySummary> weeklySummaries = new ArrayList<>();
+        List<CreateActivityAttendanceResponse.ParticipantSummary> participantSummaries = new ArrayList<>();
+        Integer totalSession = 0;
+
+        for (Activity activity : activities) {
+            List<Session> sessions = activity.getSessions();
+            for (Session session : sessions) {
+                totalSession++;
+
+                List<Attendance> attendances = session.getAttendances();
+                int present = 0;
+                int LATE = 0;
+                int ABSENT = 0;
+                int sessionNum = session.getSessionNumber();
+
+                for (Attendance attendance : attendances) {
+
+                    if (attendance.getStatus() == AttendanceStatus.PRESENT){
+                        present++;
+                    }else if (attendance.getStatus() == AttendanceStatus.ABSENT){
+                        ABSENT++;
+                    }else if (attendance.getStatus().equals(AttendanceStatus.LATE)) {
+                        LATE++;
+                    }
+
+                    CreateActivityAttendanceResponse.WeeklySummary summary = CreateActivityAttendanceResponse.WeeklySummary.builder()
+                            .sessionNumber(sessionNum)
+                            .attendanceCount(present)
+                            .absentCount(ABSENT)
+                            .lateCount(LATE)
+                            .build();
+
+                    weeklySummaries.add(summary);
+                }
+            }
+
+            List<ActivityParticipant> participants = activity.getParticipants();
+            for (ActivityParticipant participant : participants) {
+                List<Attendance> attendances = participant.getAttendances();
+                int present = 0;
+                int LATE = 0;
+                int ABSENT = 0;
+                String name = participant.getMember().getName();
+                for (Attendance attendance : attendances) {
+
+                    if (attendance.getStatus() == AttendanceStatus.PRESENT){
+                        present++;
+                    }else if (attendance.getStatus() == AttendanceStatus.ABSENT){
+                        ABSENT++;
+                    }else if (attendance.getStatus().equals(AttendanceStatus.LATE)) {
+                        LATE++;
+                    }
+
+                }
+                CreateActivityAttendanceResponse.ParticipantSummary summary = CreateActivityAttendanceResponse.ParticipantSummary.builder()
+                        .memberId(participant.getMember().getId())
+                        .name(name)
+                        .attendanceCount(present)
+                        .absentCount(ABSENT)
+                        .lateCount(LATE)
+                        .totalSessions(present + LATE + ABSENT)
+                        .build();
+                participantSummaries.add(summary);
+            }
+
+            result.add(
+                    CreateActivityAttendanceResponse.builder()
+                    .activityId(activity.getId())
+                    .activityTitle(activity.getTitle())
+                    .totalSessions(totalSession)
+                    .activityType(activity.getActivityType())
+                    .participants(participantSummaries)
+                    .weeklySummaries(weeklySummaries)
+                    .build()
+            );
+        }
+        return result;
+    }
 }

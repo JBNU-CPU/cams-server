@@ -46,10 +46,12 @@ public class AttendanceController {
 
     // todo:
     // 내가 개설한 활동 전체 출결 데이터 조회하기
-//    @GetMapping("/me/create")
-//    public List<CreateActivityAttendanceResponse> getAllAttendances() {
-//        // todo: 리더인지 확인
-//        attendanceService.getMyCreateActivityAttendances();
-//        return List.of(new CreateActivityAttendanceResponse());
-//    }
+    @GetMapping("/me/create")
+    public List<CreateActivityAttendanceResponse> getAllAttendances() {
+
+        // todo: 리더인지 확인
+        List<CreateActivityAttendanceResponse> myCreateActivityAttendances = attendanceService.getMyCreateActivityAttendances();
+
+        return myCreateActivityAttendances;
+    }
 }

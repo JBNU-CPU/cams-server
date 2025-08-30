@@ -36,4 +36,6 @@ public interface ActivityRepository extends JpaRepository<Activity, Long> {
 
     // 개설자 이름으로 검색
     Page<Activity> findByCreatedBy_NameContaining(String name, Pageable pageable);
+
+    List<Activity> findByCreatedBy(Member findMember);
 }
