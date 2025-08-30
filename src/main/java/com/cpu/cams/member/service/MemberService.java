@@ -39,10 +39,9 @@ public class MemberService {
                 .build();
     }
 
-    public void updateMyProfile(ProfileRequest profileRequest) {
-        //        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        String username = "init1";
+    public Long updateMyProfile(ProfileRequest profileRequest, String username) {
         Member findMember = memberRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("멤버없음"));
-        findMember.update(profileRequest);
+        Member update = findMember.update(profileRequest);
+        return update.getId();
     }
 }

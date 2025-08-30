@@ -43,19 +43,25 @@ public class MemberController {
 
     // 내 프로필 조회
     @GetMapping("/me")
-    public ProfileResponse getMyProfile(@AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<ProfileResponse> getMyProfile(@AuthenticationPrincipal UserDetails userDetails) {
+
         String username = userDetails != null
                 ? userDetails.getUsername()
                 : "init1";
 
         ProfileResponse myProfile = memberService.getMyProfile(username);
-        return myProfile;
+        return ResponseEntity.ok(myProfile);
     }
 
     // 내 프로필 편집
     @PutMapping("/me")
-    public String updateMyProfile(@RequestBody ProfileRequest profileRequest) {
-        memberService.updateMyProfile(profileRequest);
-        return "ok";
+    public ResponseEntity<Long> updateMyProfile(@RequestBody ProfileRequest profileRequest, @AuthenticationPrincipal UserDetails userDetails) {
+
+        String username = userDetails != null
+                ? userDetails.getUsername()
+                : "init1";
+
+        Long result = memberService.updateMyProfile(profileRequest, username);
+        return ResponseEntity.ok(result);
     }
 }

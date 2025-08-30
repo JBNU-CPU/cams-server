@@ -20,8 +20,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         //DB에서 조회
         Member userData = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
-        System.out.println(userData);
-        System.out.println(username);
 
         if (userData != null) {
             //UserDetails에 담아서 return하면 AutneticationManager가 검증 함
