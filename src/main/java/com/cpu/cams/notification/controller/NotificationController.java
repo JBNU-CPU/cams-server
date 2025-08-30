@@ -31,7 +31,7 @@ public class NotificationController {
 
         // 기존 emitter가 있다면 삭제하고 새로 생성
         emitterRepository.deleteByUsername(username);
-        emitterRepository.save(username, emitter); // 사용자별로 고유한 SseEmitter 객체 생성 -> 이 객체는 서버에서 클라이언트로 데이터를 보낼 수 있는 지속적인 단방향 연결 통로 역할 수행
+        emitterRepository.save(username, emitter); // 사용자 별로 고유한 SseEmitter 객체 생성 -> 이 객체는 서버에서 클라이언트로 데이터를 보낼 수 있는 지속적인 단방향 연결 통로 역할 수행
 
         // 연결 종료 시 리포지토리에서 제거
         emitter.onCompletion(() -> emitterRepository.deleteByUsername(username));

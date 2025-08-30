@@ -23,7 +23,6 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class AnnouncementService {
 
     private final MemberRepository memberRepository;
@@ -33,6 +32,7 @@ public class AnnouncementService {
     private final ApplicationEventPublisher eventPublisher;
 
     // 공지사항 등록
+    @Transactional
     public Long createAnnouncement(AnnouncementRequest announcementRequest, CustomUserDetails customUserDetails) {
 
         // 관리자 체크
@@ -41,6 +41,7 @@ public class AnnouncementService {
         Member findMember = memberService.findByUsername(customUserDetails.getUsername());
 
         Announcement announcement = Announcement.create(announcementRequest, findMember);
+        announcementRepository.save(announcement);
 
         // 모든 사용자에게 알림을 보내기 위한 이벤트 발행
         List<Member> allMembers = memberRepository.findAll();
