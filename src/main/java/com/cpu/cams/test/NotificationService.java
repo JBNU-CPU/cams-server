@@ -9,10 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.UUID;
-import java.util.ArrayList;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -189,9 +186,23 @@ public class NotificationService {
     }
 
 
-    // 선택: heartbeat
+    // 25초마다 연결되어 있는 사람들에게 핑 보내기
     @Scheduled(fixedRate = 25_000)
     public void heartbeatAll() {
-        // 필요 시 전체 사용자 순회하여 가벼운 신호 전송 (규모 크면 비활성/샤딩 권장)
+        for (Long userId : emitterRepo.userIds()) {
+            // 전송 중 변경에 안전하도록 스냅샷으로 순회
+            var emitters = new HashMap<>(emitterRepo.getAll(userId));
+            emitters.forEach((emitterId, emitter) -> {
+                try {
+                    // 방법 1) 코멘트 프레임 (가장 가볍고 화면엔 표시되지 않음)
+                    emitter.send(SseEmitter.event().comment("ping"));
+                    // 방법 2) 이벤트로 보내고 싶다면:
+                    // emitter.send(SseEmitter.event().name("ping").data(""));
+                } catch (IOException e) {
+                    emitter.complete();
+                    emitterRepo.remove(userId, emitterId); // 끊긴 연결 정리
+                }
+            });
+        }
     }
 }

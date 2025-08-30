@@ -3,7 +3,9 @@ package com.cpu.cams.test;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
@@ -29,5 +31,9 @@ public class EmitterRepository {
 
     public void removeAll(Long userId) {
         store.remove(userId);
+    }
+
+    public Set<Long> userIds() {
+        return new HashSet<>(store.keySet()); // 스냅샷
     }
 }
