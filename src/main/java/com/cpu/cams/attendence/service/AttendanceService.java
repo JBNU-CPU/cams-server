@@ -72,9 +72,15 @@ public class AttendanceService {
 
     }
 
-    public Long updateAttendancesStatus(Long sessionId, Long participantId, String attendanceStatus) {
+    public Long updateAttendancesStatus(Long sessionId, Long participantId, String attendanceStatus, String username) {
 
+        // 팀장인지 확인하는 작업
         Attendance attendance = attendanceRepository.findBySessionIdAndParticipantId(sessionId, participantId).orElseThrow(() -> new RuntimeException("없는 출석"));
+
+        if(!attendance.getSession().getActivity().getCreatedBy().getUsername().equals(username)){
+            throw new RuntimeException("당시 누구야??");
+        }
+
         attendance.changeStatus(AttendanceStatus.valueOf(attendanceStatus));
 
         return attendance.getId();
@@ -86,11 +92,9 @@ public class AttendanceService {
         return attendanceRepository.findMyAttendances(findMember.getId(), PageRequest.of(page, size));
     }
 
-    //todo:
-    public List<CreateActivityAttendanceResponse> getMyCreateActivityAttendances() {
+    //todo: 코드 고쳐야함
+    public List<CreateActivityAttendanceResponse> getMyCreateActivityAttendances(String username) {
 
-        // String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        String username = "init1";
         Member findMember = memberRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("멤버없음"));
         List<Activity> activities = activityRepository.findByCreatedBy(findMember);
 
@@ -101,13 +105,14 @@ public class AttendanceService {
 
         for (Activity activity : activities) {
 
+            // 주차별 출석 현황
             List<Session> sessions = activity.getSessions();
 
             for (Session session : sessions) {
                 totalSession++;
 
                 List<Attendance> attendances = session.getAttendances();
-                int present = 0;
+                int PRESENT = 0;
                 int LATE = 0;
                 int ABSENT = 0;
                 int sessionNum = session.getSessionNumber();
@@ -115,7 +120,7 @@ public class AttendanceService {
                 for (Attendance attendance : attendances) {
 
                     if (attendance.getStatus() == AttendanceStatus.PRESENT){
-                        present++;
+                        PRESENT++;
                     }else if (attendance.getStatus() == AttendanceStatus.ABSENT){
                         ABSENT++;
                     }else if (attendance.getStatus().equals(AttendanceStatus.LATE)) {
@@ -124,7 +129,7 @@ public class AttendanceService {
 
                     CreateActivityAttendanceResponse.WeeklySummary summary = CreateActivityAttendanceResponse.WeeklySummary.builder()
                             .sessionNumber(sessionNum)
-                            .attendanceCount(present)
+                            .attendanceCount(PRESENT)
                             .absentCount(ABSENT)
                             .lateCount(LATE)
                             .build();
@@ -133,6 +138,7 @@ public class AttendanceService {
                 }
             }
 
+            // 참여자 출석 현황
             List<ActivityParticipant> participants = activity.getParticipants();
             for (ActivityParticipant participant : participants) {
                 List<Attendance> attendances = participant.getAttendances();
@@ -162,16 +168,16 @@ public class AttendanceService {
                 participantSummaries.add(summary);
             }
 
-            result.add(
-                    CreateActivityAttendanceResponse.builder()
+            CreateActivityAttendanceResponse response = CreateActivityAttendanceResponse.builder()
                     .activityId(activity.getId())
                     .activityTitle(activity.getTitle())
                     .totalSessions(totalSession)
                     .activityType(activity.getActivityType())
                     .participants(participantSummaries)
                     .weeklySummaries(weeklySummaries)
-                    .build()
-            );
+                    .build();
+
+            result.add(response);
         }
         return result;
     }

@@ -12,8 +12,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -22,41 +20,31 @@ public class AnnouncementService {
     private final MemberRepository memberRepository;
     private final AnnouncementRepository announcementRepository;
 
-    public void createAnnouncement(AnnouncementRequest announcementRequest) {
-        // String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        String username = "init2";
+    // 공지사항 등록
+    public Long createAnnouncement(AnnouncementRequest announcementRequest, String username) {
+
         Member findMember = memberRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("멤버없음"));
 
-        Announcement.create(announcementRequest, findMember);
+        Announcement announcement = Announcement.create(announcementRequest, findMember);
+        return announcement.getId();
     }
 
+    // 공지사항 전체 조회
     public Page<AnnouncementResponse> getAnnouncements(int page, int size) {
 
-        Page<AnnouncementResponse> announcements = announcementRepository.findAll(PageRequest.of(page, size)).map(
+        return announcementRepository.findAll(PageRequest.of(page, size)).map(
                 announcement -> {
-                    return AnnouncementResponse.builder()
-                            .id(announcement.getId())
-                            .title(announcement.getTitle())
-                            .content(announcement.getContent())
-                            .createdBy(announcement.getCreatedBy().getName())
-                            .createdAt(announcement.getCreatedAt())
-                            .build();
+                    return AnnouncementResponse.entityToDto(announcement);
                 }
         );
-
-        return announcements;
     }
 
-    public AnnouncementResponse getAnnouncement(Long id) {
+    // 공지사항 세부 조회
+    public AnnouncementResponse getAnnouncementDetail(Long announcementId) {
 
-        Announcement announcement = announcementRepository.findById(id).orElseThrow(() -> new RuntimeException("공지 없음"));
-        return AnnouncementResponse.builder()
-                .id(announcement.getId())
-                .content(announcement.getContent())
-                .title(announcement.getTitle())
-                .createdAt(announcement.getCreatedAt())
-                .createdBy(announcement.getCreatedBy().getName())
-                .build();
+        Announcement announcement = announcementRepository.findById(announcementId).orElseThrow(() -> new RuntimeException("공지 없음"));
+
+        return AnnouncementResponse.entityToDto(announcement);
     }
 
     public void updateAnnouncement(Long announcementId, AnnouncementRequest announcementRequest) {
