@@ -4,12 +4,14 @@ import com.cpu.cams.attendence.dto.request.SessionRequest;
 import com.cpu.cams.attendence.dto.response.OpenSessionResponse;
 import com.cpu.cams.attendence.service.SessionService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/session")
@@ -25,6 +27,7 @@ public class SessionController {
         String username = userDetails != null
                 ? userDetails.getUsername()
                 : "init1";
+        log.info("username = {}", username);
 
         Long sessionId = sessionService.createSession(activityId, sessionRequest, username);
 
@@ -49,6 +52,7 @@ public class SessionController {
         String username = userDetails != null
                 ? userDetails.getUsername()
                 : "init1";
+        log.info("username = {}", username);
 
         Long id = sessionService.toggleOpenAttendance(sessionId, username);
         return ResponseEntity.ok(id);
@@ -56,8 +60,14 @@ public class SessionController {
 
     // 출석 코드 변경
     @PutMapping("/{sessionId}/attendance-code")
-    public ResponseEntity<Long> updateAttendanceCode(@PathVariable Long sessionId, @RequestParam String attendanceCode) {
-        Long id = sessionService.updateAttendanceCode(sessionId, attendanceCode);
+    public ResponseEntity<Long> updateAttendanceCode(@PathVariable Long sessionId, @RequestParam String attendanceCode, @AuthenticationPrincipal UserDetails userDetails) {
+        // todo: 지우기
+        String username = userDetails != null
+                ? userDetails.getUsername()
+                : "init1";
+        log.info("username = {}", username);
+
+        Long id = sessionService.updateAttendanceCode(sessionId, attendanceCode, username);
         return ResponseEntity.ok(id);
     }
 

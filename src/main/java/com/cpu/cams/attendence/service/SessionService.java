@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -69,23 +68,31 @@ public class SessionService {
     // 출석 마감 여부 수정 -> 세션 상태 변경
     public Long toggleOpenAttendance(Long sessionId, String username) {
 
-        Session session = sessionRepository.findById(sessionId).orElseThrow(() -> new RuntimeException("세션이 없어요"));
-        if(session.getActivity().getCreatedBy().getUsername() != username){
-            throw new RuntimeException("너 누구야?!");
-        }
+        Session session = isOwner(username, sessionId);
+
         session.toggleDoneStatus();
 
         return session.getId();
     }
 
     // 출석 코드 변경
-    public Long updateAttendanceCode(Long sessionId, String attendanceCode) {
+    public Long updateAttendanceCode(Long sessionId, String attendanceCode, String username) {
+        
+        Session session = isOwner(username, sessionId);
 
-        Session session = sessionRepository.findById(sessionId).orElseThrow(() -> new RuntimeException("세션이 없어요"));
         session.changeCode(attendanceCode);
         return session.getId();
     }
 
+    // 세션 주인 확인 메서드
+    private Session isOwner(String username, Long sessionId) {
+        Session session = sessionRepository.findById(sessionId).orElseThrow(() -> new RuntimeException("세션이 없어요"));
+        
+        if(!session.getActivity().getCreatedBy().getUsername().equals(username)){
+            throw new RuntimeException("너 누구야?!");
+        }
+        return session;
+    }
 
 
 }
