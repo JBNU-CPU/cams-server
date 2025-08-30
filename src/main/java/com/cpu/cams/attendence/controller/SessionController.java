@@ -24,13 +24,7 @@ public class SessionController {
     @PostMapping("/{activityId}")
     public ResponseEntity<Long> createAttendance(@PathVariable Long activityId, @RequestBody SessionRequest sessionRequest, @AuthenticationPrincipal UserDetails userDetails) {
 
-        // todo: 지우기
-        String username = userDetails != null
-                ? userDetails.getUsername()
-                : "init1";
-        log.info("username = {}", username);
-
-        Long sessionId = sessionService.createSession(activityId, sessionRequest, username);
+        Long sessionId = sessionService.createSession(activityId, sessionRequest, userDetails.getUsername());
 
         return ResponseEntity.ok(sessionId); // 출석 코드 응답
     }
@@ -39,13 +33,8 @@ public class SessionController {
     @GetMapping("/open-session")
     public ResponseEntity<Page<OpenSessionResponse>> getOpenSessionList(@AuthenticationPrincipal UserDetails userDetails, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "2") int size) {
 
-        // todo: 지우기
-        String username = userDetails != null
-                ? userDetails.getUsername()
-                : "init1";
-        log.info("username = {}", username);
 
-        Page<OpenSessionResponse> result = sessionService.findOpenSessionList(username, page, size);
+        Page<OpenSessionResponse> result = sessionService.findOpenSessionList(userDetails.getUsername(), page, size);
 
         return ResponseEntity.ok(result);
     }
@@ -54,26 +43,15 @@ public class SessionController {
     @PutMapping("/{sessionId}")
     public ResponseEntity<Long> toggleOpenAttendance(@PathVariable Long sessionId, @AuthenticationPrincipal UserDetails userDetails) {
 
-        // todo: 지우기
-        String username = userDetails != null
-                ? userDetails.getUsername()
-                : "init1";
-        log.info("username = {}", username);
-
-        Long id = sessionService.toggleOpenAttendance(sessionId, username);
+        Long id = sessionService.toggleOpenAttendance(sessionId, userDetails.getUsername());
         return ResponseEntity.ok(id);
     }
 
     // 출석 코드 변경
     @PutMapping("/{sessionId}/attendance-code")
     public ResponseEntity<Long> updateAttendanceCode(@PathVariable Long sessionId, @RequestParam String attendanceCode, @AuthenticationPrincipal UserDetails userDetails) {
-        // todo: 지우기
-        String username = userDetails != null
-                ? userDetails.getUsername()
-                : "init1";
-        log.info("username = {}", username);
 
-        Long id = sessionService.updateAttendanceCode(sessionId, attendanceCode, username);
+        Long id = sessionService.updateAttendanceCode(sessionId, attendanceCode, userDetails.getUsername());
         return ResponseEntity.ok(id);
     }
 

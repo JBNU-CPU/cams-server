@@ -44,24 +44,16 @@ public class MemberController {
     // 내 프로필 조회
     @GetMapping("/me")
     public ResponseEntity<ProfileResponse> getMyProfile(@AuthenticationPrincipal UserDetails userDetails) {
-        // todo: 지우기
-        String username = userDetails != null
-                ? userDetails.getUsername()
-                : "init1";
 
-        ProfileResponse myProfile = memberService.getMyProfile(username);
+        ProfileResponse myProfile = memberService.getMyProfile(userDetails.getUsername());
         return ResponseEntity.ok(myProfile);
     }
 
     // 내 프로필 편집
     @PutMapping("/me")
     public ResponseEntity<Long> updateMyProfile(@RequestBody ProfileRequest profileRequest, @AuthenticationPrincipal UserDetails userDetails) {
-        // todo: 지우기
-        String username = userDetails != null
-                ? userDetails.getUsername()
-                : "init1";
 
-        Long result = memberService.updateMyProfile(profileRequest, username);
+        Long result = memberService.updateMyProfile(profileRequest, userDetails.getUsername());
         return ResponseEntity.ok(result);
     }
 }

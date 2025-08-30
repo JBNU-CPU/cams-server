@@ -22,6 +22,12 @@ public class AttendanceController {
     @PostMapping("/{sessionId}")
     public ResponseEntity<Long> attendance(@PathVariable Long sessionId, @RequestParam String attendancesCode) {
 
+//        // todo: 지우기
+//        String username = userDetails != null
+//                ? userDetails.getUsername()
+//                : "init1";
+//        log.info("username = {}", username);
+
         Long attendanceId = attendanceService.attendance(sessionId, attendancesCode);
 
         return ResponseEntity.ok().body(attendanceId);
