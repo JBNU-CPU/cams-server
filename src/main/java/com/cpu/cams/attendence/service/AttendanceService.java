@@ -11,6 +11,7 @@ import com.cpu.cams.attendence.entity.Attendance;
 import com.cpu.cams.attendence.entity.AttendanceStatus;
 import com.cpu.cams.attendence.entity.Session;
 import com.cpu.cams.attendence.repository.AttendanceRepository;
+import com.cpu.cams.member.dto.response.CustomUserDetails;
 import com.cpu.cams.member.entity.Member;
 import com.cpu.cams.member.repository.MemberRepository;
 import com.cpu.cams.member.service.MemberService;
@@ -72,13 +73,14 @@ public class AttendanceService {
 
     }
 
-    public Long updateAttendancesStatus(Long sessionId, Long participantId, String attendanceStatus, String username) {
+    // 출석 ON/OFF 관리
+    public Long updateAttendancesStatus(Long sessionId, Long participantId, String attendanceStatus, CustomUserDetails customUserDetails) {
 
         // 팀장인지 확인하는 작업
         Attendance attendance = attendanceRepository.findBySessionIdAndParticipantId(sessionId, participantId).orElseThrow(() -> new RuntimeException("없는 출석"));
 
-        if(!attendance.getSession().getActivity().getCreatedBy().getUsername().equals(username)){
-            throw new RuntimeException("당시 누구야??");
+        if(!attendance.getSession().getActivity().getCreatedBy().getUsername().equals(customUserDetails.getUsername()) && !checkAdmin(customUserDetails)){
+            throw new RuntimeException("당신 누구야??");
         }
 
         attendance.changeStatus(AttendanceStatus.valueOf(attendanceStatus));
@@ -180,5 +182,17 @@ public class AttendanceService {
             result.add(response);
         }
         return result;
+    }
+
+
+    // 관리자인지 확인하는 로직
+    private boolean checkAdmin(CustomUserDetails customUserDetails) {
+        boolean isAdmin = customUserDetails.getAuthorities().stream()
+                .anyMatch(a -> "ROLE_ADMIN".equals(a.getAuthority())); // 또는 Role.ROLE_ADMIN.name()
+
+        if (!isAdmin) {
+            throw new RuntimeException("너 관리자 아니구나?");
+        }
+        return true;
     }
 }

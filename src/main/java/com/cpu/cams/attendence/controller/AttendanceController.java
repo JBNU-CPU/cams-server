@@ -3,6 +3,7 @@ package com.cpu.cams.attendence.controller;
 import com.cpu.cams.attendence.dto.response.CreateActivityAttendanceResponse;
 import com.cpu.cams.attendence.dto.response.ParticipantActivityAttendanceResponse;
 import com.cpu.cams.attendence.service.AttendanceService;
+import com.cpu.cams.member.dto.response.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -38,9 +39,9 @@ public class AttendanceController {
             @PathVariable Long sessionId,
             @PathVariable Long participantId,
             @RequestParam String attendanceStatus,
-            @AuthenticationPrincipal UserDetails userDetails
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
     ){
-        Long attendanceId = attendanceService.updateAttendancesStatus(sessionId, participantId, attendanceStatus, userDetails.getUsername());
+        Long attendanceId = attendanceService.updateAttendancesStatus(sessionId, participantId, attendanceStatus, customUserDetails);
 
         return ResponseEntity.ok().body(attendanceId);
     }
