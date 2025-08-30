@@ -10,6 +10,7 @@ import com.cpu.cams.activity.entity.Curriculum;
 import com.cpu.cams.activity.entity.EventSchedule;
 import com.cpu.cams.activity.entity.RecurringSchedule;
 import com.cpu.cams.activity.repository.ActivityRepository;
+import com.cpu.cams.member.dto.response.CustomUserDetails;
 import com.cpu.cams.member.entity.Member;
 import com.cpu.cams.member.repository.MemberRepository;
 import com.cpu.cams.point.PointConst;
@@ -20,7 +21,7 @@ import com.cpu.cams.point.repository.PointRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,10 +37,8 @@ public class ActivityService {
     private final PointRepository pointRepository;
 
     // 개설하기
-    public Activity createActivity(ActivityRequest activityRequest) {
+    public Long createActivity(ActivityRequest activityRequest, String username) {
 
-//        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        String username = "init1";
         Member findMember = memberRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("멤버없음"));
         Activity activity = Activity.create(activityRequest, findMember);
 
@@ -62,6 +61,8 @@ public class ActivityService {
             Curriculum.create(curriculum, activity);
         }
 
+        activityRepository.save(activity);
+
         PointRequest pointRequest = PointRequest.builder()
                 .type(PointType.CREATE.toString())
                 .description(activity.getTitle() + " 개설")
@@ -71,8 +72,7 @@ public class ActivityService {
         Point point = Point.create(pointRequest, findMember);
         pointRepository.save(point);
 
-        return activityRepository.save(activity);
-
+        return activity.getId();
     }
     
     // 전체 활동 목록 조회
@@ -100,7 +100,7 @@ public class ActivityService {
 
     // 활동 세부 정보 조회
     public ActivityResponse getActivity(Long activityId) {
-        Activity activity = activityRepository.findById(activityId).orElseThrow(() -> new RuntimeException("운동 없음"));
+        Activity activity = activityRepository.findById(activityId).orElseThrow(() -> new RuntimeException("활동 없음"));
         return ActivityResponse.builder()
                 .id(activity.getId())
                 .title(activity.getTitle())
@@ -115,7 +115,13 @@ public class ActivityService {
                 .build();
     }
 
-    public Long updateActivity(Long activityId, ActivityRequest activityRequest) {
+    // 활동 수정하기
+    public Long updateActivity(Long activityId, ActivityRequest activityRequest, CustomUserDetails userDetails) {
+
+        if (!isOwnerOrAdmin(userDetails, activityId)) {
+            throw new AccessDeniedException("수정 권한이 없습니다.");
+        }
+        
         Activity activity = activityRepository.findById(activityId).orElseThrow(() -> new RuntimeException("운동 없음"));
 
         activity.updateActivity(activityRequest);
@@ -145,16 +151,21 @@ public class ActivityService {
         return activity.getId();
     }
 
-    public String updateStatus(Long activityId, String status) {
+    public String updateStatus(Long activityId, String status, CustomUserDetails userDetails) {
+        if (!isOwnerOrAdmin(userDetails, activityId)) {
+            throw new AccessDeniedException("상태 변경 권한이 없습니다.");
+        }
         Activity activity = activityRepository.findById(activityId).orElseThrow(() -> new RuntimeException("에러"));
         activity.updateActivityStatus(status);
         return status;
     }
 
-    public Long deleteActivity(Long activityId) {
-        //        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        String username = "init1";
-        Member findMember = memberRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("멤버없음"));
+    public Long deleteActivity(Long activityId, CustomUserDetails userDetails) {
+        if (!isOwnerOrAdmin(userDetails, activityId)) {
+            throw new AccessDeniedException("삭제 권한이 없습니다.");
+        }
+        
+        Member findMember = memberRepository.findByUsername(userDetails.getUsername()).orElseThrow(() -> new RuntimeException("멤버없음"));
         findMember.updateTotalPoints(-100);
 
         activityRepository.deleteById(activityId);
@@ -187,5 +198,18 @@ public class ActivityService {
                 .activityType(activity.getActivityType().name())
                 .activityStatus(activity.getActivityStatus().name())
                 .build());
+    }
+    
+    // 활동 주인 및 관리자 확인 메서드
+    private Boolean isOwnerOrAdmin(CustomUserDetails userDetails, Long activityId) {
+        // 관리자 권한 확인
+        if (userDetails.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+            return true;
+        }
+
+        // 활동 소유자 확인
+        Activity activity = activityRepository.findById(activityId).orElseThrow(() -> new RuntimeException("활동이 없습니다."));
+        return activity.getCreatedBy().getUsername().equals(userDetails.getUsername());
     }
 }

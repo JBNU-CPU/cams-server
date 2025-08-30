@@ -3,13 +3,17 @@ package com.cpu.cams.activity.controller;
 import com.cpu.cams.ResponseDto;
 import com.cpu.cams.activity.dto.request.ActivityRequest;
 import com.cpu.cams.activity.dto.response.ActivityResponse;
+import com.cpu.cams.activity.entity.Activity;
 import com.cpu.cams.activity.service.ActivityService;
+import com.cpu.cams.member.dto.response.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,10 +27,12 @@ public class ActivityController {
 
     // 개설하기
     @PostMapping
-    public String createActivity(@RequestBody ActivityRequest activityRequest) {
-        // todo: 리다이렉트용 URI 보내주기
-        activityService.createActivity(activityRequest);
-        return "OK";
+    public ResponseEntity<Long> createActivity(
+            @RequestBody ActivityRequest activityRequest,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        Long activityId = activityService.createActivity(activityRequest, userDetails.getUsername());
+        return ResponseEntity.ok().body(activityId);
     }
     
     // 목록조회하기
@@ -39,30 +45,40 @@ public class ActivityController {
 
     // 개별조회하기
     @GetMapping("/{activityId}")
-    public ResponseEntity<?> getActivity(@PathVariable Long activityId) {
-
+    public ResponseEntity<ActivityResponse> getActivity(@PathVariable Long activityId) {
         ActivityResponse activity = activityService.getActivity(activityId);
         return ResponseEntity.ok().body(activity);
     }
 
-     //활동수정하기
+    //활동수정하기
     @PutMapping("/{activityId}")
-    public ResponseEntity<Long> updateActivity(@PathVariable Long activityId, @RequestBody ActivityRequest activityRequest) {
-        Long updateActivityId = activityService.updateActivity(activityId, activityRequest);
+    public ResponseEntity<Long> updateActivity(
+            @PathVariable Long activityId,
+            @RequestBody ActivityRequest activityRequest,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        Long updateActivityId = activityService.updateActivity(activityId, activityRequest, userDetails);
         return ResponseEntity.ok().body(updateActivityId);
     }
 
     // 활동 상태 변경 (모집 중, 마감)
     @PutMapping("/{activityId}/status")
-    public ResponseEntity<String> updateActivityStatus(@PathVariable Long activityId, @RequestParam String status) {
-        String updateActivityStatus = activityService.updateStatus(activityId, status);
+    public ResponseEntity<String> updateActivityStatus(
+            @PathVariable Long activityId, 
+            @RequestParam String status,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        String updateActivityStatus = activityService.updateStatus(activityId, status, userDetails);
         return ResponseEntity.ok().body(updateActivityStatus);
     }
 
     // 활동 삭제하기
     @DeleteMapping("/{activityId}")
-    public ResponseEntity<Long> deleteActivity(@PathVariable Long activityId) {
-        Long deletedActivityId = activityService.deleteActivity(activityId);
+    public ResponseEntity<Long> deleteActivity(
+            @PathVariable Long activityId,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        Long deletedActivityId = activityService.deleteActivity(activityId, userDetails);
         return ResponseEntity.ok().body(deletedActivityId);
     }
 
