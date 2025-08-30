@@ -13,6 +13,9 @@ import com.cpu.cams.attendence.entity.Session;
 import com.cpu.cams.attendence.repository.AttendanceRepository;
 import com.cpu.cams.member.entity.Member;
 import com.cpu.cams.member.repository.MemberRepository;
+import com.cpu.cams.point.dto.request.PointRequest;
+import com.cpu.cams.point.entity.Point;
+import com.cpu.cams.point.entity.PointType;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,8 +47,6 @@ public class AttendanceService {
         Session session = sessionRepository.findById(sessionId).orElseThrow(() -> new RuntimeException("없는 세션입니다."));
         ActivityParticipant activityParticipant = activityParticipantRepository.findByMemberAndActivity(findMember, session.getActivity()).orElseThrow(() -> new RuntimeException("참여자 없음"));
         Attendance attendance = attendanceRepository.findBySessionAndParticipant(session, activityParticipant).orElseThrow(() -> new RuntimeException("없는 출석"));
-        
-
 
         if(!session.getOpenAttendance()){
             throw new RuntimeException("출석이 열리지 않았습니다.");
@@ -57,7 +58,13 @@ public class AttendanceService {
             throw new RuntimeException("출석코드 틀림");
         }
 
-        //todo: 포인트 지급 로직
+        PointRequest pointRequest = new PointRequest();
+        pointRequest.setAmount(10);
+        pointRequest.setType(PointType.ATTENDANCE.toString());
+        pointRequest.setDescription(session.getActivity().getTitle() + " 활동" + session.getSessionNumber() + " 회차 출석 완료");
+        Point.create(pointRequest, findMember);
+        findMember.updateTotalPoints(10);
+
 
 
         return attendance.getId();
