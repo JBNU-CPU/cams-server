@@ -78,7 +78,7 @@ public class Member {
         member.email = signupRequest.getEmail();
         member.phone = signupRequest.getPhone();
         member.department = signupRequest.getDepartment();
-        member.role = Role.ROLE_USER;
+        member.role = Role.ROLE_ADMIN;
         member.cohort = signupRequest.getCohort();
         return member;
     }
