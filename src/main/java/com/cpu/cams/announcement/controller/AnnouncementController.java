@@ -3,13 +3,20 @@ package com.cpu.cams.announcement.controller;
 import com.cpu.cams.announcement.dto.request.AnnouncementRequest;
 import com.cpu.cams.announcement.dto.response.AnnouncementResponse;
 import com.cpu.cams.announcement.service.AnnouncementService;
+import com.cpu.cams.member.dto.response.CustomUserDetails;
+import com.cpu.cams.member.entity.Role;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
+
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/announcement")
@@ -21,9 +28,10 @@ public class AnnouncementController {
     @PostMapping()
     public ResponseEntity<Long> createAnnouncement(
             @RequestBody AnnouncementRequest announcementRequest,
-            @AuthenticationPrincipal UserDetails userDetails
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
     ){
-        Long announcement = announcementService.createAnnouncement(announcementRequest, userDetails.getUsername());
+        
+        Long announcement = announcementService.createAnnouncement(announcementRequest, customUserDetails);
         return ResponseEntity.ok(announcement);
     }
 
@@ -31,7 +39,7 @@ public class AnnouncementController {
     @GetMapping()
     public ResponseEntity<Page<AnnouncementResponse>> getAnnouncementList(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "2") int size
+            @RequestParam(defaultValue = "5") int size
     ){
         Page<AnnouncementResponse> announcements = announcementService.getAnnouncements(page, size);
 
@@ -50,14 +58,15 @@ public class AnnouncementController {
     @PutMapping("/{announcementId}")
     public void updateAnnouncement(
             @PathVariable Long announcementId,
-            @RequestBody AnnouncementRequest announcementRequest
+            @RequestBody AnnouncementRequest announcementRequest,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
     ){
-        announcementService.updateAnnouncement(announcementId, announcementRequest);
+        announcementService.updateAnnouncement(announcementId, announcementRequest, customUserDetails);
     }
 
     // 공지 삭제
     @DeleteMapping("/{announcementId}")
-    public void deleteAnnouncement(@PathVariable Long announcementId) {
-        announcementService.deleteAnnouncement(announcementId);
+    public void deleteAnnouncement(@PathVariable Long announcementId, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        announcementService.deleteAnnouncement(announcementId, customUserDetails);
     }
 }
