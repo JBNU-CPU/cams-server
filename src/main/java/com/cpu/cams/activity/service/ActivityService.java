@@ -157,4 +157,32 @@ public class ActivityService {
         activityRepository.deleteById(activityId);
         return activityId;
     }
+
+    public Page<ActivityResponse> searchActivity(String type, String keyword, int page, int size) {
+
+        Page<Activity> activities;
+
+        if ("titleContent".equals(type)) {
+            activities = activityRepository.findByTitleContainingOrDescriptionContaining(keyword, keyword, PageRequest.of(page, size));
+        } else if ("leader".equals(type)) {
+            activities = activityRepository.findByCreatedBy_NameContaining(keyword, PageRequest.of(page, size));
+        } else {
+            // Or throw an exception for invalid type
+            activities = Page.empty();
+        }
+
+        return activities.map(activity -> ActivityResponse.builder()
+                .id(activity.getId())
+                .title(activity.getTitle())
+                .description(activity.getDescription())
+                .createdBy(activity.getCreatedBy().getName())
+                .recurringSchedules(ActivityResponse.convertRecurringSchedules(activity.getRecurringSchedules()))
+                .eventSchedules(ActivityResponse.convertEventSchedules(activity.getEventSchedules()))
+                .curriculums(ActivityResponse.convertCurriculums(activity.getCurriculums()))
+                .maxParticipants(activity.getMaxParticipants())
+                .participantCount(activity.getParticipantCount())
+                .activityType(activity.getActivityType().name())
+                .activityStatus(activity.getActivityStatus().name())
+                .build());
+    }
 }

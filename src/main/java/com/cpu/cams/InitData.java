@@ -37,24 +37,24 @@ public class InitData {
         Long member2Id = memberService.signup(new SignupRequest("init2", "1234", "test2", "test2@gmail.com", "010-2222-2222", "소공", 2));
         Long member3Id = memberService.signup(new SignupRequest("init3", "1234", "test3", "test3@gmail.com", "010-3333-3333", "소공", 3));
         Long member4Id = memberService.signup(new SignupRequest("init4", "1234", "test4", "test4@gmail.com", "010-4444-4444", "소공", 4));
-//
-//        Activity activity1 = activityService.createActivity(new ActivityRequest("테스트활동1", "테스트활동내용1", "화이팅1", ActivityType.SESSION, 10, "도서관1", "주의하시오1", List.of( // recurringSchedules
-//                new RecurringScheduleDTO(DayOfWeek.MONDAY, LocalTime.of(10, 0), LocalTime.of(12, 0)),
-//                new RecurringScheduleDTO(DayOfWeek.WEDNESDAY, LocalTime.of(14, 0), LocalTime.of(16, 0)))
-//                , Collections.emptyList(), Collections.emptyList()));
-//
-//        Activity activity2 = activityService.createActivity(new ActivityRequest("테스트활동2", "테스트활동내용2", "화이팅2", ActivityType.GENERAL, 11, "도서관2", "주의하시오2", List.of( // recurringSchedules
-//                new RecurringScheduleDTO(DayOfWeek.MONDAY, LocalTime.of(11, 30), LocalTime.of(13, 30)),
-//                new RecurringScheduleDTO(DayOfWeek.WEDNESDAY, LocalTime.of(15, 30), LocalTime.of(17, 30)))
-//                , Collections.emptyList(), Collections.emptyList()));
-//
-//        Activity activity3 = activityService.createActivity(new ActivityRequest("테스트활동1", "테스트활동내용1", "화이팅1", ActivityType.PROJECT, 12, "도서관3", "주의하시오3", List.of( // recurringSchedules
-//                new RecurringScheduleDTO(DayOfWeek.MONDAY, LocalTime.of(12, 40), LocalTime.of(14, 40)),
-//                new RecurringScheduleDTO(DayOfWeek.WEDNESDAY, LocalTime.of(16, 40), LocalTime.of(18, 40)))
-//                , Collections.emptyList(), Collections.emptyList()));
-//
-//        activityService.updateStatus(1L, "STARTED");
-//
+
+        Activity activity1 = activityService.createActivity(new ActivityRequest("테스트활동1", "테스트활동내용1", "화이팅1", ActivityType.SESSION, 10, "도서관1", "주의하시오1", List.of( // recurringSchedules
+                new RecurringScheduleDTO(DayOfWeek.MONDAY, LocalTime.of(10, 0), LocalTime.of(12, 0)),
+                new RecurringScheduleDTO(DayOfWeek.WEDNESDAY, LocalTime.of(14, 0), LocalTime.of(16, 0)))
+                , Collections.emptyList(), Collections.emptyList()));
+
+        Activity activity2 = activityService.createActivity(new ActivityRequest("테스트활동2", "테스트활동내용2", "화이팅2", ActivityType.GENERAL, 11, "도서관2", "주의하시오2", List.of( // recurringSchedules
+                new RecurringScheduleDTO(DayOfWeek.MONDAY, LocalTime.of(11, 30), LocalTime.of(13, 30)),
+                new RecurringScheduleDTO(DayOfWeek.WEDNESDAY, LocalTime.of(15, 30), LocalTime.of(17, 30)))
+                , Collections.emptyList(), Collections.emptyList()));
+
+        Activity activity3 = activityService.createActivity(new ActivityRequest("테스트활동1", "테스트활동내용1", "화이팅1", ActivityType.PROJECT, 12, "도서관3", "주의하시오3", List.of( // recurringSchedules
+                new RecurringScheduleDTO(DayOfWeek.MONDAY, LocalTime.of(12, 40), LocalTime.of(14, 40)),
+                new RecurringScheduleDTO(DayOfWeek.WEDNESDAY, LocalTime.of(16, 40), LocalTime.of(18, 40)))
+                , Collections.emptyList(), Collections.emptyList()));
+
+        activityService.updateStatus(1L, "STARTED");
+
 //        // test1 테스트활동1, 테스트활동2 참가
 //        participantService.addParticipant(activity1.getId(), member2Id);
 //        participantService.addParticipant(activity2.getId(), member2Id);

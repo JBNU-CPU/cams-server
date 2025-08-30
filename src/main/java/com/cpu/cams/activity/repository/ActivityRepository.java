@@ -31,4 +31,9 @@ public interface ActivityRepository extends JpaRepository<Activity, Long> {
 """)
     Page<Activity> findMyParticipateActivitiesByMember(@Param("member")Member member, Pageable pageable);
 
+    // 제목 또는 내용으로 검색
+    Page<Activity> findByTitleContainingOrDescriptionContaining(String title, String description, Pageable pageable);
+
+    // 개설자 이름으로 검색
+    Page<Activity> findByCreatedBy_NameContaining(String name, Pageable pageable);
 }

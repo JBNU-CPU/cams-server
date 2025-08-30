@@ -67,8 +67,9 @@ public class ActivityController {
     }
 
     // 검색
-    @PostMapping("/search")
-    public String searchActivity(@RequestParam String keyword) {
-        return "OK";
+    @GetMapping("/search")
+    public ResponseEntity<Page<ActivityResponse>> searchActivity(@RequestParam String type, @RequestParam String keyword, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        Page<ActivityResponse> activities = activityService.searchActivity(type, keyword, page, size);
+        return ResponseEntity.ok().body(activities);
     }
 }
