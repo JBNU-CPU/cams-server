@@ -19,6 +19,7 @@ public class NotificationEventListener {
 
     @TransactionalEventListener // 트랜잭션이 성공적으로 커밋될 때만 이벤트 수신
     public void handleNotificationEvent(AnnouncementService.NotificationEvent event) {
+
         // 1. DB에 알림 저장
         notificationService.createNotification(event.username(), event.message());
 
