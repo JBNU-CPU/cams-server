@@ -6,6 +6,7 @@ import com.cpu.cams.point.dto.response.PointHistoryResponse;
 import com.cpu.cams.point.repository.PointRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,12 +16,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PointService {
 
-    private final PointRepository pointRepository;
     private final MemberRepository memberRepository;
 
-    public List<PointHistoryResponse> getPointHistory() {
-        // String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        String username = "init2";
+    // 포인트 전체 내역 조회하기
+    public List<PointHistoryResponse> getPointHistory(String username) {
         Member findMember = memberRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("멤버없음"));
         List<PointHistoryResponse> result = findMember.getPointList().stream().map(point -> {
             return PointHistoryResponse.builder()

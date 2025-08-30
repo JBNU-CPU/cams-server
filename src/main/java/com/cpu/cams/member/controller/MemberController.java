@@ -8,6 +8,8 @@ import com.cpu.cams.member.dto.response.ProfileResponse;
 import com.cpu.cams.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -41,8 +43,12 @@ public class MemberController {
 
     // 내 프로필 조회
     @GetMapping("/me")
-    public ProfileResponse getMyProfile() {
-        ProfileResponse myProfile = memberService.getMyProfile();
+    public ProfileResponse getMyProfile(@AuthenticationPrincipal UserDetails userDetails) {
+        String username = userDetails != null
+                ? userDetails.getUsername()
+                : "init1";
+
+        ProfileResponse myProfile = memberService.getMyProfile(username);
         return myProfile;
     }
 

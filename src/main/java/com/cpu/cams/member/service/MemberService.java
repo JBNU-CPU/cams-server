@@ -6,6 +6,7 @@ import com.cpu.cams.member.dto.response.ProfileResponse;
 import com.cpu.cams.member.entity.Member;
 import com.cpu.cams.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,9 +26,8 @@ public class MemberService {
         return member.getId();
     }
 
-    public ProfileResponse getMyProfile() {
-        //        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        String username = "init1";
+    public ProfileResponse getMyProfile(String username) {
+
         Member findMember = memberRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("멤버없음"));
         return ProfileResponse.builder()
                 .email(findMember.getEmail())
