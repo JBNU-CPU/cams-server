@@ -1,5 +1,6 @@
 package com.cpu.cams.test;
 
+import com.cpu.cams.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -10,6 +11,9 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -18,9 +22,11 @@ public class NotificationService {
 
     private static final long DEFAULT_TIMEOUT = 60L * 60L * 1000L; // 1 hour
     private static final String EVENT_NAME = "notify";
+    private static final int BATCH_SIZE = 500; // 인원 많으면 값 키우세요
 
     private final EmitterRepository emitterRepo;
     private final NotificationRepository notificationRepo;
+    private final MemberRepository memberRepository;
 
     /** 구독: 미읽음 먼저 쏜 다음 연결 유지 */
     @Transactional(readOnly = true)
@@ -98,6 +104,58 @@ public class NotificationService {
         }
         if (n.isUnread()) n.markRead();
     }
+
+    @Transactional
+    public BroadcastResult broadcastToAll(NotificationPayload payload) {
+        var allUserIds = memberRepository.findAllIds();
+        if (allUserIds.isEmpty()) return new BroadcastResult(0, 0, 0);
+
+        int inserted = 0;
+        int pushed = 0;
+
+        for (int i = 0; i < allUserIds.size(); i += BATCH_SIZE) {
+            int to = Math.min(i + BATCH_SIZE, allUserIds.size());
+            var chunk = allUserIds.subList(i, to);
+
+            // 1) DB 일괄 저장 (오프라인 사용자를 위한 미읽음 적재)
+            var toSave = new ArrayList<Notification>(chunk.size());
+            for (Long uid : chunk) {
+                toSave.add(Notification.create(uid, payload.type(), payload.message(), payload.link()));
+            }
+            var saved = notificationRepo.saveAll(toSave);
+            inserted += saved.size();
+
+            // 2) 온라인 유저(이미 emitter 열려있는 사람)에게 즉시 푸시
+            Map<Long, List<Notification>> byUser =
+                    saved.stream().collect(Collectors.groupingBy(Notification::getUserId));
+
+            for (var entry : byUser.entrySet()) {
+                Long userId = entry.getKey();
+                var emitters = emitterRepo.getAll(userId);
+                if (emitters.isEmpty()) continue;
+
+                for (Notification n : entry.getValue()) {
+                    for (var e : emitters.entrySet()) {
+                        String emitterId = e.getKey();
+                        SseEmitter emitter = e.getValue();
+                        try {
+                            emitter.send(SseEmitter.event()
+                                    .id(n.getId().toString())
+                                    .name(EVENT_NAME)
+                                    .data(NotificationResponse.from(n)));
+                            pushed++;
+                        } catch (IOException ex) {
+                            emitter.complete();
+                            emitterRepo.remove(userId, emitterId);
+                        }
+                    }
+                }
+            }
+        }
+
+        return new BroadcastResult(allUserIds.size(), inserted, pushed);
+    }
+
 
     // 선택: heartbeat
     @Scheduled(fixedRate = 25_000)

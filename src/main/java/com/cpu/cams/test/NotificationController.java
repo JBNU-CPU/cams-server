@@ -60,6 +60,11 @@ public class NotificationController {
                 .toList();
     }
 
+    // 전체 공지
+    @PostMapping("/broadcast")
+    public BroadcastResult broadcast(@RequestBody NotificationPayload payload) {
+        return notificationService.broadcastToAll(payload);
+    }
 
     // --- helper ---
 
