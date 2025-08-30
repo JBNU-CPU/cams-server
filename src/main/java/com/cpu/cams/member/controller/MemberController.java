@@ -44,7 +44,7 @@ public class MemberController {
     // 내 프로필 조회
     @GetMapping("/me")
     public ResponseEntity<ProfileResponse> getMyProfile(@AuthenticationPrincipal UserDetails userDetails) {
-
+        // todo: 지우기
         String username = userDetails != null
                 ? userDetails.getUsername()
                 : "init1";
@@ -56,7 +56,7 @@ public class MemberController {
     // 내 프로필 편집
     @PutMapping("/me")
     public ResponseEntity<Long> updateMyProfile(@RequestBody ProfileRequest profileRequest, @AuthenticationPrincipal UserDetails userDetails) {
-
+        // todo: 지우기
         String username = userDetails != null
                 ? userDetails.getUsername()
                 : "init1";

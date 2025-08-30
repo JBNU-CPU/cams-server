@@ -25,6 +25,7 @@ public class PointController {
     @GetMapping("/history")
     public ResponseEntity<List<PointHistoryResponse>> getPointHistory(@AuthenticationPrincipal UserDetails userDetails) {
 
+        // todo: 지우기
         String username = userDetails != null
                 ? userDetails.getUsername()
                 : "init1";

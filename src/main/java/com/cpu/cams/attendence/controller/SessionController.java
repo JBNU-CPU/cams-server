@@ -6,6 +6,8 @@ import com.cpu.cams.attendence.service.SessionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,9 +19,14 @@ public class SessionController {
 
     // 세션 생성
     @PostMapping("/{activityId}")
-    public ResponseEntity<Long> createAttendance(@PathVariable Long activityId, @RequestBody SessionRequest sessionRequest) {
+    public ResponseEntity<Long> createAttendance(@PathVariable Long activityId, @RequestBody SessionRequest sessionRequest, @AuthenticationPrincipal UserDetails userDetails) {
 
-        Long sessionId = sessionService.createSession(activityId, sessionRequest);
+        // todo: 지우기
+        String username = userDetails != null
+                ? userDetails.getUsername()
+                : "init1";
+
+        Long sessionId = sessionService.createSession(activityId, sessionRequest, username);
 
         return ResponseEntity.ok(sessionId); // 출석 코드 응답
     }
@@ -36,9 +43,14 @@ public class SessionController {
 
     // 출석 마감 여부 수정 -> 세션 상태 변경
     @PutMapping("/{sessionId}")
-    public ResponseEntity<Long> toggleOpenAttendance(@PathVariable Long sessionId) {
+    public ResponseEntity<Long> toggleOpenAttendance(@PathVariable Long sessionId, @AuthenticationPrincipal UserDetails userDetails) {
 
-        Long id = sessionService.toggleOpenAttendance(sessionId);
+        // todo: 지우기
+        String username = userDetails != null
+                ? userDetails.getUsername()
+                : "init1";
+
+        Long id = sessionService.toggleOpenAttendance(sessionId, username);
         return ResponseEntity.ok(id);
     }
 

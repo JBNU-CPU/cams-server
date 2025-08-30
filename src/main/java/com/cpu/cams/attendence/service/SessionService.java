@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,11 +24,22 @@ public class SessionService {
     private final ActivityRepository activityRepository;
     private final SessionRepository sessionRepository;
 
-    @Transactional
-    public Long createSession(Long activityId, SessionRequest request) {
+    // 세션 만들기
+    public Long createSession(Long activityId, SessionRequest request, String username) {
 
         Activity activity = activityRepository.findById(activityId).orElseThrow(() -> new RuntimeException("활동 없는데?"));
+
+        if(activity.getCreatedBy().getUsername() != username){
+            throw new RuntimeException("너 누구야?!");
+        }
         // 세션 만들기
+        
+        // 1. 기존 세션 있는지 확인
+        boolean hasOpen = activity.getSessions().stream().anyMatch(session -> Boolean.TRUE.equals(session.getOpenAttendance()));
+        if(hasOpen){
+            throw new RuntimeException("이미 세션 존재함");
+        }
+        // 2. 기존 세션 없다면 만들기
         Session session = Session.create(activity, request.getSessionNumber(), request.getDescription(), request.getAttendanceCode());
         Session saveSession = sessionRepository.save(session);
 
@@ -55,9 +67,12 @@ public class SessionService {
     }
 
     // 출석 마감 여부 수정 -> 세션 상태 변경
-    public Long toggleOpenAttendance(Long sessionId) {
+    public Long toggleOpenAttendance(Long sessionId, String username) {
 
         Session session = sessionRepository.findById(sessionId).orElseThrow(() -> new RuntimeException("세션이 없어요"));
+        if(session.getActivity().getCreatedBy().getUsername() != username){
+            throw new RuntimeException("너 누구야?!");
+        }
         session.toggleDoneStatus();
 
         return session.getId();
