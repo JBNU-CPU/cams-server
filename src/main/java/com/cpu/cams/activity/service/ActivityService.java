@@ -44,6 +44,7 @@ public class ActivityService {
 
         List<RecurringScheduleDTO> recurringSchedules = activityRequest.getRecurringSchedules();
 
+        //todo: Recurring, Event 둘 중 하나만 받도록 설정
         for (RecurringScheduleDTO recurringSchedule : recurringSchedules) {
             RecurringSchedule.create(recurringSchedule, activity);
         }

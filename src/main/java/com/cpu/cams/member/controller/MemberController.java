@@ -42,12 +42,14 @@ public class MemberController {
     // 내 프로필 조회
     @GetMapping("/me")
     public ProfileResponse getMyProfile() {
-        return new ProfileResponse();
+        ProfileResponse myProfile = memberService.getMyProfile();
+        return myProfile;
     }
 
     // 내 프로필 편집
     @PutMapping("/me")
     public String updateMyProfile(@RequestBody ProfileRequest profileRequest) {
+        memberService.updateMyProfile(profileRequest);
         return "ok";
     }
 }

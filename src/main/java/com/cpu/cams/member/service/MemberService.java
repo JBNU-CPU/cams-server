@@ -1,6 +1,8 @@
 package com.cpu.cams.member.service;
 
+import com.cpu.cams.member.dto.request.ProfileRequest;
 import com.cpu.cams.member.dto.request.SignupRequest;
+import com.cpu.cams.member.dto.response.ProfileResponse;
 import com.cpu.cams.member.entity.Member;
 import com.cpu.cams.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,5 +23,26 @@ public class MemberService {
         Member member = Member.create(signupRequest);
         memberRepository.save(member);
         return member.getId();
+    }
+
+    public ProfileResponse getMyProfile() {
+        //        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        String username = "init1";
+        Member findMember = memberRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("멤버없음"));
+        return ProfileResponse.builder()
+                .email(findMember.getEmail())
+                .name(findMember.getName())
+                .phone(findMember.getPhone())
+                .department(findMember.getDepartment())
+                .cohort(findMember.getCohort())
+                .totalPoints(findMember.getTotalPoints())
+                .build();
+    }
+
+    public void updateMyProfile(ProfileRequest profileRequest) {
+        //        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        String username = "init1";
+        Member findMember = memberRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("멤버없음"));
+        findMember.update(profileRequest);
     }
 }

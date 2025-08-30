@@ -3,6 +3,7 @@ package com.cpu.cams.member.entity;
 import com.cpu.cams.activity.entity.Activity;
 import com.cpu.cams.activity.entity.ActivityParticipant;
 import com.cpu.cams.announcement.entity.Announcement;
+import com.cpu.cams.member.dto.request.ProfileRequest;
 import com.cpu.cams.member.dto.request.SignupRequest;
 import com.cpu.cams.point.entity.Point;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -88,6 +89,16 @@ public class Member {
         member.username = username;
         member.role = Role.valueOf(role);
         return member;
+    }
+    
+    // 프로필 수정
+    public Member update(ProfileRequest profileRequest) {
+        this.name = profileRequest.getName();
+        this.email = profileRequest.getEmail();
+        this.phone = profileRequest.getPhone();
+        this.department = profileRequest.getDepartment();
+        this.cohort = profileRequest.getCohort();
+        return this;
     }
 
     // 멤버 권한 변경
