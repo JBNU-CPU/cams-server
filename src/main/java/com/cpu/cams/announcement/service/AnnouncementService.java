@@ -9,6 +9,8 @@ import com.cpu.cams.member.entity.Member;
 import com.cpu.cams.member.entity.Role;
 import com.cpu.cams.member.repository.MemberRepository;
 import com.cpu.cams.member.service.MemberService;
+import com.cpu.cams.test.NotificationPayload;
+import com.cpu.cams.test.NotificationService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +27,7 @@ public class AnnouncementService {
     private final MemberRepository memberRepository;
     private final AnnouncementRepository announcementRepository;
     private final MemberService memberService;
+    private final NotificationService notificationService;
 
     // 공지사항 등록
     public Long createAnnouncement(AnnouncementRequest announcementRequest, CustomUserDetails customUserDetails) {
@@ -35,6 +38,11 @@ public class AnnouncementService {
         Member findMember = memberService.findByUsername(customUserDetails.getUsername());
 
         Announcement announcement = Announcement.create(announcementRequest, findMember);
+
+        // 전체 공지
+        NotificationPayload notificationPayload = new NotificationPayload("공지", announcementRequest.getTitle(), "~~~링크 참조");
+        notificationService.broadcastToAll(notificationPayload);
+
         return announcement.getId();
     }
 
