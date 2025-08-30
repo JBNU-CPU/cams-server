@@ -29,10 +29,9 @@ public class SessionService {
         Activity activity = activityRepository.findById(activityId).orElseThrow(() -> new RuntimeException("활동 없는데?"));
         // 세션 만들기
         Session session = Session.create(activity, request.getSessionNumber(), request.getDescription(), request.getAttendanceCode());
-
         Session saveSession = sessionRepository.save(session);
 
-        // 세션에 따른 모든 참여 학생 attendance 객체 생성
+        // 세션에 따른 모든 참여 학생 attendance 객체 생성 (초기값 : 결석)
         // 학생에 따른 출석부 만들기 -> 더티채킹으로 repository 없이 만들기
         List<Attendance> attendanceList = activity.getParticipants().stream().map(participant -> Attendance.create(saveSession, participant)).toList();
 

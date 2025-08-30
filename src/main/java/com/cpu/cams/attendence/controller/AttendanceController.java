@@ -19,12 +19,11 @@ public class AttendanceController {
     private final AttendanceService attendanceService;
 
     // 출석하기 (출석 코드 인증)
-    @PostMapping("/{sessionId}/{activityParticipantId}")
-    public ResponseEntity<Long> attendance(@PathVariable Long sessionId, @PathVariable Long activityParticipantId, @RequestParam String attendancesCode) {
+    @PostMapping("/{sessionId}")
+    public ResponseEntity<Long> attendance(@PathVariable Long sessionId, @RequestParam String attendancesCode) {
 
-        Long attendanceId = attendanceService.attendance(sessionId, activityParticipantId, attendancesCode);
-        //todo: 포인트 지급 로직
-        //todo: Session이 닫힌 상태면 출석 불가능하게
+        Long attendanceId = attendanceService.attendance(sessionId, attendancesCode);
+
         return ResponseEntity.ok().body(attendanceId);
     }
 

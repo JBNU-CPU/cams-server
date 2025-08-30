@@ -149,6 +149,11 @@ public class ActivityService {
     }
 
     public Long deleteActivity(Long activityId) {
+        //        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        String username = "init1";
+        Member findMember = memberRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("멤버없음"));
+        findMember.updateTotalPoints(-100);
+
         activityRepository.deleteById(activityId);
         return activityId;
     }

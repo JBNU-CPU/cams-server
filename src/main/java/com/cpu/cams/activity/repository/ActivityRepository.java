@@ -1,6 +1,7 @@
 package com.cpu.cams.activity.repository;
 
 import com.cpu.cams.activity.entity.Activity;
+import com.cpu.cams.attendence.entity.Session;
 import com.cpu.cams.member.entity.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,6 +30,5 @@ public interface ActivityRepository extends JpaRepository<Activity, Long> {
     where ap.member = :member
 """)
     Page<Activity> findMyParticipateActivitiesByMember(@Param("member")Member member, Pageable pageable);
-
 
 }

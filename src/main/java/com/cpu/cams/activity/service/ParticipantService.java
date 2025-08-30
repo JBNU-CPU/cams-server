@@ -23,13 +23,11 @@ public class ParticipantService {
     private final ActivityRepository activityRepository;
 
     // 활동 참가 신청하기
-    public void addParticipant(Long activityId){
-        addParticipant(activityId, 1L);
-    }
-
-    public void addParticipant(Long activityId, Long memberId) {
+    public void addParticipant(Long activityId) {
         // todo: 레포지토리로 불러오는게 맞니? MemberService에 함수 만들고 서비스로 불러오는게 맞니?
-        Member member = memberRepository.findById(memberId).orElseThrow(() -> new RuntimeException("멤버없음"));
+//        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        String username = "init2";
+        Member member = memberRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("멤버없음"));
         Activity activity = activityRepository.findById(activityId).orElseThrow(() -> new RuntimeException("활동 없음"));
 
         // 중복 참가 방지

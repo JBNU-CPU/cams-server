@@ -93,6 +93,9 @@ public class Member {
     }
 
     public void updateTotalPoints(Integer pointAmount) {
+        if (this.totalPoints + pointAmount < 0) {
+            throw new RuntimeException("포인트가 이상해요");
+        }
         this.totalPoints = this.totalPoints + pointAmount;
     }
 

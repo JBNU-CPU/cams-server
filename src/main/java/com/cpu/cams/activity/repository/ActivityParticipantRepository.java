@@ -2,10 +2,13 @@ package com.cpu.cams.activity.repository;
 
 import com.cpu.cams.activity.entity.Activity;
 import com.cpu.cams.activity.entity.ActivityParticipant;
+import com.cpu.cams.attendence.entity.Session;
 import com.cpu.cams.member.entity.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.Optional;
 
 public interface ActivityParticipantRepository extends JpaRepository<ActivityParticipant, Long> {
     
@@ -13,4 +16,6 @@ public interface ActivityParticipantRepository extends JpaRepository<ActivityPar
     Page<ActivityParticipant> findByActivity(Activity activity, Pageable pageable);
 
     boolean existsByMember(Member member);
+
+    Optional<ActivityParticipant> findByMemberAndActivity(Member findMember, Activity activity);
 }

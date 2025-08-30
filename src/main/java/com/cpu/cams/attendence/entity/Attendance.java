@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(
-        uniqueConstraints = {
+        uniqueConstraints = { // session_id & participant_id 조합 유니크로 설정
                 @UniqueConstraint(
                         name = "attendance_uk",
                         columnNames = {"session_id", "participant_id"}
