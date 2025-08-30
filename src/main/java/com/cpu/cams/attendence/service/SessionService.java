@@ -7,13 +7,14 @@ import com.cpu.cams.attendence.dto.request.SessionRequest;
 import com.cpu.cams.attendence.dto.response.OpenSessionResponse;
 import com.cpu.cams.attendence.entity.Attendance;
 import com.cpu.cams.attendence.entity.Session;
+import com.cpu.cams.member.entity.Member;
+import com.cpu.cams.member.repository.MemberRepository;
+import com.cpu.cams.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -22,13 +23,15 @@ public class SessionService {
 
     private final ActivityRepository activityRepository;
     private final SessionRepository sessionRepository;
+    private final MemberService memberService;
+    private final MemberRepository memberRepository;
 
     // 세션 만들기
     public Long createSession(Long activityId, SessionRequest request, String username) {
 
         Activity activity = activityRepository.findById(activityId).orElseThrow(() -> new RuntimeException("활동 없는데?"));
 
-        if(activity.getCreatedBy().getUsername() != username){
+        if(!activity.getCreatedBy().getUsername().equals(username)){
             throw new RuntimeException("너 누구야?!");
         }
         // 세션 만들기
@@ -44,25 +47,26 @@ public class SessionService {
 
         // 세션에 따른 모든 참여 학생 attendance 객체 생성 (초기값 : 결석)
         // 학생에 따른 출석부 만들기 -> 더티채킹으로 repository 없이 만들기
-        List<Attendance> attendanceList = activity.getParticipants().stream().map(participant -> Attendance.create(saveSession, participant)).toList();
+        activity.getParticipants().forEach(participant -> Attendance.create(saveSession, participant));
 
         return session.getId();
     }
 
     // 열린 세션 확인하기
-    public Page<OpenSessionResponse> findOpenSessionList(Long memberId) {
+    public Page<OpenSessionResponse> findOpenSessionList(String username, int page, int size) {
+
+        Member member = memberRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("유저가 없어요"));
+
         // memberId -> activity_partipants에서 activity조회해서 그 중에 session이 start인걸 조회한다~ 리턴값으로는 activity, session 둘 다 줘야 한다.
         // 1. memberId로 activity 찾기
         // 2. activity들 session 찾기
         // 3. session의 openAttendance true인 것 찾기
-        PageRequest pageRequest = PageRequest.of(0, 3);
-        Page<OpenSessionResponse> openSessionList = sessionRepository.findOpenSessionList(memberId, pageRequest).map(
+        return sessionRepository.findOpenSessionList(member.getId(), PageRequest.of(page, size)).map(
                 session -> OpenSessionResponse.builder()
                             .sessionId(session.getId())
                             .activityTitle(session.getActivity().getTitle())
                             .sessionNumber(session.getSessionNumber())
                             .build());
-        return openSessionList;
     }
 
     // 출석 마감 여부 수정 -> 세션 상태 변경
