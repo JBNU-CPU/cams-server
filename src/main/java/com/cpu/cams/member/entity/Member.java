@@ -2,6 +2,7 @@ package com.cpu.cams.member.entity;
 
 import com.cpu.cams.activity.entity.Activity;
 import com.cpu.cams.activity.entity.ActivityParticipant;
+import com.cpu.cams.announcement.entity.Announcement;
 import com.cpu.cams.member.dto.request.SignupRequest;
 import com.cpu.cams.point.entity.Point;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -64,6 +65,9 @@ public class Member {
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Point> pointList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Announcement> announcementList = new ArrayList<>();
 
     public static Member create(SignupRequest signupRequest) {
         Member member = new Member();

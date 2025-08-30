@@ -2,6 +2,9 @@ package com.cpu.cams.notification.entity;
 
 import com.cpu.cams.member.entity.Member;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity
 public class Notification {
@@ -10,12 +13,16 @@ public class Notification {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "member_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    @Column(columnDefinition = "TEXT") private String message;
-    private Boolean isRead = Boolean.FALSE;
+    @Column()
+    private String message;
+
+    private Boolean isRead = false;
 
     @Column(name = "created_at")
-    private java.time.LocalDateTime createdAt;
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 }
