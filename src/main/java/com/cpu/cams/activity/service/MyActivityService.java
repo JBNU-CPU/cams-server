@@ -4,26 +4,24 @@ import com.cpu.cams.activity.dto.response.ActivityResponse;
 import com.cpu.cams.activity.repository.ActivityRepository;
 import com.cpu.cams.member.entity.Member;
 import com.cpu.cams.member.repository.MemberRepository;
+import com.cpu.cams.member.service.MemberService;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class MyActivityService {
     private final ActivityRepository activityRepository;
-    private final MemberRepository memberRepository;
+    private final MemberService memberService;
 
-    public MyActivityService(ActivityRepository activityRepository, MemberRepository memberRepository) {
-        this.activityRepository = activityRepository;
-        this.memberRepository = memberRepository;
-    }
+    // 내가 개설한 활동 조회
+    public Page<ActivityResponse> getMyCreateActivities(int page, int size, String username) {
 
-    public Page<ActivityResponse> getMyCreateActivities(int page, int size) {
-        // todo: memberId security 에서 불러오기
-        Long memberId = 1L;
-        Member member = memberRepository.findById(memberId).orElse(null);
+        Member member = memberService.findByUsername(username);
 
         Page<ActivityResponse> myCreateActivities = activityRepository.findMyCreateActivityByCreatedBy(PageRequest.of(page, size), member).map(
                 activity -> {
@@ -43,15 +41,13 @@ public class MyActivityService {
                 }
         );
 
-
         return myCreateActivities;
     }
 
-    public Page<ActivityResponse> getMyParticipateActivities(int page, int size) {
+    // 내가 참여한 활동 조회
+    public Page<ActivityResponse> getMyParticipateActivities(int page, int size, String username) {
 
-        // todo: memberId security 에서 불러오기
-        Long memberId = 1L;
-        Member member = memberRepository.findById(memberId).orElse(null);
+        Member member = memberService.findByUsername(username);
 
         Page<ActivityResponse> myParticipateActivities = activityRepository.findMyParticipateActivitiesByMember(member, PageRequest.of(page, size)).map(
                 activity -> {

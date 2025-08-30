@@ -5,6 +5,8 @@ import com.cpu.cams.activity.service.MyActivityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,15 +21,23 @@ public class MyActivityController {
 
     // 내가 개설한 활동 조회
     @GetMapping("/create")
-    public ResponseEntity<Page<ActivityResponse>> getMyCreateActivities(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-        Page<ActivityResponse> myCreateActivities = myActivityService.getMyCreateActivities(page, size);
+    public ResponseEntity<Page<ActivityResponse>> getMyCreateActivities(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @AuthenticationPrincipal UserDetails userDetails
+            ) {
+        Page<ActivityResponse> myCreateActivities = myActivityService.getMyCreateActivities(page, size, userDetails.getUsername());
         return ResponseEntity.ok().body(myCreateActivities);
     }
 
     // 내가 참여한 활동 조회
     @GetMapping("/participate")
-    public ResponseEntity<Page<ActivityResponse>> getMyParticipateActivities(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-        Page<ActivityResponse> myParticipateActivities = myActivityService.getMyParticipateActivities(page, size);
+    public ResponseEntity<Page<ActivityResponse>> getMyParticipateActivities(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        Page<ActivityResponse> myParticipateActivities = myActivityService.getMyParticipateActivities(page, size, userDetails.getUsername());
         return ResponseEntity.ok().body(myParticipateActivities);
     }
 

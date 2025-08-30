@@ -5,8 +5,10 @@ import com.cpu.cams.activity.entity.Activity;
 import com.cpu.cams.activity.entity.ActivityParticipant;
 import com.cpu.cams.activity.repository.ActivityParticipantRepository;
 import com.cpu.cams.activity.repository.ActivityRepository;
+import com.cpu.cams.member.dto.response.CustomUserDetails;
 import com.cpu.cams.member.entity.Member;
 import com.cpu.cams.member.repository.MemberRepository;
+import com.cpu.cams.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,12 +23,11 @@ public class ParticipantService {
     private final ActivityParticipantRepository activityParticipantRepository;
     private final MemberRepository memberRepository;
     private final ActivityRepository activityRepository;
+    private final MemberService memberService;
 
     // 활동 참가 신청하기
-    public void addParticipant(Long activityId) {
-        // todo: 레포지토리로 불러오는게 맞니? MemberService에 함수 만들고 서비스로 불러오는게 맞니?
-//        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        String username = "init2";
+    public void addParticipant(Long activityId, String username) {
+
         Member member = memberRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("멤버없음"));
         Activity activity = activityRepository.findById(activityId).orElseThrow(() -> new RuntimeException("활동 없음"));
 
@@ -42,12 +43,15 @@ public class ParticipantService {
     }
 
     // 활동 참가자 목록 조회하기
-    public Page<ParticipantResponse> getActivityParticipants(Long activityId){
-        Long leaderId = 1l; // todo: 현재 사용자 즉 api 보낸 사람이 이 활동을 만든 사람이 맞는지 확인 작업 추가
+    public Page<ParticipantResponse> getActivityParticipants(Long activityId, CustomUserDetails customUserDetails, int page, int size){
+
         Activity activity = activityRepository.findById(activityId).orElseThrow(() -> new RuntimeException("활동 없음"));
 
-        PageRequest pageRequest = PageRequest.of(0, 3);
-        Page<ActivityParticipant> participants = activityParticipantRepository.findByActivity(activity, pageRequest);
+        if(!activity.getCreatedBy().getUsername().equals(customUserDetails.getUsername()) && !checkAdmin(customUserDetails)){
+            throw new RuntimeException("당신 팀장 맞아?");
+        }
+
+        Page<ActivityParticipant> participants = activityParticipantRepository.findByActivity(activity, PageRequest.of(page, size));
 
         Page<ParticipantResponse> result = participants.map(participant ->
                 ParticipantResponse.builder()
@@ -62,17 +66,30 @@ public class ParticipantService {
     }
 
     // 활동 신청자 삭제하기
-    public void deleteParticipant(Long activityId, Long participantId){
-        Long leaderId = 1l; // todo: 현재 사용자 즉 api 보낸 사람이 이 활동을 만든 사람이 맞는지 확인 작업 추가
+    public void deleteParticipant(Long activityId, CustomUserDetails customUserDetails){
 
         // 멤버가 실제 참가했었는지 확인
-        ActivityParticipant participant = activityParticipantRepository.findById(participantId).orElseThrow(() -> new RuntimeException("신청자가 아닙니다"));
-        if(participant.getActivity().getId() != activityId){
-            throw new RuntimeException("이 활동에 참가한 멤버가 아닙니다");
+        Activity activity = activityRepository.findById(activityId).orElseThrow(() -> new RuntimeException("활동 없음"));
+
+        if(!activity.getCreatedBy().getUsername().equals(customUserDetails.getUsername()) && !checkAdmin(customUserDetails)){
+            throw new RuntimeException("당신 팀장 맞아?");
         }
+
+        Member findMember = memberService.findByUsername(customUserDetails.getUsername());
+
+        ActivityParticipant participant = activityParticipantRepository.findByMemberAndActivity(findMember, activity).orElseThrow(() -> new RuntimeException("참가자 아닌거같아요"));
 
         activityParticipantRepository.delete(participant);
     }
 
+    // 활동 주인 및 관리자 확인 메서드
+    private Boolean checkAdmin(CustomUserDetails customUserDetails) {
+        // 관리자 권한 확인
+        if (customUserDetails.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+            return true;
+        }
+        return false;
+    }
 
 }
