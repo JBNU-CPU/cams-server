@@ -1,7 +1,9 @@
 package com.cpu.cams.point.entity;
 
 import com.cpu.cams.member.entity.Member;
+import com.cpu.cams.point.dto.request.PointRequest;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -25,5 +27,20 @@ public class Point {
     private Integer amount;
 
     @Column(name = "created_at")
+    @CreationTimestamp
     private LocalDateTime createdAt;
+
+    public static Point create(PointRequest pointRequest, Member member) {
+        Point point = new Point();
+        point.type = PointType.valueOf(pointRequest.getType());
+        point.description = pointRequest.getDescription();
+        point.amount = pointRequest.getAmount();
+        point.addMember(member);
+        return point;
+    }
+
+    private void addMember(Member member) {
+        member.getPointList().add(this);
+        this.member = member;
+    }
 }

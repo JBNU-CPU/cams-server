@@ -12,6 +12,10 @@ import com.cpu.cams.activity.entity.RecurringSchedule;
 import com.cpu.cams.activity.repository.ActivityRepository;
 import com.cpu.cams.member.entity.Member;
 import com.cpu.cams.member.repository.MemberRepository;
+import com.cpu.cams.point.dto.request.PointRequest;
+import com.cpu.cams.point.entity.Point;
+import com.cpu.cams.point.entity.PointType;
+import com.cpu.cams.point.repository.PointRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,13 +32,13 @@ public class ActivityService {
 
     private final ActivityRepository activityRepository;
     private final MemberRepository memberRepository;
+    private final PointRepository pointRepository;
 
     // 개설하기
     public Activity createActivity(ActivityRequest activityRequest) {
 
-        //todo: 시큐리티에서 사용자 정보 가져오기
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-
+//        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        String username = "init1";
         Member findMember = memberRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("멤버없음"));
         Activity activity = Activity.create(activityRequest, findMember);
 
@@ -55,6 +59,13 @@ public class ActivityService {
         for (CurriculumDTO curriculum : curriculums) {
             Curriculum.create(curriculum, activity);
         }
+
+        PointRequest pointRequest = new PointRequest();
+        pointRequest.setType(PointType.CREATE.toString());
+        pointRequest.setDescription(activity.getTitle() + " 개설");
+        pointRequest.setAmount(100);
+        Point point = Point.create(pointRequest, findMember);
+        pointRepository.save(point);
 
         return activityRepository.save(activity);
 
