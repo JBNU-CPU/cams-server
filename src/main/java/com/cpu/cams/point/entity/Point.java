@@ -3,11 +3,13 @@ package com.cpu.cams.point.entity;
 import com.cpu.cams.member.entity.Member;
 import com.cpu.cams.point.dto.request.PointRequest;
 import jakarta.persistence.*;
+import lombok.Getter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
 @Entity
+@Getter
 public class Point {
 
     @Id
