@@ -40,4 +40,8 @@ public class Notification {
     public void updateIsRead(boolean isRead) {
         this.isRead = isRead;
     }
+
+    public void updateIsSent(boolean isSent) {
+        this.isSent = isSent;
+    }
 }

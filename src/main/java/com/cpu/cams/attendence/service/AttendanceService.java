@@ -15,6 +15,7 @@ import com.cpu.cams.member.dto.response.CustomUserDetails;
 import com.cpu.cams.member.entity.Member;
 import com.cpu.cams.member.repository.MemberRepository;
 import com.cpu.cams.member.service.MemberService;
+import com.cpu.cams.notification.service.NotificationService;
 import com.cpu.cams.point.PointConst;
 import com.cpu.cams.point.dto.request.PointRequest;
 import com.cpu.cams.point.entity.Point;
@@ -41,6 +42,7 @@ public class AttendanceService {
     private final MemberRepository memberRepository;
     private final ActivityRepository activityRepository;
     private final MemberService memberService;
+    private final NotificationService notificationService;
 
     // 출석하기
     public Long attendance(Long sessionId, String attendancesCode, String username) {
@@ -68,7 +70,6 @@ public class AttendanceService {
 
         // 포인트 만들면서 멤버 포인트 증가까지 한번에 실행
         Point.create(pointRequest, findMember);
-
         return attendance.getId();
 
     }

@@ -45,7 +45,7 @@ public class AttendanceController {
 
         return ResponseEntity.ok().body(attendanceId);
     }
-    
+
     // 내 출결 조회하기
     @GetMapping("/me")
     public ResponseEntity<Page<ParticipantActivityAttendanceResponse>> getMyAttendances(

@@ -2,86 +2,72 @@ package com.cpu.cams.notification.controller;
 
 import com.cpu.cams.member.dto.response.CustomUserDetails;
 import com.cpu.cams.notification.entity.Notification;
+import com.cpu.cams.notification.repository.EmitterRepository;
 import com.cpu.cams.notification.service.NotificationService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/notifications")
+@Slf4j
 public class NotificationController {
 
     private final NotificationService notificationService;
+    private final EmitterRepository emitterRepository;
 
-    private final CopyOnWriteArrayList<SseEmitter> emitters = new CopyOnWriteArrayList<>();
-    @GetMapping("/stream")
+    // 사용자별 emitter 관리
+    private final ConcurrentMap<String, SseEmitter> emittersByUser = new ConcurrentHashMap<>();
+
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2);
+
+    @GetMapping(value = "/stream")
     public SseEmitter streamNotifications(@AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        SseEmitter emitter = new SseEmitter(60000L); // 60초 타임아웃 설정
-        emitters.add(emitter);
+        if (userDetails == null) {
+            return null; // 예외 처리 또는 적절한 응답
+        }
+        String username = userDetails.getUsername();
+        SseEmitter emitter = new SseEmitter(60 * 1000L); // 1분
 
-        emitter.onCompletion(() -> emitters.remove(emitter));
+        // 기존 emitter가 있다면 삭제하고 새로 생성
+        emitterRepository.deleteByUsername(username);
+        emitterRepository.save(username, emitter);
 
-        emitter.onTimeout(() -> {
-            emitters.remove(emitter);
-            emitter.complete();
-        });
-
-        emitter.onError((e) -> {
-            emitters.remove(emitter);
-            emitter.completeWithError(e);
-        });
+        // 연결 종료 시 리포지토리에서 제거
+        emitter.onCompletion(() -> emitterRepository.deleteByUsername(username));
+        emitter.onTimeout(() -> emitterRepository.deleteByUsername(username));
+        emitter.onError((e) -> emitterRepository.deleteByUsername(username));
 
         try {
-            emitter.send(SseEmitter.event().name("connect").data("SSE stream connected."));
-        } catch (Exception e) {
-            emitter.completeWithError(e);
+            // 최초 연결 시 더미 데이터 전송 (503 Service Unavailable 방지)
+            emitter.send(SseEmitter.event().name("connect").data("SSE connected for user: " + username));
+        } catch (IOException e) {
+            // 에러 발생 시 emitter 제거 및 로깅
+            emitterRepository.deleteByUsername(username);
+            log.error("SSE connection error", e);
         }
 
-        // 사용자 인증 확인
-        if (userDetails == null) {
-            emitter.complete();
-            return emitter;
-        }
 
-        String username = userDetails.getUsername();
-
-        // 새로운 쓰레드에서 알림을 전송
-        new Thread(() -> {
-            try {
-                while (true) {
-                    if (emitters.contains(emitter)) {
-                        List<Notification> notifications = notificationService.getUnreadNotificationsByUsername(username);
-
-                        if (!notifications.isEmpty()) {
-                            for (Notification notification : notifications) {
-                                if (!notification.getIsSent()) { // 알림이 전송되지 않았는지 확인
-                                    emitter.send(SseEmitter.event()
-                                            .name("notification")
-                                            .data(notification.getMessage()));
-
-                                    // 알림을 읽음 상태로 업데이트 및 전송됨 상태로 설정
-                                    notificationService.markAsRead(notification.getId());
-                                }
-                            }
-                        }
-                    } else {
-                        break; // emitter가 이미 완료된 경우 반복문 종료
-                    }
-                    Thread.sleep(10000); // 10초마다 알림을 체크
-                }
-            } catch (Exception e) {
-                System.out.println("e = " + e);
-                // emitter.completeWithError(e);
-            }
-        }).start();
         return emitter;
     }
+    
+    // 로그인한 사용자의 읽지 않은 알림 리스트
+    @GetMapping
+    public List<Notification> getNotifications(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        return notificationService.getUnreadNotificationsByUsername(userDetails.getUsername());
+    }
+
 }

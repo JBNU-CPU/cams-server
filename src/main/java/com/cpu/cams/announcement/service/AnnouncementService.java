@@ -9,12 +9,16 @@ import com.cpu.cams.member.entity.Member;
 import com.cpu.cams.member.entity.Role;
 import com.cpu.cams.member.repository.MemberRepository;
 import com.cpu.cams.member.service.MemberService;
+import com.cpu.cams.notification.service.NotificationService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -25,6 +29,8 @@ public class AnnouncementService {
     private final MemberRepository memberRepository;
     private final AnnouncementRepository announcementRepository;
     private final MemberService memberService;
+    private final NotificationService notificationService;
+    private final ApplicationEventPublisher eventPublisher;
 
     // 공지사항 등록
     public Long createAnnouncement(AnnouncementRequest announcementRequest, CustomUserDetails customUserDetails) {
@@ -35,6 +41,15 @@ public class AnnouncementService {
         Member findMember = memberService.findByUsername(customUserDetails.getUsername());
 
         Announcement announcement = Announcement.create(announcementRequest, findMember);
+
+        // 모든 사용자에게 알림을 보내기 위한 이벤트 발행
+        List<Member> allMembers = memberRepository.findAll();
+        for (Member member : allMembers) {
+            // 이벤트 객체를 만들어 발행
+            NotificationEvent event = new NotificationEvent(member.getUsername(), "새로운 공지사항: " + announcement.getTitle());
+            eventPublisher.publishEvent(event);
+        }
+
         return announcement.getId();
     }
 
@@ -89,4 +104,6 @@ public class AnnouncementService {
         return announcementRepository.findById(announcementId).orElseThrow(() -> new RuntimeException("공지 없음"));
     }
 
+    // 이벤트 객체 정의 (간단한 record 또는 class)
+    public record NotificationEvent(String username, String message) {}
 }

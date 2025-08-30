@@ -13,6 +13,7 @@ import com.cpu.cams.activity.repository.ActivityRepository;
 import com.cpu.cams.member.dto.response.CustomUserDetails;
 import com.cpu.cams.member.entity.Member;
 import com.cpu.cams.member.repository.MemberRepository;
+import com.cpu.cams.notification.service.NotificationService;
 import com.cpu.cams.point.PointConst;
 import com.cpu.cams.point.dto.request.PointRequest;
 import com.cpu.cams.point.entity.Point;
@@ -35,6 +36,7 @@ public class ActivityService {
     private final ActivityRepository activityRepository;
     private final MemberRepository memberRepository;
     private final PointRepository pointRepository;
+    private final NotificationService notificationService;
 
     // 개설하기
     public Long createActivity(ActivityRequest activityRequest, String username) {
