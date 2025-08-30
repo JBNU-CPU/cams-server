@@ -6,6 +6,8 @@ import com.cpu.cams.attendence.service.AttendanceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,15 +22,9 @@ public class AttendanceController {
 
     // 출석하기 (출석 코드 인증)
     @PostMapping("/{sessionId}")
-    public ResponseEntity<Long> attendance(@PathVariable Long sessionId, @RequestParam String attendancesCode) {
+    public ResponseEntity<Long> attendance(@PathVariable Long sessionId, @RequestParam String attendancesCode, @AuthenticationPrincipal UserDetails userDetails) {
 
-//        // todo: 지우기
-//        String username = userDetails != null
-//                ? userDetails.getUsername()
-//                : "init1";
-//        log.info("username = {}", username);
-
-        Long attendanceId = attendanceService.attendance(sessionId, attendancesCode);
+        Long attendanceId = attendanceService.attendance(sessionId, attendancesCode, userDetails.getUsername());
 
         return ResponseEntity.ok().body(attendanceId);
     }
@@ -44,8 +40,13 @@ public class AttendanceController {
     
     // 내 출결 조회하기
     @GetMapping("/me")
-    public ResponseEntity<Page<ParticipantActivityAttendanceResponse>> getMyAttendances() {
-        Page<ParticipantActivityAttendanceResponse> result = attendanceService.getMyAttendances();
+    public ResponseEntity<Page<ParticipantActivityAttendanceResponse>> getMyAttendances(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+
+        Page<ParticipantActivityAttendanceResponse> result = attendanceService.getMyAttendances(userDetails.getUsername(),page, size);
 
         return ResponseEntity.ok().body(result);
     }

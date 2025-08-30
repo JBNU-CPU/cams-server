@@ -37,12 +37,13 @@ public class Point {
         point.type = PointType.valueOf(pointRequest.getType());
         point.description = pointRequest.getDescription();
         point.amount = pointRequest.getAmount();
-        point.addMember(member);
+        point.addMember(member, pointRequest.getAmount());
         return point;
     }
 
-    private void addMember(Member member) {
+    private void addMember(Member member, Integer amount) {
         member.getPointList().add(this);
+        member.updateTotalPoints(amount);
         this.member = member;
     }
 }

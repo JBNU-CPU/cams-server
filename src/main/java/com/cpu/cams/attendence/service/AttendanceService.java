@@ -13,6 +13,8 @@ import com.cpu.cams.attendence.entity.Session;
 import com.cpu.cams.attendence.repository.AttendanceRepository;
 import com.cpu.cams.member.entity.Member;
 import com.cpu.cams.member.repository.MemberRepository;
+import com.cpu.cams.member.service.MemberService;
+import com.cpu.cams.point.PointConst;
 import com.cpu.cams.point.dto.request.PointRequest;
 import com.cpu.cams.point.entity.Point;
 import com.cpu.cams.point.entity.PointType;
@@ -37,19 +39,19 @@ public class AttendanceService {
     private final AttendanceRepository attendanceRepository;
     private final MemberRepository memberRepository;
     private final ActivityRepository activityRepository;
+    private final MemberService memberService;
 
     // 출석하기
-    public Long attendance(Long sessionId, String attendancesCode) {
-        // String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        String username = "init2";
+    public Long attendance(Long sessionId, String attendancesCode, String username) {
+
         Member findMember = memberRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("멤버없음"));
         Session session = sessionRepository.findById(sessionId).orElseThrow(() -> new RuntimeException("없는 세션입니다."));
-        ActivityParticipant activityParticipant = activityParticipantRepository.findByMemberAndActivity(findMember, session.getActivity()).orElseThrow(() -> new RuntimeException("참여자 없음"));
-        Attendance attendance = attendanceRepository.findBySessionAndParticipant(session, activityParticipant).orElseThrow(() -> new RuntimeException("없는 출석"));
-
         if(!session.getOpenAttendance()){
             throw new RuntimeException("출석이 열리지 않았습니다.");
         }
+
+        ActivityParticipant activityParticipant = activityParticipantRepository.findByMemberAndActivity(findMember, session.getActivity()).orElseThrow(() -> new RuntimeException("참여자 없음"));
+        Attendance attendance = attendanceRepository.findBySessionAndParticipant(session, activityParticipant).orElseThrow(() -> new RuntimeException("없는 출석"));
 
         if(attendancesCode.equals(session.getAttendancesCode())){
             attendance.changeStatus(AttendanceStatus.PRESENT);
@@ -57,14 +59,14 @@ public class AttendanceService {
             throw new RuntimeException("출석코드 틀림");
         }
 
-        PointRequest pointRequest = new PointRequest();
-        pointRequest.setAmount(10);
-        pointRequest.setType(PointType.ATTENDANCE.toString());
-        pointRequest.setDescription(session.getActivity().getTitle() + " 활동" + session.getSessionNumber() + " 회차 출석 완료");
+        PointRequest pointRequest = PointRequest.builder()
+                .amount(PointConst.ATTENDANCE_POINT)
+                .type(PointType.ATTENDANCE.toString())
+                .description(session.getActivity().getTitle() + " 활동" + session.getSessionNumber() + " 회차 출석 완료")
+                .build();
+
+        // 포인트 만들면서 멤버 포인트 증가까지 한번에 실행
         Point.create(pointRequest, findMember);
-        findMember.updateTotalPoints(10);
-
-
 
         return attendance.getId();
 
@@ -78,11 +80,10 @@ public class AttendanceService {
         return attendance.getId();
     }
 
-    public Page<ParticipantActivityAttendanceResponse> getMyAttendances() {
+    public Page<ParticipantActivityAttendanceResponse> getMyAttendances(String username, int page, int size) {
 
-        Long memberId = 2L;
-        Page<ParticipantActivityAttendanceResponse> myAttendances = attendanceRepository.findMyAttendances(memberId, PageRequest.of(0, 10));
-        return myAttendances;
+        Member findMember = memberService.findByUsername(username);
+        return attendanceRepository.findMyAttendances(findMember.getId(), PageRequest.of(page, size));
     }
 
     //todo:
@@ -99,7 +100,9 @@ public class AttendanceService {
         Integer totalSession = 0;
 
         for (Activity activity : activities) {
+
             List<Session> sessions = activity.getSessions();
+
             for (Session session : sessions) {
                 totalSession++;
 

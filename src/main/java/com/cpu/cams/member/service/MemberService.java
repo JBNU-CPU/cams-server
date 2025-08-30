@@ -44,4 +44,8 @@ public class MemberService {
         Member update = findMember.update(profileRequest);
         return update.getId();
     }
+
+    public Member findByUsername(String username) {
+        return memberRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("멤버가 없습니다"));
+    }
 }

@@ -12,6 +12,7 @@ import com.cpu.cams.activity.entity.RecurringSchedule;
 import com.cpu.cams.activity.repository.ActivityRepository;
 import com.cpu.cams.member.entity.Member;
 import com.cpu.cams.member.repository.MemberRepository;
+import com.cpu.cams.point.PointConst;
 import com.cpu.cams.point.dto.request.PointRequest;
 import com.cpu.cams.point.entity.Point;
 import com.cpu.cams.point.entity.PointType;
@@ -61,12 +62,13 @@ public class ActivityService {
             Curriculum.create(curriculum, activity);
         }
 
-        PointRequest pointRequest = new PointRequest();
-        pointRequest.setType(PointType.CREATE.toString());
-        pointRequest.setDescription(activity.getTitle() + " 개설");
-        pointRequest.setAmount(100);
+        PointRequest pointRequest = PointRequest.builder()
+                .type(PointType.CREATE.toString())
+                .description(activity.getTitle() + " 개설")
+                .amount(PointConst.CREATE_POINT)
+                .build();
+
         Point point = Point.create(pointRequest, findMember);
-        findMember.updateTotalPoints(100);
         pointRepository.save(point);
 
         return activityRepository.save(activity);
