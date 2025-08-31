@@ -86,6 +86,7 @@ public class SessionService {
                         .activityTitle(session.getActivity().getTitle())
                         .sessionNumber(session.getSessionNumber())
                         .closedAt(session.getClosedAt())
+                        .createdBy(session.getActivity().getCreatedBy().getName())
                         .build());
     }
 

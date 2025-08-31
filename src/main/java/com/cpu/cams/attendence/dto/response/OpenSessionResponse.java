@@ -12,4 +12,5 @@ public class OpenSessionResponse {
     private String activityTitle;
     private Integer sessionNumber; // 회차
     private LocalDateTime closedAt; // 마감 시간
+    private String createdBy;
 }

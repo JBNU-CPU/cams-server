@@ -4,6 +4,8 @@ import com.cpu.cams.activity.dto.request.ActivityRequest;
 import com.cpu.cams.activity.entity.ActivityType;
 import com.cpu.cams.activity.service.ActivityService;
 import com.cpu.cams.activity.service.ParticipantService;
+import com.cpu.cams.attendence.dto.request.SessionRequest;
+import com.cpu.cams.attendence.service.SessionService;
 import com.cpu.cams.member.dto.request.SignupRequest;
 import com.cpu.cams.member.service.MemberService;
 import jakarta.annotation.PostConstruct;
@@ -17,11 +19,13 @@ public class InitData {
     private final MemberService memberService;
     private final ActivityService activityService;
     private final ParticipantService participantService;
+    private final SessionService sessionService;
 
-    public InitData(MemberService memberService, ActivityService activityService, ParticipantService participantService) {
+    public InitData(MemberService memberService, ActivityService activityService, ParticipantService participantService, SessionService sessionService) {
         this.memberService = memberService;
         this.activityService = activityService;
         this.participantService = participantService;
+        this.sessionService = sessionService;
     }
 
     @PostConstruct
@@ -55,5 +59,14 @@ public class InitData {
         // Add Participants
         participantService.addParticipant(newActivityId, "test1");
         participantService.addParticipant(newActivityId, "test2");
+
+        // 세션 생성 요청 DTO
+        SessionRequest sessionRequest = new SessionRequest(
+            "ABC123",
+                3
+        );
+
+        // 세션 생성
+        sessionService.createSession(newActivityId, sessionRequest, "owner1");
     }
 }
