@@ -1,6 +1,9 @@
 package com.cpu.cams;
 
 import com.cpu.cams.activity.dto.request.ActivityRequest;
+import com.cpu.cams.activity.dto.response.CurriculumDTO;
+import com.cpu.cams.activity.dto.response.EventScheduleDTO;
+import com.cpu.cams.activity.dto.response.RecurringScheduleDTO;
 import com.cpu.cams.activity.entity.ActivityType;
 import com.cpu.cams.activity.service.ActivityService;
 import com.cpu.cams.activity.service.ParticipantService;
@@ -8,12 +11,6 @@ import com.cpu.cams.attendence.dto.request.SessionRequest;
 import com.cpu.cams.attendence.service.SessionService;
 import com.cpu.cams.member.dto.request.SignupRequest;
 import com.cpu.cams.member.service.MemberService;
-import jakarta.annotation.PostConstruct;
-import org.springframework.stereotype.Component;
-
-import com.cpu.cams.activity.dto.response.CurriculumDTO;
-import com.cpu.cams.activity.dto.response.EventScheduleDTO;
-import com.cpu.cams.activity.dto.response.RecurringScheduleDTO;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 
@@ -51,7 +48,10 @@ public class InitData {
         memberService.signup(new SignupRequest("owner2", "1234", "owner2", "owner2@gmail.com", "010-6666-6666", "컴공", 2));
         memberService.signup(new SignupRequest("owner3", "1234", "owner3", "owner3@gmail.com", "010-7777-7777", "컴공", 3));
 
-        // Create Activity
+        /***
+         *
+         * 첫 번째 활동 개설 - owner1
+         */
         List<RecurringScheduleDTO> recurringSchedules1 = Arrays.asList(
                 new RecurringScheduleDTO(DayOfWeek.MONDAY, LocalTime.of(10, 0), LocalTime.of(12, 0)),
                 new RecurringScheduleDTO(DayOfWeek.WEDNESDAY, LocalTime.of(14, 0), LocalTime.of(16, 0))
@@ -88,7 +88,10 @@ public class InitData {
         // 세션 생성
         sessionService.createSession(newActivityId, sessionRequest, "owner1");
 
-        // Create Activity
+        /***
+         *
+         * 두 번째 활동 개설 - owner1
+         */
         List<EventScheduleDTO> eventSchedules2 = Arrays.asList(
                 new EventScheduleDTO(LocalDateTime.of(2025, 9, 1, 10, 0), LocalDateTime.of(2025, 9, 1, 12, 0)),
                 new EventScheduleDTO(LocalDateTime.of(2025, 9, 5, 14, 0), LocalDateTime.of(2025, 9, 5, 16, 0))
@@ -99,7 +102,7 @@ public class InitData {
         );
         ActivityRequest activityRequest2 = new ActivityRequest(
                 "임시 활동2", // title
-                "owner2이 개설한 임시 활동입니다.", // description
+                "owner1이 개설한 임시 활동입니다.", // description
                 "테스트 목표", // goal
                 ActivityType.MEETING, // activityType
                 10, // maxParticipants
@@ -110,7 +113,7 @@ public class InitData {
                 curriculums2  // curriculums
         );
 
-        Long newActivityId2 = activityService.createActivity(activityRequest2, "owner2");
+        Long newActivityId2 = activityService.createActivity(activityRequest2, "owner1");
 
         // Add Participants
         participantService.addParticipant(newActivityId2, "test1");
@@ -123,9 +126,12 @@ public class InitData {
         );
 
         // 세션 생성
-        sessionService.createSession(newActivityId2, sessionRequest2, "owner2");
+        sessionService.createSession(newActivityId2, sessionRequest2, "owner1");
 
-        // Create Activity
+        /***
+         *
+         * 세 번째 활동 개설 - owner2
+         */
         List<RecurringScheduleDTO> recurringSchedules3 = Arrays.asList(
                 new RecurringScheduleDTO(DayOfWeek.TUESDAY, LocalTime.of(9, 0), LocalTime.of(11, 0)),
                 new RecurringScheduleDTO(DayOfWeek.THURSDAY, LocalTime.of(13, 0), LocalTime.of(15, 0))
@@ -136,7 +142,7 @@ public class InitData {
         );
         ActivityRequest activityRequest3 = new ActivityRequest(
                 "임시 활동3", // title
-                "owner1이 개설한 임시 활동입니다.", // description
+                "owner2이 개설한 임시 활동입니다.", // description
                 "테스트 목표", // goal
                 ActivityType.STUDY, // activityType
                 10, // maxParticipants
@@ -147,7 +153,7 @@ public class InitData {
                 curriculums3  // curriculums
         );
 
-        Long newActivityId3 = activityService.createActivity(activityRequest3, "owner1");
+        Long newActivityId3 = activityService.createActivity(activityRequest3, "owner2");
 
         // Add Participants
         participantService.addParticipant(newActivityId3, "test1");
@@ -160,6 +166,6 @@ public class InitData {
         );
 
         // 세션 생성
-        sessionService.createSession(newActivityId3, sessionRequest3, "owner1");
+        sessionService.createSession(newActivityId3, sessionRequest3, "owner2");
     }
 }

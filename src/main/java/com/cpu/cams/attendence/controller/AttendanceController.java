@@ -66,4 +66,13 @@ public class AttendanceController {
 
         return ResponseEntity.ok(myCreateActivityAttendances);
     }
+
+    // 내가 개설한 특정 활동 전체 출결 데이터 조회하기
+    @GetMapping("/me/create/{activityId}")
+    public ResponseEntity<CreateActivityAttendanceResponse> getAttendance(@PathVariable Long activityId, @AuthenticationPrincipal UserDetails userDetails) {
+
+        CreateActivityAttendanceResponse myCreateActivityAttendances = attendanceService.getAttendance(activityId, userDetails.getUsername());
+
+        return ResponseEntity.ok(myCreateActivityAttendances);
+    }
 }

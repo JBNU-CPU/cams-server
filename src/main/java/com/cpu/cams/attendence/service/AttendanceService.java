@@ -199,4 +199,89 @@ public class AttendanceService {
         }
         return true;
     }
+
+    // 내가 개설한 특정 활동 출석 현황 조회
+    public CreateActivityAttendanceResponse getAttendance(Long activityId, String username) {
+        Member findMember = memberRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("멤버없음"));
+        Activity activity = activityRepository.findById(activityId).orElseThrow(() -> new RuntimeException("활동 없음"));
+
+        if (!activity.getCreatedBy().equals(findMember)) {
+            throw new RuntimeException("해당 활동을 개설한 멤버가 아닙니다.");
+        }
+
+        List<CreateActivityAttendanceResponse.WeeklySummary> weeklySummaries = new ArrayList<>();
+        List<CreateActivityAttendanceResponse.ParticipantSummary> participantSummaries = new ArrayList<>();
+        Integer totalSession = 0;
+
+        // 주차별 출석 현황
+        List<Session> sessions = activity.getSessions();
+
+        for (Session session : sessions) {
+            totalSession++;
+
+            List<Attendance> attendances = session.getAttendances();
+            int PRESENT = 0;
+            int LATE = 0;
+            int ABSENT = 0;
+            int sessionNum = session.getSessionNumber();
+
+            for (Attendance attendance : attendances) {
+
+                if (attendance.getStatus() == AttendanceStatus.PRESENT){
+                    PRESENT++;
+                }else if (attendance.getStatus() == AttendanceStatus.ABSENT){
+                    ABSENT++;
+                }else if (attendance.getStatus().equals(AttendanceStatus.LATE)) {
+                    LATE++;
+                }
+            }
+            CreateActivityAttendanceResponse.WeeklySummary summary = CreateActivityAttendanceResponse.WeeklySummary.builder()
+                    .sessionNumber(sessionNum)
+                    .attendanceCount(PRESENT)
+                    .absentCount(ABSENT)
+                    .lateCount(LATE)
+                    .build();
+
+            weeklySummaries.add(summary);
+        }
+
+        // 참여자 출석 현황
+        List<ActivityParticipant> participants = activity.getParticipants();
+        for (ActivityParticipant participant : participants) {
+            List<Attendance> attendances = participant.getAttendances();
+            int present = 0;
+            int LATE = 0;
+            int ABSENT = 0;
+            String name = participant.getMember().getName();
+            for (Attendance attendance : attendances) {
+
+                if (attendance.getStatus() == AttendanceStatus.PRESENT){
+                    present++;
+                }else if (attendance.getStatus() == AttendanceStatus.ABSENT){
+                    ABSENT++;
+                }else if (attendance.getStatus().equals(AttendanceStatus.LATE)) {
+                    LATE++;
+                }
+
+            }
+            CreateActivityAttendanceResponse.ParticipantSummary summary = CreateActivityAttendanceResponse.ParticipantSummary.builder()
+                    .memberId(participant.getMember().getId())
+                    .name(name)
+                    .attendanceCount(present)
+                    .absentCount(ABSENT)
+                    .lateCount(LATE)
+                    .totalSessions(totalSession) // 전체 세션 수를 사용
+                    .build();
+            participantSummaries.add(summary);
+        }
+
+        return CreateActivityAttendanceResponse.builder()
+                .activityId(activity.getId())
+                .activityTitle(activity.getTitle())
+                .totalSessions(totalSession)
+                .activityType(activity.getActivityType())
+                .participantSummaries(participantSummaries)
+                .weeklySummaries(weeklySummaries)
+                .build();
+    }
 }
