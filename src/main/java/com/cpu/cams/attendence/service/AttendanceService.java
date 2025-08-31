@@ -97,6 +97,7 @@ public class AttendanceService {
         return attendanceRepository.findMyAttendances(findMember.getId(), PageRequest.of(page, size));
     }
 
+    // 내가 개설한 활동의 출결 현황 조회
     //todo: 코드 고쳐야함
     public List<CreateActivityAttendanceResponse> getMyCreateActivityAttendances(String username) {
 

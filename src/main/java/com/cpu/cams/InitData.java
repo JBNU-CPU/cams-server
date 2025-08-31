@@ -62,7 +62,7 @@ public class InitData {
 
         // 세션 생성 요청 DTO
         SessionRequest sessionRequest = new SessionRequest(
-                "ABC123",
+                "0000",
                 3
         );
 
@@ -91,7 +91,7 @@ public class InitData {
 
         // 세션 생성 요청 DTO
         SessionRequest sessionRequest2 = new SessionRequest(
-                "ABC123",
+                "0000",
                 3
         );
 
