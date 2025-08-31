@@ -120,6 +120,10 @@ public class Activity {
         this.isApproved = !this.isApproved;
         return this.isApproved;
     }
+
+    public void addParticipant(){
+        this.participantCount++;
+    }
 }
 
 

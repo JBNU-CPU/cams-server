@@ -25,6 +25,8 @@ public class ActivityResponse {
     private Integer maxParticipants;
     private String activityType;
     private String activityStatus;
+    private String notes;
+    private String goal;
 
     public static List<RecurringScheduleDTO> convertRecurringSchedules(List<RecurringSchedule> recurringSchedules) {
 

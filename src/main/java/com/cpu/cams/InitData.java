@@ -33,10 +33,10 @@ public class InitData {
     @PostConstruct
     public void init(){
 
-        Long member1Id = memberService.signup(new SignupRequest("init1", "1234", "test1", "test1@gmail.com", "010-1111-1111", "소공", 1));
-        Long member2Id = memberService.signup(new SignupRequest("init2", "1234", "test2", "test2@gmail.com", "010-2222-2222", "소공", 2));
-        Long member3Id = memberService.signup(new SignupRequest("init3", "1234", "test3", "test3@gmail.com", "010-3333-3333", "소공", 3));
-        Long member4Id = memberService.signup(new SignupRequest("init4", "1234", "test4", "test4@gmail.com", "010-4444-4444", "소공", 4));
+//        Long member1Id = memberService.signup(new SignupRequest("init1", "1234", "test1", "test1@gmail.com", "010-1111-1111", "소공", 1));
+//        Long member2Id = memberService.signup(new SignupRequest("init2", "1234", "test2", "test2@gmail.com", "010-2222-2222", "소공", 2));
+//        Long member3Id = memberService.signup(new SignupRequest("init3", "1234", "test3", "test3@gmail.com", "010-3333-3333", "소공", 3));
+//        Long member4Id = memberService.signup(new SignupRequest("init4", "1234", "test4", "test4@gmail.com", "010-4444-4444", "소공", 4));
 
 //        Activity activity1 = activityService.createActivity(new ActivityRequest("테스트활동1", "테스트활동내용1", "화이팅1", ActivityType.SESSION, 10, "도서관1", "주의하시오1", List.of( // recurringSchedules
 //                new RecurringScheduleDTO(DayOfWeek.MONDAY, LocalTime.of(10, 0), LocalTime.of(12, 0)),
