@@ -1,12 +1,12 @@
 package com.cpu.cams.attendence.entity;
 
 import com.cpu.cams.activity.entity.Activity;
-import com.cpu.cams.activity.entity.ActivityStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,13 +23,17 @@ public class Session {
     private Integer sessionNumber; // 회차
 
     @Column(nullable = false)
-    private String description;
+    private String title;
 
     @Column(nullable = false)
     private String attendancesCode; // 출석 코드
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Boolean openAttendance; // 출석 열렸는지 확인
+    private SessionStatus status; // 출석 열렸는지 확인
+
+    @Column
+    private LocalDateTime closedAt; // 마감 시간
 
     // == 연관관계 == //
     @ManyToOne(fetch = FetchType.LAZY)
@@ -46,27 +50,29 @@ public class Session {
     }
 
     // == 생성자 메서드 == //
-    public static Session create(Activity activity, int sessionNumber, String description, String attendancesCode){
+    public static Session create(Activity activity, int sessionNumber, String title, String attendancesCode, Integer closableAfterMinutes){
         Session session = new Session();
         session.addActivity(activity);
         session.sessionNumber = sessionNumber;
-        session.description = description;
+        session.title = title;
         session.attendancesCode = attendancesCode; // 클라이언트에서 생성되고 보내진 출석 코드
-        session.openAttendance = true; // 세션 생성 시 바로 출석 오픈
+        session.status = SessionStatus.OPEN; // 세션 생성 시 바로 출석 오픈
+
+        if (closableAfterMinutes != null) {
+            session.closedAt = LocalDateTime.now().plusMinutes(closableAfterMinutes); //마감 시간 현재 시간 + 세션 만료 시간으로 설정
+        }
+
         return session;
     }
 
     // == 비즈니스 로직 == //
     // 출석 마감 여부 변경
-    public void toggleDoneStatus(){
-        this.openAttendance = !this.openAttendance;
+    public void setStatus(SessionStatus status){
+        this.status = status;
     }
 
     // 출석 코드 변경
     public void changeCode(String attendancesCode){
         this.attendancesCode = attendancesCode;
     }
-    
-
-
 }

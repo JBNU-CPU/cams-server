@@ -43,7 +43,7 @@ public class SessionController {
     @PutMapping("/{sessionId}")
     public ResponseEntity<Long> toggleOpenAttendance(@PathVariable Long sessionId, @AuthenticationPrincipal UserDetails userDetails) {
 
-        Long id = sessionService.toggleOpenAttendance(sessionId, userDetails.getUsername());
+        Long id = sessionService.closeSession(sessionId, userDetails.getUsername());
         return ResponseEntity.ok(id);
     }
 
