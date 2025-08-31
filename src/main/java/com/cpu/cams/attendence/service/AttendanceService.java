@@ -5,6 +5,7 @@ import com.cpu.cams.activity.entity.ActivityParticipant;
 import com.cpu.cams.activity.repository.ActivityParticipantRepository;
 import com.cpu.cams.activity.repository.ActivityRepository;
 import com.cpu.cams.attendence.dto.response.CreateActivityAttendanceResponse;
+import com.cpu.cams.attendence.entity.SessionStatus;
 import com.cpu.cams.attendence.repository.SessionRepository;
 import com.cpu.cams.attendence.dto.response.ParticipantActivityAttendanceResponse;
 import com.cpu.cams.attendence.entity.Attendance;
@@ -47,7 +48,8 @@ public class AttendanceService {
 
         Member findMember = memberRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("멤버없음"));
         Session session = sessionRepository.findById(sessionId).orElseThrow(() -> new RuntimeException("없는 세션입니다."));
-        if(!session.getOpenAttendance()){
+
+        if(session.getStatus().equals(SessionStatus.CLOSED)) {
             throw new RuntimeException("출석이 열리지 않았습니다.");
         }
 

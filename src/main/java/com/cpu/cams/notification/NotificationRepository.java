@@ -1,4 +1,4 @@
-package com.cpu.cams.test;
+package com.cpu.cams.notification;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

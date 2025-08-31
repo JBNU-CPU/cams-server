@@ -1,4 +1,4 @@
-package com.cpu.cams.test;
+package com.cpu.cams.notification;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;

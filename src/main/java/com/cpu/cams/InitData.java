@@ -1,66 +1,72 @@
 package com.cpu.cams;
 
 import com.cpu.cams.activity.dto.request.ActivityRequest;
-import com.cpu.cams.activity.dto.response.RecurringScheduleDTO;
-import com.cpu.cams.activity.entity.Activity;
 import com.cpu.cams.activity.entity.ActivityType;
 import com.cpu.cams.activity.service.ActivityService;
 import com.cpu.cams.activity.service.ParticipantService;
+import com.cpu.cams.attendence.dto.request.SessionRequest;
+import com.cpu.cams.attendence.service.SessionService;
 import com.cpu.cams.member.dto.request.SignupRequest;
 import com.cpu.cams.member.service.MemberService;
 import jakarta.annotation.PostConstruct;
-import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Component;
 
-import java.time.DayOfWeek;
-import java.time.LocalTime;
 import java.util.Collections;
-import java.util.List;
 
-//@Component
-@Controller
+@Component
 public class InitData {
 
     private final MemberService memberService;
     private final ActivityService activityService;
     private final ParticipantService participantService;
+    private final SessionService sessionService;
 
-    public InitData(MemberService memberService, ActivityService activityService, ParticipantService participantService) {
+    public InitData(MemberService memberService, ActivityService activityService, ParticipantService participantService, SessionService sessionService) {
         this.memberService = memberService;
         this.activityService = activityService;
         this.participantService = participantService;
+        this.sessionService = sessionService;
     }
 
     @PostConstruct
     public void init(){
+        memberService.signup(new SignupRequest("admin", "1234", "admin", "admin@gmail.com", "010-4444-4444", "컴공", 4));
 
-//        Long member1Id = memberService.signup(new SignupRequest("init1", "1234", "test1", "test1@gmail.com", "010-1111-1111", "소공", 1));
-//        Long member2Id = memberService.signup(new SignupRequest("init2", "1234", "test2", "test2@gmail.com", "010-2222-2222", "소공", 2));
-//        Long member3Id = memberService.signup(new SignupRequest("init3", "1234", "test3", "test3@gmail.com", "010-3333-3333", "소공", 3));
-//        Long member4Id = memberService.signup(new SignupRequest("init4", "1234", "test4", "test4@gmail.com", "010-4444-4444", "소공", 4));
+        memberService.signup(new SignupRequest("test1", "1234", "test1", "test1@gmail.com", "010-1111-1111", "컴공", 1));
+        memberService.signup(new SignupRequest("test2", "1234", "test2", "test2@gmail.com", "010-2222-2222", "컴공", 2));
+        memberService.signup(new SignupRequest("test3", "1234", "test3", "test3@gmail.com", "010-3333-3333", "컴공", 3));
 
-//        Activity activity1 = activityService.createActivity(new ActivityRequest("테스트활동1", "테스트활동내용1", "화이팅1", ActivityType.SESSION, 10, "도서관1", "주의하시오1", List.of( // recurringSchedules
-//                new RecurringScheduleDTO(DayOfWeek.MONDAY, LocalTime.of(10, 0), LocalTime.of(12, 0)),
-//                new RecurringScheduleDTO(DayOfWeek.WEDNESDAY, LocalTime.of(14, 0), LocalTime.of(16, 0)))
-//                , Collections.emptyList(), Collections.emptyList()));
-//
-//        Activity activity2 = activityService.createActivity(new ActivityRequest("테스트활동2", "테스트활동내용2", "화이팅2", ActivityType.GENERAL, 11, "도서관2", "주의하시오2", List.of( // recurringSchedules
-//                new RecurringScheduleDTO(DayOfWeek.MONDAY, LocalTime.of(11, 30), LocalTime.of(13, 30)),
-//                new RecurringScheduleDTO(DayOfWeek.WEDNESDAY, LocalTime.of(15, 30), LocalTime.of(17, 30)))
-//                , Collections.emptyList(), Collections.emptyList()));
-//
-//        Activity activity3 = activityService.createActivity(new ActivityRequest("테스트활동1", "테스트활동내용1", "화이팅1", ActivityType.PROJECT, 12, "도서관3", "주의하시오3", List.of( // recurringSchedules
-//                new RecurringScheduleDTO(DayOfWeek.MONDAY, LocalTime.of(12, 40), LocalTime.of(14, 40)),
-//                new RecurringScheduleDTO(DayOfWeek.WEDNESDAY, LocalTime.of(16, 40), LocalTime.of(18, 40)))
-//                , Collections.emptyList(), Collections.emptyList()));
+        memberService.signup(new SignupRequest("owner1", "1234", "owner1", "owner1@gmail.com", "010-5555-5555", "컴공", 1));
+        memberService.signup(new SignupRequest("owner2", "1234", "owner2", "owner2@gmail.com", "010-6666-6666", "컴공", 2));
+        memberService.signup(new SignupRequest("owner3", "1234", "owner3", "owner3@gmail.com", "010-7777-7777", "컴공", 3));
 
-//        activityService.updateStatus(1L, "STARTED");
+        // Create Activity
+        ActivityRequest activityRequest = new ActivityRequest(
+            "임시 활동", // title
+            "owner1이 개설한 임시 활동입니다.", // description
+            "테스트 목표", // goal
+            ActivityType.GENERAL, // activityType
+            10, // maxParticipants
+            "온라인", // location
+            "참고 사항 없음", // notes
+            Collections.emptyList(), // recurringSchedules
+            Collections.emptyList(), // eventSchedule
+            Collections.emptyList()  // curriculums
+        );
 
-//        // test1 테스트활동1, 테스트활동2 참가
-//        participantService.addParticipant(activity1.getId(), member2Id);
-//        participantService.addParticipant(activity2.getId(), member2Id);
-//
-//        // test2 테스트활동1 참가
-//        participantService.addParticipant(activity1.getId(), member3Id);
+        Long newActivityId = activityService.createActivity(activityRequest, "owner1");
 
+        // Add Participants
+        participantService.addParticipant(newActivityId, "test1");
+        participantService.addParticipant(newActivityId, "test2");
+
+        // 세션 생성 요청 DTO
+        SessionRequest sessionRequest = new SessionRequest(
+            "ABC123",
+                3
+        );
+
+        // 세션 생성
+        sessionService.createSession(newActivityId, sessionRequest, "owner1");
     }
 }

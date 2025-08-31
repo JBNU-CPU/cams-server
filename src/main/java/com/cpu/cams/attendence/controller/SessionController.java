@@ -38,11 +38,11 @@ public class SessionController {
         return ResponseEntity.ok(result);
     }
 
-    // 출석 마감 여부 수정 -> 세션 상태 변경
+    // 출석 수동 마감
     @PutMapping("/{sessionId}")
-    public ResponseEntity<Long> toggleOpenAttendance(@PathVariable Long sessionId, @AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<Long> closeSession (@PathVariable Long sessionId, @AuthenticationPrincipal UserDetails userDetails) {
 
-        Long id = sessionService.toggleOpenAttendance(sessionId, userDetails.getUsername());
+        Long id = sessionService.closeSession(sessionId, userDetails.getUsername());
         return ResponseEntity.ok(id);
     }
 

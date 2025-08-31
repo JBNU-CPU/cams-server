@@ -1,11 +1,15 @@
 package com.cpu.cams.attendence.repository;
 
 import com.cpu.cams.attendence.entity.Session;
+import com.cpu.cams.attendence.entity.SessionStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 public interface SessionRepository extends JpaRepository<Session, Long> {
 
@@ -15,6 +19,8 @@ public interface SessionRepository extends JpaRepository<Session, Long> {
             "join pa.activity ac " +
             "join ac.sessions s " +
             "where m.id = :memberId and " +
-            "s.openAttendance = true")
+            "s.status = 'OPEN'")
     Page<Session> findOpenSessionList(@Param("memberId") Long memberId, PageRequest pageRequest);
+
+    List<Session> findByStatusAndClosedAtBefore(SessionStatus status, LocalDateTime time);
 }
