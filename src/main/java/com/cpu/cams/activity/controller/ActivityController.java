@@ -1,22 +1,14 @@
 package com.cpu.cams.activity.controller;
 
-import com.cpu.cams.ResponseDto;
 import com.cpu.cams.activity.dto.request.ActivityRequest;
 import com.cpu.cams.activity.dto.response.ActivityResponse;
-import com.cpu.cams.activity.entity.Activity;
 import com.cpu.cams.activity.service.ActivityService;
 import com.cpu.cams.member.dto.response.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/activities")

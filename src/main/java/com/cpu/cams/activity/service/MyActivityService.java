@@ -3,7 +3,6 @@ package com.cpu.cams.activity.service;
 import com.cpu.cams.activity.dto.response.ActivityResponse;
 import com.cpu.cams.activity.repository.ActivityRepository;
 import com.cpu.cams.member.entity.Member;
-import com.cpu.cams.member.repository.MemberRepository;
 import com.cpu.cams.member.service.MemberService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +38,8 @@ public class MyActivityService {
                             .participantCount(activity.getParticipantCount())
                             .activityType(activity.getActivityType().name())
                             .activityStatus(activity.getActivityStatus().name())
+                            .sessionCount(activity.getSessionCount())
+                            .isApproved(activity.getIsApproved())
                             .build();
                 }
         );
@@ -67,6 +68,8 @@ public class MyActivityService {
                             .participantCount(activity.getParticipantCount())
                             .activityType(activity.getActivityType().name())
                             .activityStatus(activity.getActivityStatus().name())
+                            .sessionCount(activity.getSessionCount())
+                            .isApproved(activity.getIsApproved())
                             .build();
                 }
         );

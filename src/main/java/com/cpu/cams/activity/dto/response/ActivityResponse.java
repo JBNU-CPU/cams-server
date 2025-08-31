@@ -18,15 +18,18 @@ public class ActivityResponse {
     private String title;
     private String description;
     private String createdBy;
-    private List<RecurringScheduleDTO> recurringSchedules;
-    private List<EventScheduleDTO> eventSchedules;
-    private List<CurriculumDTO> curriculums;
     private Integer participantCount;
     private Integer maxParticipants;
     private String activityType;
     private String activityStatus;
     private String notes;
     private String goal;
+    private Boolean isApproved;
+    private Integer sessionCount;
+    private List<RecurringScheduleDTO> recurringSchedules;
+    private List<EventScheduleDTO> eventSchedules;
+    private List<CurriculumDTO> curriculums;
+
 
     public static List<RecurringScheduleDTO> convertRecurringSchedules(List<RecurringSchedule> recurringSchedules) {
 

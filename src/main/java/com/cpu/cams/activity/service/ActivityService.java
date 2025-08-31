@@ -100,6 +100,8 @@ public class ActivityService {
                     .participantCount(activity.getParticipantCount())
                     .activityType(activity.getActivityType().name())
                     .activityStatus(activity.getActivityStatus().name())
+                    .sessionCount(activity.getSessionCount())
+                    .isApproved(activity.getIsApproved())
                     .build();
             }
         );
@@ -124,6 +126,8 @@ public class ActivityService {
                 .participantCount(activity.getParticipantCount())
                 .activityType(activity.getActivityType().name())
                 .activityStatus(activity.getActivityStatus().name())
+                .sessionCount(activity.getSessionCount())
+                .isApproved(activity.getIsApproved())
                 .build();
     }
 
@@ -212,6 +216,8 @@ public class ActivityService {
                 .participantCount(activity.getParticipantCount())
                 .activityType(activity.getActivityType().name())
                 .activityStatus(activity.getActivityStatus().name())
+                .sessionCount(activity.getSessionCount())
+                .isApproved(activity.getIsApproved())
                 .build());
     }
     
