@@ -26,6 +26,7 @@ public class MyActivityService {
         Page<ActivityResponse> myCreateActivities = activityRepository.findMyCreateActivityByCreatedBy(PageRequest.of(page, size), member).map(
                 activity -> {
                     return ActivityResponse.builder()
+                            .location(activity.getLocation())
                             .id(activity.getId())
                             .goal(activity.getGoal())
                             .notes(activity.getNotes())
@@ -54,6 +55,7 @@ public class MyActivityService {
         Page<ActivityResponse> myParticipateActivities = activityRepository.findMyParticipateActivitiesByMember(member, PageRequest.of(page, size)).map(
                 activity -> {
                     return ActivityResponse.builder()
+                            .location(activity.getLocation())
                             .id(activity.getId())
                             .goal(activity.getGoal())
                             .notes(activity.getNotes())

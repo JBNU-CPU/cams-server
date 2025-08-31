@@ -27,6 +27,7 @@ public class ActivityResponse {
     private String activityStatus;
     private String notes;
     private String goal;
+    private String location;
 
     public static List<RecurringScheduleDTO> convertRecurringSchedules(List<RecurringSchedule> recurringSchedules) {
 
