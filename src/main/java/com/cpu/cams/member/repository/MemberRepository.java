@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
@@ -14,4 +15,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     // id만 가져오면 더 가벼움
     @Query("select m.id from Member m where m.username = :username")
     Optional<Long> findIdByUsername(@Param("username") String username);
+
+    @Query("select m.id from Member m")
+    List<Long> findAllIds();
 }

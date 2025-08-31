@@ -37,7 +37,7 @@ public class ActivityController {
     
     // 목록조회하기
     @GetMapping
-    public ResponseEntity<Page<ActivityResponse>> getActivities(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "2") int size) {
+    public ResponseEntity<Page<ActivityResponse>> getActivities(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "8") int size) {
 
         Page<ActivityResponse> activities = activityService.getActivities(page, size);
         return ResponseEntity.ok().body(activities);

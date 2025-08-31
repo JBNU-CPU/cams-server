@@ -34,11 +34,17 @@ public class ParticipantController {
         return ResponseEntity.ok(result);
     }
 
-    // 신청자 삭제
-    @DeleteMapping("/{participantId}")
+    // 신청 취소
+    @DeleteMapping
     public String deleteParticipant(@PathVariable Long activityId, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         participantsService.deleteParticipant(activityId, customUserDetails);
         return "OK";
+    }
+
+    // 신청 삭제
+    @DeleteMapping("{participantId}")
+    public void deleParticipantByReader(@PathVariable Long activityId, @PathVariable Long participantId, @AuthenticationPrincipal CustomUserDetails customUserDetails){
+        participantsService.deleteParticipantByReader(activityId, participantId, customUserDetails);
     }
 
     // 참가 신청
@@ -49,4 +55,5 @@ public class ParticipantController {
 
         return "OK";
     }
+
 }

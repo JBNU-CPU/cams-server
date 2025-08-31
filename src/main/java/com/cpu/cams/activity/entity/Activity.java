@@ -52,6 +52,10 @@ public class Activity {
     @Column(nullable = false)
     private Boolean isApproved = false;
 
+    // 개설된 세션 수
+    @Column
+    private Integer sessionCount = 0;
+
     // 활동 신청 시작 전, 신청 진행 중, 신청 마감
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -120,6 +124,19 @@ public class Activity {
         this.isApproved = !this.isApproved;
         return this.isApproved;
     }
+
+    public void addParticipant(){
+        this.participantCount++;
+    }
+
+    public void cancelParticipant(){
+        this.participantCount--;
+    }
+
+    public void addSession(){this.sessionCount++;}
+
+    public void cancelSession(){this.sessionCount--;}
+
 }
 
 

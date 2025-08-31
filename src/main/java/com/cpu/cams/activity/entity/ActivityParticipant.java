@@ -41,6 +41,7 @@ public class ActivityParticipant {
         this.member = member;
         member.getParticipatedActivities().add(this);
         activity.getParticipants().add(this);
+        activity.addParticipant();
     }
 
     // == 생성 메서드 == //

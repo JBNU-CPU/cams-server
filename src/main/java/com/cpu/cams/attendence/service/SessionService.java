@@ -10,6 +10,9 @@ import com.cpu.cams.attendence.entity.SessionStatus;
 import com.cpu.cams.attendence.repository.SessionRepository;
 import com.cpu.cams.member.entity.Member;
 import com.cpu.cams.member.repository.MemberRepository;
+import com.cpu.cams.member.service.MemberService;
+import com.cpu.cams.test.NotificationPayload;
+import com.cpu.cams.test.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -29,7 +32,9 @@ public class SessionService {
 
     private final ActivityRepository activityRepository;
     private final SessionRepository sessionRepository;
+    private final MemberService memberService;
     private final MemberRepository memberRepository;
+    private final NotificationService notificationService;
 
     // 세션 만들기
     public Long createSession(Long activityId, SessionRequest request, String username) {
@@ -47,12 +52,18 @@ public class SessionService {
         }
 
         // 2. 세션 생성
-        Session session = Session.create(activity, request.getSessionNumber(), request.getTitle(), request.getAttendanceCode(), request.getClosableAfterMinutes());
+        Session session = Session.create(activity, activity.getSessionCount() + 1, activity.getTitle(), request.getAttendanceCode(), request.getClosableAfterMinutes());
         Session saveSession = sessionRepository.save(session);
 
         // 3. 세션에 따른 모든 참여 학생의 출석(Attendance) 객체 생성 (초기값: 결석)
         // 학생에 따른 출석부 만들기 -> 더티채킹으로 repository 없이 만들기
         activity.getParticipants().forEach(participant -> Attendance.create(saveSession, participant));
+
+        // 활동 참가자들에게 알림
+        NotificationPayload notificationPayload = new NotificationPayload("출석 열림", activity.getTitle() + " 출석이 열렸습니다.", "~~~링크 참조");
+        activity.getParticipants().forEach( activityParticipant -> {
+            notificationService.createAndSend(activityParticipant.getMember().getId(), notificationPayload);
+        });
 
         return session.getId();
     }

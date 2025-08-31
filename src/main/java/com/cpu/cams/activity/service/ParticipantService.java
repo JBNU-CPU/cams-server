@@ -9,6 +9,8 @@ import com.cpu.cams.member.dto.response.CustomUserDetails;
 import com.cpu.cams.member.entity.Member;
 import com.cpu.cams.member.repository.MemberRepository;
 import com.cpu.cams.member.service.MemberService;
+import com.cpu.cams.test.NotificationPayload;
+import com.cpu.cams.test.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +26,7 @@ public class ParticipantService {
     private final MemberRepository memberRepository;
     private final ActivityRepository activityRepository;
     private final MemberService memberService;
+    private final NotificationService notificationService;
 
     // 활동 참가 신청하기
     public void addParticipant(Long activityId, String username) {
@@ -38,7 +41,17 @@ public class ParticipantService {
             throw new RuntimeException("당신 중복 참가자임");
         }
 
+        // 팀장 참가 금지
+        if(username.equals(activity.getCreatedBy().getUsername())){
+            throw new RuntimeException("너가 만든걸 너가 신청할려고?");
+        }
+
         ActivityParticipant.create(activity, member);
+
+        NotificationPayload notificationPayload = new NotificationPayload("참가 신청", member.getUsername() + "님이 "+activity.getTitle() + " 활동을 참가하고 싶어합니다", "~~~링크 참조");
+
+        // 팀장에게 알림
+        notificationService.createAndSend(activity.getCreatedBy().getId(), notificationPayload);
 
     }
 
@@ -55,6 +68,7 @@ public class ParticipantService {
 
         Page<ParticipantResponse> result = participants.map(participant ->
                 ParticipantResponse.builder()
+                        .id(participant.getId())
                         .name(participant.getMember().getName())
                         .email(participant.getMember().getEmail())
                         .phone(participant.getMember().getPhone())
@@ -65,21 +79,22 @@ public class ParticipantService {
         return result;
     }
 
-    // 활동 신청자 삭제하기
+    // 활동 신청자 취소
     public void deleteParticipant(Long activityId, CustomUserDetails customUserDetails){
 
         // 멤버가 실제 참가했었는지 확인
         Activity activity = activityRepository.findById(activityId).orElseThrow(() -> new RuntimeException("활동 없음"));
 
-        if(!activity.getCreatedBy().getUsername().equals(customUserDetails.getUsername()) && !checkAdmin(customUserDetails)){
-            throw new RuntimeException("당신 팀장 맞아?");
-        }
+        String username = customUserDetails.getUsername();
+        activity.getParticipants().stream().filter((participant -> participant.getMember().getUsername().equals(username))).findFirst().orElseThrow(() -> new RuntimeException("당신 참가자 아닌거같음"));
 
         Member findMember = memberService.findByUsername(customUserDetails.getUsername());
 
         ActivityParticipant participant = activityParticipantRepository.findByMemberAndActivity(findMember, activity).orElseThrow(() -> new RuntimeException("참가자 아닌거같아요"));
 
         activityParticipantRepository.delete(participant);
+        // 참가자 줄이기
+        activity.cancelParticipant();
     }
 
     // 활동 주인 및 관리자 확인 메서드
@@ -90,6 +105,26 @@ public class ParticipantService {
             return true;
         }
         return false;
+    }
+
+    // 참가자 삭제하기
+    public void deleteParticipantByReader(Long activityId, Long participantId, CustomUserDetails customUserDetails) {
+
+        Activity activity = activityRepository.findById(activityId)
+                .orElseThrow(() -> new RuntimeException("활동 없음"));
+
+        // 권한 체크 (팀장 or 관리자만 가능)
+        if (!activity.getCreatedBy().getUsername().equals(customUserDetails.getUsername())
+                && !checkAdmin(customUserDetails)) {
+            throw new RuntimeException("당신 팀장 맞아?");
+        }
+
+        // 해당 멤버 참가자 찾아 삭제
+        ActivityParticipant participant = activityParticipantRepository.findById(participantId).orElseThrow(() -> new RuntimeException("참가자 아님"));
+        activityParticipantRepository.delete(participant);
+
+        // 참가자 줄이기
+        activity.cancelParticipant();
     }
 
 }

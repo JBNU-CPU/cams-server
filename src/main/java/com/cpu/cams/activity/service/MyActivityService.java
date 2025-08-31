@@ -27,6 +27,8 @@ public class MyActivityService {
                 activity -> {
                     return ActivityResponse.builder()
                             .id(activity.getId())
+                            .goal(activity.getGoal())
+                            .notes(activity.getNotes())
                             .title(activity.getTitle())
                             .description(activity.getDescription())
                             .createdBy(activity.getCreatedBy().getName())
@@ -53,6 +55,8 @@ public class MyActivityService {
                 activity -> {
                     return ActivityResponse.builder()
                             .id(activity.getId())
+                            .goal(activity.getGoal())
+                            .notes(activity.getNotes())
                             .title(activity.getTitle())
                             .description(activity.getDescription())
                             .createdBy(activity.getCreatedBy().getName())
