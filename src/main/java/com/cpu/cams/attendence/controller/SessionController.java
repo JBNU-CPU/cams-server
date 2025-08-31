@@ -3,7 +3,6 @@ package com.cpu.cams.attendence.controller;
 import com.cpu.cams.attendence.dto.request.SessionRequest;
 import com.cpu.cams.attendence.dto.response.OpenSessionResponse;
 import com.cpu.cams.attendence.service.SessionService;
-import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -39,9 +38,9 @@ public class SessionController {
         return ResponseEntity.ok(result);
     }
 
-    // 출석 마감 여부 수정 -> 세션 상태 변경
+    // 출석 수동 마감
     @PutMapping("/{sessionId}")
-    public ResponseEntity<Long> toggleOpenAttendance(@PathVariable Long sessionId, @AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<Long> closeSession (@PathVariable Long sessionId, @AuthenticationPrincipal UserDetails userDetails) {
 
         Long id = sessionService.closeSession(sessionId, userDetails.getUsername());
         return ResponseEntity.ok(id);
