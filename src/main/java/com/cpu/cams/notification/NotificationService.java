@@ -1,4 +1,4 @@
-package com.cpu.cams.test;
+package com.cpu.cams.notification;
 
 import com.cpu.cams.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;

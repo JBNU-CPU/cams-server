@@ -10,9 +10,8 @@ import com.cpu.cams.attendence.entity.SessionStatus;
 import com.cpu.cams.attendence.repository.SessionRepository;
 import com.cpu.cams.member.entity.Member;
 import com.cpu.cams.member.repository.MemberRepository;
-import com.cpu.cams.member.service.MemberService;
-import com.cpu.cams.test.NotificationPayload;
-import com.cpu.cams.test.NotificationService;
+import com.cpu.cams.notification.NotificationPayload;
+import com.cpu.cams.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -21,6 +20,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -32,7 +32,6 @@ public class SessionService {
 
     private final ActivityRepository activityRepository;
     private final SessionRepository sessionRepository;
-    private final MemberService memberService;
     private final MemberRepository memberRepository;
     private final NotificationService notificationService;
 
@@ -59,7 +58,10 @@ public class SessionService {
         // 학생에 따른 출석부 만들기 -> 더티채킹으로 repository 없이 만들기
         activity.getParticipants().forEach(participant -> Attendance.create(saveSession, participant));
 
-        // 활동 참가자들에게 알림
+        // 4. Activity 세션 수 증가
+        activity.addSession();
+
+        // 5. 활동 참가자들에게 알림
         NotificationPayload notificationPayload = new NotificationPayload("출석 열림", activity.getTitle() + " 출석이 열렸습니다.", "~~~링크 참조");
         activity.getParticipants().forEach( activityParticipant -> {
             notificationService.createAndSend(activityParticipant.getMember().getId(), notificationPayload);
@@ -74,15 +76,16 @@ public class SessionService {
 
         Member member = memberRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
-        // memberId -> activity_partipants에서 activity조회해서 그 중에 session이 start인걸 조회한다~ 리턴값으로는 activity, session 둘 다 줘야 한다.                                                    │
-        // 1. memberId로 activity 찾기                                                                                                                                                                   │
-        // 2. activity들 session 찾기                                                                                                                                                                    │
+        // memberId -> activity_partipants에서 activity조회해서 그 중에 session이 start인걸 조회한다~ 리턴값으로는 activity, session 둘 다 줘야 한다.
+        // 1. memberId로 activity 찾기
+        // 2. activity들 session 찾기
         // 3. session의 openAttendance true인 것 찾기
         return sessionRepository.findOpenSessionList(member.getId(), PageRequest.of(page, size)).map(
                 session -> OpenSessionResponse.builder()
                         .sessionId(session.getId())
                         .activityTitle(session.getActivity().getTitle())
                         .sessionNumber(session.getSessionNumber())
+                        .closedAt(session.getClosedAt())
                         .build());
     }
 
