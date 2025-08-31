@@ -8,5 +8,5 @@ import lombok.Getter;
 public class OpenSessionResponse {
     private Long sessionId;
     private String activityTitle;
-    private Integer sessionNumber;
+    private Integer sessionNumber; // 회차
 }
