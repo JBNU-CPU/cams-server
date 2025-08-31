@@ -12,11 +12,13 @@ import com.cpu.cams.member.service.MemberService;
 import com.cpu.cams.notification.NotificationPayload;
 import com.cpu.cams.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -79,6 +81,7 @@ public class ParticipantService {
         return result;
     }
 
+    @Transactional
     // 활동 신청자 취소
     public void deleteParticipant(Long activityId, CustomUserDetails customUserDetails){
 
@@ -88,13 +91,15 @@ public class ParticipantService {
         String username = customUserDetails.getUsername();
         activity.getParticipants().stream().filter((participant -> participant.getMember().getUsername().equals(username))).findFirst().orElseThrow(() -> new RuntimeException("당신 참가자 아닌거같음"));
 
-        Member findMember = memberService.findByUsername(customUserDetails.getUsername());
+        Member findMember = memberService.findByUsername(username);
 
         ActivityParticipant participant = activityParticipantRepository.findByMemberAndActivity(findMember, activity).orElseThrow(() -> new RuntimeException("참가자 아닌거같아요"));
+        activity.getParticipants().remove(participant);
 
         activityParticipantRepository.delete(participant);
         // 참가자 줄이기
         activity.cancelParticipant();
+        log.info("활동 신청자 취소 ={}", participant.getId());
     }
 
     // 활동 주인 및 관리자 확인 메서드

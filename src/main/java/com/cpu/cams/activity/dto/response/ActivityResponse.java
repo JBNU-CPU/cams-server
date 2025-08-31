@@ -24,6 +24,7 @@ public class ActivityResponse {
     private String activityStatus;
     private String notes;
     private String goal;
+    private String location;
     private Boolean isApproved;
     private Integer sessionCount;
     private List<RecurringScheduleDTO> recurringSchedules;

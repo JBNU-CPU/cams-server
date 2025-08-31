@@ -1,0 +1,5 @@
+package com.cpu.cams.member.entity;
+
+public enum Interesting {
+    FRONTEND,BACKEND,FULLSTACK,MOBILE,DATA,AI,INFRASTRUCTURE,SECURITY,HACKING,GAME,EMBEDDED,PLANNER,DESIGNER,PM
+}

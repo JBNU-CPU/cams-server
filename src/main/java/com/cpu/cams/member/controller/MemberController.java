@@ -5,12 +5,16 @@ import com.cpu.cams.member.dto.request.ResetPasswordRequest;
 import com.cpu.cams.member.dto.request.SignupRequest;
 import com.cpu.cams.member.dto.request.WithdrawalRequest;
 import com.cpu.cams.member.dto.response.ProfileResponse;
+import com.cpu.cams.member.entity.Member;
 import com.cpu.cams.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -54,6 +58,15 @@ public class MemberController {
     public ResponseEntity<Long> updateMyProfile(@RequestBody ProfileRequest profileRequest, @AuthenticationPrincipal UserDetails userDetails) {
 
         Long result = memberService.updateMyProfile(profileRequest, userDetails.getUsername());
+        return ResponseEntity.ok(result);
+    }
+
+    // 나인지 판단하는 로직
+    @GetMapping("/check")
+    public ResponseEntity<Map<String, String>> checkMe(@AuthenticationPrincipal UserDetails userDetails){
+        Member member = memberService.findByUsername(userDetails.getUsername());
+        Map<String, String> result = new HashMap<>();
+        result.put("name", member.getName());
         return ResponseEntity.ok(result);
     }
 }

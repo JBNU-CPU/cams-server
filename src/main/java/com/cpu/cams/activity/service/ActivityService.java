@@ -87,6 +87,7 @@ public class ActivityService {
         Page<ActivityResponse> activities = activityRepository.findAll(PageRequest.of(page, size)).map(
                 activity -> {
             return ActivityResponse.builder()
+                    .location(activity.getLocation())
                     .id(activity.getId())
                     .goal(activity.getGoal())
                     .notes(activity.getNotes())
@@ -113,6 +114,7 @@ public class ActivityService {
     public ActivityResponse getActivity(Long activityId) {
         Activity activity = activityRepository.findById(activityId).orElseThrow(() -> new RuntimeException("활동 없음"));
         return ActivityResponse.builder()
+                .location(activity.getLocation())
                 .id(activity.getId())
                 .title(activity.getTitle())
                 .goal(activity.getGoal())
@@ -203,6 +205,7 @@ public class ActivityService {
         }
 
         return activities.map(activity -> ActivityResponse.builder()
+                .location(activity.getLocation())
                 .id(activity.getId())
                 .title(activity.getTitle())
                 .goal(activity.getGoal())
