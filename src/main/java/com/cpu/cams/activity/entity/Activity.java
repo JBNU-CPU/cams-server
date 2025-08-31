@@ -124,6 +124,10 @@ public class Activity {
     public void addParticipant(){
         this.participantCount++;
     }
+
+    public void cancelParticipant(){
+        this.participantCount--;
+    }
 }
 
 
