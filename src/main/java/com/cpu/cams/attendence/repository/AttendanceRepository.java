@@ -22,7 +22,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
 
     //  내 출결 조회하기
     @Query(
-            "select new com.cpu.cams.attendence.dto.response.ParticipantActivityAttendanceResponse(s.activity.title, s.sessionNumber, a.status, a.attendanceTime) " +
+            "select new com.cpu.cams.attendence.dto.response.ParticipantActivityAttendanceResponse(s.activity.id, s.activity.title, s.sessionNumber, a.status, a.attendanceTime) " +
                     "from Member m " +
                     "join m.participatedActivities ap " +
                     "join ap.attendances a " +

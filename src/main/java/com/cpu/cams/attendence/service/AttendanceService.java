@@ -90,6 +90,7 @@ public class AttendanceService {
         return attendance.getId();
     }
 
+    // 내 출결 조회
     public Page<ParticipantActivityAttendanceResponse> getMyAttendances(String username, int page, int size) {
 
         Member findMember = memberService.findByUsername(username);

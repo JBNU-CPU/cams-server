@@ -42,7 +42,7 @@ public class InitData {
 
         // Create Activity
         ActivityRequest activityRequest = new ActivityRequest(
-            "임시 활동", // title
+            "임시 활동1", // title
             "owner1이 개설한 임시 활동입니다.", // description
             "테스트 목표", // goal
             ActivityType.GENERAL, // activityType
@@ -62,11 +62,40 @@ public class InitData {
 
         // 세션 생성 요청 DTO
         SessionRequest sessionRequest = new SessionRequest(
-            "ABC123",
+                "ABC123",
                 3
         );
 
         // 세션 생성
         sessionService.createSession(newActivityId, sessionRequest, "owner1");
+
+        // Create Activity
+        ActivityRequest activityRequest2 = new ActivityRequest(
+                "임시 활동2", // title
+                "owner2이 개설한 임시 활동입니다.", // description
+                "테스트 목표", // goal
+                ActivityType.GENERAL, // activityType
+                10, // maxParticipants
+                "온라인", // location
+                "참고 사항 없음", // notes
+                Collections.emptyList(), // recurringSchedules
+                Collections.emptyList(), // eventSchedule
+                Collections.emptyList()  // curriculums
+        );
+
+        Long newActivityId2 = activityService.createActivity(activityRequest2, "owner2");
+
+        // Add Participants
+        participantService.addParticipant(newActivityId2, "test1");
+        participantService.addParticipant(newActivityId2, "test2");
+
+        // 세션 생성 요청 DTO
+        SessionRequest sessionRequest2 = new SessionRequest(
+                "ABC123",
+                3
+        );
+
+        // 세션 생성
+        sessionService.createSession(newActivityId2, sessionRequest2, "owner2");
     }
 }
