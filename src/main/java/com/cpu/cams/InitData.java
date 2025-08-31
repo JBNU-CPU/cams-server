@@ -11,7 +11,18 @@ import com.cpu.cams.member.service.MemberService;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 
+import com.cpu.cams.activity.dto.response.CurriculumDTO;
+import com.cpu.cams.activity.dto.response.EventScheduleDTO;
+import com.cpu.cams.activity.dto.response.RecurringScheduleDTO;
+import jakarta.annotation.PostConstruct;
+import org.springframework.stereotype.Component;
+
+import java.time.DayOfWeek;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 @Component
 public class InitData {
@@ -41,17 +52,25 @@ public class InitData {
         memberService.signup(new SignupRequest("owner3", "1234", "owner3", "owner3@gmail.com", "010-7777-7777", "컴공", 3));
 
         // Create Activity
+        List<RecurringScheduleDTO> recurringSchedules1 = Arrays.asList(
+                new RecurringScheduleDTO(DayOfWeek.MONDAY, LocalTime.of(10, 0), LocalTime.of(12, 0)),
+                new RecurringScheduleDTO(DayOfWeek.WEDNESDAY, LocalTime.of(14, 0), LocalTime.of(16, 0))
+        );
+        List<CurriculumDTO> curriculums1 = Arrays.asList(
+                new CurriculumDTO(1, "세션 1", "세션 첫 번째 커리큘럼"),
+                new CurriculumDTO(2, "세션 2", "세션 두 번째 커리큘럼")
+        );
         ActivityRequest activityRequest = new ActivityRequest(
             "임시 활동1", // title
             "owner1이 개설한 임시 활동입니다.", // description
             "테스트 목표", // goal
-            ActivityType.GENERAL, // activityType
+            ActivityType.SESSION, // activityType
             10, // maxParticipants
             "온라인", // location
             "참고 사항 없음", // notes
-            Collections.emptyList(), // recurringSchedules
+            recurringSchedules1, // recurringSchedules
             Collections.emptyList(), // eventSchedule
-            Collections.emptyList()  // curriculums
+            curriculums1  // curriculums
         );
 
         Long newActivityId = activityService.createActivity(activityRequest, "owner1");
@@ -70,17 +89,25 @@ public class InitData {
         sessionService.createSession(newActivityId, sessionRequest, "owner1");
 
         // Create Activity
+        List<EventScheduleDTO> eventSchedules2 = Arrays.asList(
+                new EventScheduleDTO(LocalDateTime.of(2025, 9, 1, 10, 0), LocalDateTime.of(2025, 9, 1, 12, 0)),
+                new EventScheduleDTO(LocalDateTime.of(2025, 9, 5, 14, 0), LocalDateTime.of(2025, 9, 5, 16, 0))
+        );
+        List<CurriculumDTO> curriculums2 = Arrays.asList(
+                new CurriculumDTO(1, "미팅 1", "미팅 첫 번째 커리큘럼"),
+                new CurriculumDTO(2, "미팅 2", "미팅 두 번째 커리큘럼")
+        );
         ActivityRequest activityRequest2 = new ActivityRequest(
                 "임시 활동2", // title
                 "owner2이 개설한 임시 활동입니다.", // description
                 "테스트 목표", // goal
-                ActivityType.GENERAL, // activityType
+                ActivityType.MEETING, // activityType
                 10, // maxParticipants
                 "온라인", // location
                 "참고 사항 없음", // notes
                 Collections.emptyList(), // recurringSchedules
-                Collections.emptyList(), // eventSchedule
-                Collections.emptyList()  // curriculums
+                eventSchedules2, // eventSchedule
+                curriculums2  // curriculums
         );
 
         Long newActivityId2 = activityService.createActivity(activityRequest2, "owner2");
@@ -97,5 +124,42 @@ public class InitData {
 
         // 세션 생성
         sessionService.createSession(newActivityId2, sessionRequest2, "owner2");
+
+        // Create Activity
+        List<RecurringScheduleDTO> recurringSchedules3 = Arrays.asList(
+                new RecurringScheduleDTO(DayOfWeek.TUESDAY, LocalTime.of(9, 0), LocalTime.of(11, 0)),
+                new RecurringScheduleDTO(DayOfWeek.THURSDAY, LocalTime.of(13, 0), LocalTime.of(15, 0))
+        );
+        List<CurriculumDTO> curriculums3 = Arrays.asList(
+                new CurriculumDTO(1, "스터디 1", "스터디 첫 번째 커리큘럼"),
+                new CurriculumDTO(2, "스터디 2", "스터디 두 번째 커리큘럼")
+        );
+        ActivityRequest activityRequest3 = new ActivityRequest(
+                "임시 활동3", // title
+                "owner1이 개설한 임시 활동입니다.", // description
+                "테스트 목표", // goal
+                ActivityType.STUDY, // activityType
+                10, // maxParticipants
+                "온라인", // location
+                "참고 사항 없음", // notes
+                recurringSchedules3, // recurringSchedules
+                Collections.emptyList(), // eventSchedule
+                curriculums3  // curriculums
+        );
+
+        Long newActivityId3 = activityService.createActivity(activityRequest3, "owner1");
+
+        // Add Participants
+        participantService.addParticipant(newActivityId3, "test1");
+        participantService.addParticipant(newActivityId3, "test2");
+
+        // 세션 생성 요청 DTO
+        SessionRequest sessionRequest3 = new SessionRequest(
+                "0000",
+                3
+        );
+
+        // 세션 생성
+        sessionService.createSession(newActivityId3, sessionRequest3, "owner1");
     }
 }

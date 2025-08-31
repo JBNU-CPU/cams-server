@@ -14,8 +14,8 @@ public class CreateActivityAttendanceResponse {
     private String activityTitle;
     private Integer totalSessions; // 전체 회차 수
     private ActivityType activityType;
-    private List<ParticipantSummary> participants;
-    private List<WeeklySummary> weeklySummaries;
+    private List<ParticipantSummary> participantSummaries; // 참여자 출석 현황
+    private List<WeeklySummary> weeklySummaries; // 주차별 출석 현황
 
     // 참여자 출석 현황
     @Builder @Getter @Setter @ToString

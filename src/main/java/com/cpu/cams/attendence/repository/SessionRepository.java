@@ -21,7 +21,7 @@ public interface SessionRepository extends JpaRepository<Session, Long> {
             "left join Attendance a on a.session = s and a.participant = pa " +
             "where m.id = :memberId and " +
             "s.status = 'OPEN' and " +
-            "(a.status is null or a.status = 'ABSENT')")
+            "(a.status is null or a.status = 'ABSENT' or a.status = 'EXCUSED')")
     Page<Session> findOpenSessionList(@Param("memberId") Long memberId, PageRequest pageRequest);
 
     List<Session> findByStatusAndClosedAtBefore(SessionStatus status, LocalDateTime time);

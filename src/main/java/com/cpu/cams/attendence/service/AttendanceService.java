@@ -179,7 +179,7 @@ public class AttendanceService {
                     .activityTitle(activity.getTitle())
                     .totalSessions(totalSession)
                     .activityType(activity.getActivityType())
-                    .participants(participantSummaries)
+                    .participantSummaries(participantSummaries)
                     .weeklySummaries(weeklySummaries)
                     .build();
 
