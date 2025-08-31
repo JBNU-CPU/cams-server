@@ -6,7 +6,6 @@ import com.cpu.cams.announcement.entity.Announcement;
 import com.cpu.cams.member.dto.request.ProfileRequest;
 import com.cpu.cams.member.dto.request.SignupRequest;
 import com.cpu.cams.point.entity.Point;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -55,6 +54,17 @@ public class Member {
     @Column(nullable = false)
     private Integer cohort;
 
+    @Column
+    private String introduce; // 자기소개
+
+    @ElementCollection(fetch = FetchType.LAZY) // EAGER 로딩보다 LAZY 로딩이 권장됩니다.
+    @CollectionTable(name = "member_interesting", // 생성될 테이블의 이름
+            joinColumns = @JoinColumn(name = "member_id") // Member 테이블과 조인할 외래 키
+    )
+    @Column(name = "interesting_name") // 컬렉션의 값이 저장될 컬럼 이름
+    @Enumerated(EnumType.STRING) // Enum의 이름을 String으로 저장 (e.g., "BACKEND")
+    private List<Interesting> interesting = new ArrayList<>();
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 
@@ -98,6 +108,11 @@ public class Member {
         this.phone = profileRequest.getPhone();
         this.department = profileRequest.getDepartment();
         this.cohort = profileRequest.getCohort();
+        this.introduce = profileRequest.getIntroduce();
+
+        List<String> interesting1 = profileRequest.getInteresting();
+        this.interesting = interesting1.stream().map(i -> Interesting.valueOf(i)).toList();
+
         return this;
     }
 

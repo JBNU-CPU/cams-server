@@ -58,15 +58,15 @@ public class InitData {
 
         // Add Participants
         participantService.addParticipant(newActivityId, "test1");
-        participantService.addParticipant(newActivityId, "test2");
-
-        // 세션 생성 요청 DTO
-        SessionRequest sessionRequest = new SessionRequest(
-            "ABC123",
-                3
-        );
-
-        // 세션 생성
-        sessionService.createSession(newActivityId, sessionRequest, "owner1");
+//        participantService.addParticipant(newActivityId, "test2");
+//
+//        // 세션 생성 요청 DTO
+//        SessionRequest sessionRequest = new SessionRequest(
+//            "ABC123",
+//                3
+//        );
+//
+//        // 세션 생성
+//        sessionService.createSession(newActivityId, sessionRequest, "owner1");
     }
 }
