@@ -2,6 +2,7 @@ package com.cpu.cams.attendence.controller;
 
 import com.cpu.cams.attendence.dto.request.SessionRequest;
 import com.cpu.cams.attendence.dto.response.OpenSessionResponse;
+import com.cpu.cams.attendence.dto.response.SessionInfoResponse;
 import com.cpu.cams.attendence.service.SessionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,12 +47,28 @@ public class SessionController {
         return ResponseEntity.ok(id);
     }
 
-    // 출석 코드 변경
-    @PutMapping("/{sessionId}/attendance-code")
-    public ResponseEntity<Long> updateAttendanceCode(@PathVariable Long sessionId, @RequestParam String attendanceCode, @AuthenticationPrincipal UserDetails userDetails) {
-
-        Long id = sessionService.updateAttendanceCode(sessionId, attendanceCode, userDetails.getUsername());
+    // 세션 정보 변경 (출석코드, 마감기한)
+    @PatchMapping("/{sessionId}/info")
+    public ResponseEntity<Long> updateSessionInfo
+    (
+            @PathVariable Long sessionId,
+            @RequestBody SessionRequest request,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        Long id = sessionService.updateSessionInfo(sessionId, request, userDetails.getUsername());
         return ResponseEntity.ok(id);
+    }
+
+    // 해당 활동의 모든 세션 조회
+    @GetMapping("/activity/{activityId}")
+    public ResponseEntity<Page<SessionInfoResponse>> getSessionsByActivity
+    (
+            @PathVariable Long activityId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Page<SessionInfoResponse> result = sessionService.findSessionsByActivity(activityId, page, size);
+        return ResponseEntity.ok(result);
     }
 
 }
