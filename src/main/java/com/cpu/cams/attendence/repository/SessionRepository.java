@@ -4,6 +4,7 @@ import com.cpu.cams.attendence.entity.Session;
 import com.cpu.cams.attendence.entity.SessionStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -25,4 +26,6 @@ public interface SessionRepository extends JpaRepository<Session, Long> {
     Page<Session> findOpenSessionList(@Param("memberId") Long memberId, PageRequest pageRequest);
 
     List<Session> findByStatusAndClosedAtBefore(SessionStatus status, LocalDateTime time);
+
+    Page<Session> findByActivityId(Long activityId, Pageable pageable);
 }
