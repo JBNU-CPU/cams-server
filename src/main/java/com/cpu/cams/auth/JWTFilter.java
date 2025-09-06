@@ -39,7 +39,12 @@ public class JWTFilter extends OncePerRequestFilter {
 
         // 토큰 만료 여부 확인, 만료시 다음 필터로 넘기지 않음
         try {
-            jwtUtil.isExpired(accessToken);
+            if (jwtUtil.isExpired(accessToken)) {
+                System.out.println("token expired");
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setHeader("Access-Token-Expired", "true");
+                return;
+            }
         } catch (ExpiredJwtException e) {
             System.out.println("token expired");
             //response status code
