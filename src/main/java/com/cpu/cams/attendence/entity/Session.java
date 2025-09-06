@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -34,6 +35,10 @@ public class Session {
 
     @Column
     private LocalDateTime closedAt; // 마감 시간
+
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
     // == 연관관계 == //
     @ManyToOne(fetch = FetchType.LAZY)

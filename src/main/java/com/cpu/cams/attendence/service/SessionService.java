@@ -154,6 +154,24 @@ public class SessionService {
         }
     }
 
+    // 3분 지난 세션 FINISHED로 변경
+    @Scheduled(cron = "0 * * * * *") // 1분마다 실행
+    @Transactional
+    public void autoFinishSessions() {
+        log.info("Checking for sessions to auto-finish at {}", LocalDateTime.now());
+        LocalDateTime finishedDuration = LocalDateTime.now().minusMinutes(3);
+        //LocalDateTime finishedDuration = LocalDateTime.now().minusHours(3); // todo: 3시간으로 변경해야 함!
+        List<Session> sessionsToFinish = sessionRepository.findByStatusNotAndCreatedAtBefore(SessionStatus.FINISHED, finishedDuration);
+
+        if (!sessionsToFinish.isEmpty()) {
+            log.info("[Auto-Finish] Found {} sessions to finish.", sessionsToFinish.size());
+            for (Session session : sessionsToFinish) {
+                session.setStatus(SessionStatus.FINISHED);
+                log.info("  - Finishing session ID: {} for activity: {}", session.getId(), session.getActivity().getTitle());
+            }
+        }
+    }
+
     // 세션 소유자 확인 메서드
     private Session isOwner(String username, Long sessionId) {
         Session session = sessionRepository.findById(sessionId).orElseThrow(() -> new RuntimeException("세션을 찾을 수 없습니다."));
@@ -161,7 +179,6 @@ public class SessionService {
         if (!session.getActivity().getCreatedBy().getUsername().equals(username)) {
             throw new RuntimeException("세션에 대한 권한이 없습니다.");
         }
-        return session;    }
-
-
+        return session;
+    }
 }
