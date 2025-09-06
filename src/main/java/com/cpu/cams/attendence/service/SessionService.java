@@ -4,6 +4,7 @@ import com.cpu.cams.activity.entity.Activity;
 import com.cpu.cams.activity.repository.ActivityRepository;
 import com.cpu.cams.attendence.dto.request.SessionRequest;
 import com.cpu.cams.attendence.dto.response.OpenSessionResponse;
+import com.cpu.cams.attendence.dto.response.SessionInfoResponse;
 import com.cpu.cams.attendence.entity.Attendance;
 import com.cpu.cams.attendence.entity.Session;
 import com.cpu.cams.attendence.entity.SessionStatus;
@@ -16,6 +17,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -104,13 +107,35 @@ public class SessionService {
         return session.getId();
     }
 
-    // 출석 코드 변경
-    public Long updateAttendanceCode(Long sessionId, String attendanceCode, String username) {
-
+    // 세션 정보 변경 (출석코드, 마감기한)
+    @Transactional
+    public Long updateSessionInfo(Long sessionId, SessionRequest request, String username) {
         Session session = isOwner(username, sessionId);
 
-        session.changeCode(attendanceCode);
+        if (request.getAttendanceCode() != null && !request.getAttendanceCode().isEmpty()) {
+            session.changeCode(request.getAttendanceCode());
+        }
+
+        if (request.getClosableAfterMinutes() != null) {
+            if (request.getClosableAfterMinutes() <= 0) {
+                throw new IllegalArgumentException("마감 시간은 0보다 커야 합니다.");
+            }
+            LocalDateTime newDeadline = LocalDateTime.now().plusMinutes(request.getClosableAfterMinutes());
+            session.updateDeadline(newDeadline);
+        }
+
         return session.getId();
+    }
+
+    // 해당 활동의 모든 세션 조회
+    @Transactional(readOnly = true)
+    public Page<SessionInfoResponse> findSessionsByActivity(Long activityId, int page, int size) {
+        if (!activityRepository.existsById(activityId)) {
+            throw new IllegalArgumentException("해당 활동을 찾을 수 없습니다.");
+        }
+        Pageable pageable = PageRequest.of(page, size, Sort.by("sessionNumber").descending());
+        Page<Session> sessions = sessionRepository.findByActivityId(activityId, pageable);
+        return sessions.map(SessionInfoResponse::from);
     }
 
     // 세션 자동 마감 스케줄러 (매 분 0초에 실행)

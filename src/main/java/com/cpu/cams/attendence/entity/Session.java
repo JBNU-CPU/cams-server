@@ -66,6 +66,7 @@ public class Session {
     }
 
     // == 비즈니스 로직 == //
+
     // 출석 마감 여부 변경
     public void setStatus(SessionStatus status){
         this.status = status;
@@ -74,5 +75,13 @@ public class Session {
     // 출석 코드 변경
     public void changeCode(String attendancesCode){
         this.attendancesCode = attendancesCode;
+    }
+
+    // 출석 마감 기한 변경
+    public void updateDeadline(LocalDateTime deadline) {
+        if (deadline != null && deadline.isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("마감 기한은 현재 시간 이후로만 설정할 수 있습니다.");
+        }
+        this.closedAt = deadline;
     }
 }
