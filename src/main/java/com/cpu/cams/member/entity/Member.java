@@ -38,7 +38,7 @@ public class Member {
     @Column(nullable = false)
     private String email;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String phone;
 
     @Column(nullable = false)
@@ -85,11 +85,12 @@ public class Member {
         member.username = signupRequest.getUsername();
         member.password = signupRequest.getPassword();
         member.name = signupRequest.getName();
-        member.email = signupRequest.getEmail();
-        member.phone = signupRequest.getPhone();
-        member.department = signupRequest.getDepartment();
+        member.email = "example@gmail.com";
+        member.phone = "010-0000-0000";
+        member.department = "ex) 컴인지";
         member.role = Role.ROLE_ADMIN;
-        member.cohort = signupRequest.getCohort();
+        member.cohort = 0
+        ;
         return member;
     }
 

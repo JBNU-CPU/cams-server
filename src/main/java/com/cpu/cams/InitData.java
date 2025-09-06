@@ -38,15 +38,15 @@ public class InitData {
 
     @PostConstruct
     public void init(){
-        memberService.signup(new SignupRequest("admin", "1234", "admin", "admin@gmail.com", "010-4444-4444", "컴공", 4));
+        memberService.signup(new SignupRequest("admin", "1234", "admin"));
 
-        memberService.signup(new SignupRequest("test1", "1234", "test1", "test1@gmail.com", "010-1111-1111", "컴공", 1));
-        memberService.signup(new SignupRequest("test2", "1234", "test2", "test2@gmail.com", "010-2222-2222", "컴공", 2));
-        memberService.signup(new SignupRequest("test3", "1234", "test3", "test3@gmail.com", "010-3333-3333", "컴공", 3));
+        memberService.signup(new SignupRequest("test1", "1234", "test1"));
+        memberService.signup(new SignupRequest("test2", "1234", "test2"));
+        memberService.signup(new SignupRequest("test3", "1234", "test3"));
 
-        memberService.signup(new SignupRequest("owner1", "1234", "owner1", "owner1@gmail.com", "010-5555-5555", "컴공", 1));
-        memberService.signup(new SignupRequest("owner2", "1234", "owner2", "owner2@gmail.com", "010-6666-6666", "컴공", 2));
-        memberService.signup(new SignupRequest("owner3", "1234", "owner3", "owner3@gmail.com", "010-7777-7777", "컴공", 3));
+        memberService.signup(new SignupRequest("owner1", "1234", "owner1"));
+        memberService.signup(new SignupRequest("owner2", "1234", "owner2"));
+        memberService.signup(new SignupRequest("owner3", "1234", "owner3"));
 
         /***
          *
