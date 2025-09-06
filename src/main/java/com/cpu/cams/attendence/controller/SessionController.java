@@ -30,7 +30,7 @@ public class SessionController {
 
     // 내가 신청한 활동 중 세션이 열린 활동 리스트 조회
     @GetMapping("/open-session")
-    public ResponseEntity<Page<OpenSessionResponse>> getOpenSessionList(@AuthenticationPrincipal UserDetails userDetails, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "2") int size) {
+    public ResponseEntity<Page<OpenSessionResponse>> getOpenSessionList(@AuthenticationPrincipal UserDetails userDetails, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
 
 
         Page<OpenSessionResponse> result = sessionService.findOpenSessionList(userDetails.getUsername(), page, size);
