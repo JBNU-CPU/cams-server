@@ -28,4 +28,6 @@ public interface SessionRepository extends JpaRepository<Session, Long> {
     List<Session> findByStatusAndClosedAtBefore(SessionStatus status, LocalDateTime time);
 
     Page<Session> findByActivityId(Long activityId, Pageable pageable);
+
+    List<Session> findByStatusNotAndCreatedAtBefore(SessionStatus status, LocalDateTime time);
 }
