@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface SessionRepository extends JpaRepository<Session, Long> {
 
@@ -28,6 +29,8 @@ public interface SessionRepository extends JpaRepository<Session, Long> {
     List<Session> findByStatusAndClosedAtBefore(SessionStatus status, LocalDateTime time);
 
     Page<Session> findByActivityId(Long activityId, Pageable pageable);
+
+    Optional<Session> findByActivityIdAndStatusIn(Long activityId, List<SessionStatus> statuses);
 
     List<Session> findByStatusNotAndCreatedAtBefore(SessionStatus status, LocalDateTime time);
 }

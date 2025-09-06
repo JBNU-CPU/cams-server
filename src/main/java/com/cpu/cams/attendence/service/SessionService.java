@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -124,6 +125,8 @@ public class SessionService {
             session.updateDeadline(newDeadline);
         }
 
+        session.setStatus(SessionStatus.OPEN); // 재오픈
+
         return session.getId();
     }
 
@@ -136,6 +139,17 @@ public class SessionService {
         Pageable pageable = PageRequest.of(page, size, Sort.by("sessionNumber").descending());
         Page<Session> sessions = sessionRepository.findByActivityId(activityId, pageable);
         return sessions.map(SessionInfoResponse::from);
+    }
+
+    @Transactional(readOnly = true)
+    public SessionInfoResponse findOngoingSessionsByActivity(Long activityId) {
+        if (!activityRepository.existsById(activityId)) {
+            throw new IllegalArgumentException("해당 활동을 찾을 수 없습니다.");
+        }
+        List<SessionStatus> ongoingStatuses = List.of(SessionStatus.OPEN, SessionStatus.CLOSED);
+        Optional<Session> session = sessionRepository.findByActivityIdAndStatusIn(activityId, ongoingStatuses);
+
+        return session.map(SessionInfoResponse::from).orElse(null);
     }
 
     // 세션 자동 마감 스케줄러 (매 분 0초에 실행)

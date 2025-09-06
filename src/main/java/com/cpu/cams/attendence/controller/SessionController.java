@@ -47,7 +47,7 @@ public class SessionController {
         return ResponseEntity.ok(id);
     }
 
-    // 세션 정보 변경 (출석코드, 마감기한)
+    // 세션 재오픈 (출석코드, 마감기한)
     @PatchMapping("/{sessionId}/info")
     public ResponseEntity<Long> updateSessionInfo
     (
@@ -70,5 +70,11 @@ public class SessionController {
         Page<SessionInfoResponse> result = sessionService.findSessionsByActivity(activityId, page, size);
         return ResponseEntity.ok(result);
     }
-
+    
+    // 해당 활동의 진행 중인 세션 (OPEN OR CLOSED) 조회
+    @GetMapping("/activity/{activityId}/ongoing")
+    public ResponseEntity<SessionInfoResponse> getOngoingSessionsByActivity(@PathVariable Long activityId) {
+        SessionInfoResponse result = sessionService.findOngoingSessionsByActivity(activityId);
+        return ResponseEntity.ok(result);
+    }
 }
