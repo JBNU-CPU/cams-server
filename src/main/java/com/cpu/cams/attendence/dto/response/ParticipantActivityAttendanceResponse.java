@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 public class ParticipantActivityAttendanceResponse {
+    private Long attendanceId;
     private Long activityId;
     private String activityTitle;
     private Integer sessionNumber;

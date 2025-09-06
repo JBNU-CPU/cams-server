@@ -337,6 +337,7 @@ public class AttendanceService {
         for (Session session : sessions) {
             attendanceRepository.findBySessionAndParticipant(session, activityParticipant)
                     .ifPresent(attendance -> result.add(new ParticipantActivityAttendanceResponse(
+                            attendance.getId(),
                             activity.getId(),
                             activity.getTitle(),
                             session.getSessionNumber(),
