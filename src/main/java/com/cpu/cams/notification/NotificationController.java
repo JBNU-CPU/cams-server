@@ -21,16 +21,16 @@ public class NotificationController {
     private final MemberRepository memberRepository;
     private final NotificationRepository notificationRepository;
 
-    /** (JWT 사용) 로그인 사용자 스트림 */
-    @GetMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public SseEmitter stream(
-            @RequestHeader(value = "Last-Event-ID", required = false) String lastEventId,
-            @AuthenticationPrincipal CustomUserDetails user
-    ) {
-//        Long userId = resolveUserId(user);
-        log.info("Last-Event-ID from client = {}", lastEventId);
-        return notificationService.subscribe(1L, lastEventId);
-    }
+//    /** (JWT 사용) 로그인 사용자 스트림 */
+//    @GetMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+//    public SseEmitter stream(
+//            @RequestHeader(value = "Last-Event-ID", required = false) String lastEventId,
+//            @AuthenticationPrincipal CustomUserDetails user
+//    ) {
+////        Long userId = resolveUserId(user);
+//        log.info("Last-Event-ID from client = {}", lastEventId);
+//        return notificationService.subscribe(1L, lastEventId);
+//    }
 
     /** (테스트) userId 지정 스트림 (permitAll로 열어두고 테스트 후 제거 권장) */
     @GetMapping(value = "/stream/test/{userId}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
