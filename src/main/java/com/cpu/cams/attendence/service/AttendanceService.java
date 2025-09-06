@@ -308,7 +308,8 @@ public class AttendanceService {
                         attendance.getId(),
                         attendance.getStatus().name(), // Enum을 String으로 변환
                         String.valueOf(attendance.getParticipant().getMember().getId()), // Member ID
-                        attendance.getParticipant().getMember().getName() // Member Name
+                        attendance.getParticipant().getMember().getName(), // Member Name
+                        attendance.getParticipant().getMember().getDepartment()
                 ))
                 .collect(Collectors.toList());
     }

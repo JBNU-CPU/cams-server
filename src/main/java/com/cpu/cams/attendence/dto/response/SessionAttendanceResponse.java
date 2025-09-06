@@ -15,4 +15,5 @@ public class SessionAttendanceResponse {
     private String attendanceStatus;
     private String participantId;
     private String participantName;
+    private String participantDepartment;
 }
