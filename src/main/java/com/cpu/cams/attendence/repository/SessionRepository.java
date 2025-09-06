@@ -33,4 +33,6 @@ public interface SessionRepository extends JpaRepository<Session, Long> {
     Optional<Session> findByActivityIdAndStatusIn(Long activityId, List<SessionStatus> statuses);
 
     List<Session> findByStatusNotAndCreatedAtBefore(SessionStatus status, LocalDateTime time);
+
+    List<Session> findByActivity(com.cpu.cams.activity.entity.Activity activity);
 }

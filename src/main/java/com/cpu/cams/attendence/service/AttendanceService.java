@@ -313,4 +313,37 @@ public class AttendanceService {
                 ))
                 .collect(Collectors.toList());
     }
+
+    // 특정 멤버의 특정 활동에 대한 전체 출결 데이터 리스트 조회
+    public List<ParticipantActivityAttendanceResponse> getMemberActivityAttendances(Long activityId, Long memberId, String username) {
+        Activity activity = activityRepository.findById(activityId)
+                .orElseThrow(() -> new RuntimeException("활동을 찾을 수 없습니다."));
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("멤버를 찾을 수 없습니다."));
+
+        // 권한 확인: 활동 개설자 또는 관리자만 조회 가능
+        if (!activity.getCreatedBy().getUsername().equals(username) && !memberService.checkAdmin(username)) {
+            throw new RuntimeException("해당 활동의 출결 정보를 조회할 권한이 없습니다.");
+        }
+
+        ActivityParticipant activityParticipant = activityParticipantRepository.findByMemberAndActivity(member, activity)
+                .orElseThrow(() -> new RuntimeException("해당 활동에 참여하지 않은 멤버입니다."));
+
+        List<Session> sessions = sessionRepository.findByActivity(activity);
+
+        List<ParticipantActivityAttendanceResponse> result = new ArrayList<>();
+
+        for (Session session : sessions) {
+            attendanceRepository.findBySessionAndParticipant(session, activityParticipant)
+                    .ifPresent(attendance -> result.add(new ParticipantActivityAttendanceResponse(
+                            activity.getId(),
+                            activity.getTitle(),
+                            session.getSessionNumber(),
+                            attendance.getStatus(),
+                            attendance.getAttendanceTime()
+                    )));
+        }
+        return result;
+    }
 }

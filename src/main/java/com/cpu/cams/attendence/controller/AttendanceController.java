@@ -85,4 +85,15 @@ public class AttendanceController {
         List<SessionAttendanceResponse> sessionAttendances = attendanceService.getSessionAttendances(sessionId, userDetails.getUsername());
         return ResponseEntity.ok(sessionAttendances);
     }
+    
+    // 특정 멤버의 특정 활동에 대한 전체 출결 데이터 리스트 조회하기
+    @GetMapping("/activity/{activityId}/member/{memberId}")
+    public ResponseEntity<List<ParticipantActivityAttendanceResponse>> getMemberActivityAttendances(
+            @PathVariable Long activityId,
+            @PathVariable Long memberId,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        List<ParticipantActivityAttendanceResponse> attendances = attendanceService.getMemberActivityAttendances(activityId, memberId, userDetails.getUsername());
+        return ResponseEntity.ok(attendances);
+    }
+    
 }

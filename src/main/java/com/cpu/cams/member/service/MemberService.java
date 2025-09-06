@@ -48,4 +48,9 @@ public class MemberService {
     public Member findByUsername(String username) {
         return memberRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("멤버가 없습니다"));
     }
+
+    public boolean checkAdmin(String username) {
+        Member findMember = memberRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("멤버없음"));
+        return findMember.getRole().equals(com.cpu.cams.member.entity.Role.ROLE_ADMIN);
+    }
 }
