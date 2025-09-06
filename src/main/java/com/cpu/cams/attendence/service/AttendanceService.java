@@ -5,6 +5,7 @@ import com.cpu.cams.activity.entity.ActivityParticipant;
 import com.cpu.cams.activity.repository.ActivityParticipantRepository;
 import com.cpu.cams.activity.repository.ActivityRepository;
 import com.cpu.cams.attendence.dto.response.CreateActivityAttendanceResponse;
+import com.cpu.cams.attendence.dto.response.SessionAttendanceResponse;
 import com.cpu.cams.attendence.entity.SessionStatus;
 import com.cpu.cams.attendence.repository.SessionRepository;
 import com.cpu.cams.attendence.dto.response.ParticipantActivityAttendanceResponse;
@@ -27,6 +28,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.stream.Collectors;
 import java.util.*;
 
 
@@ -283,5 +285,31 @@ public class AttendanceService {
                 .participantSummaries(participantSummaries)
                 .weeklySummaries(weeklySummaries)
                 .build();
+    }
+
+    // 특정 세션 전체 출결 데이터 리스트 조회
+    public List<SessionAttendanceResponse> getSessionAttendances(Long sessionId, String username) {
+        // 1. 세션 조회
+        Session session = sessionRepository.findById(sessionId)
+                .orElseThrow(() -> new RuntimeException("세션을 찾을 수 없습니다."));
+
+        // 2. 활동 개설자 확인 (권한 체크)
+        // 현재 로그인한 사용자가 해당 세션이 속한 활동의 개설자인지 확인
+        if (!session.getActivity().getCreatedBy().getUsername().equals(username)) {
+            throw new RuntimeException("해당 세션의 출결 정보를 조회할 권한이 없습니다.");
+        }
+
+        // 3. 해당 세션의 모든 출결 데이터 조회 (참가자 정보 포함)
+        List<Attendance> attendances = attendanceRepository.findBySessionIdWithParticipantAndMember(sessionId);
+
+        // 4. DTO로 변환
+        return attendances.stream()
+                .map(attendance -> new SessionAttendanceResponse(
+                        attendance.getId(),
+                        attendance.getStatus().name(), // Enum을 String으로 변환
+                        String.valueOf(attendance.getParticipant().getMember().getId()), // Member ID
+                        attendance.getParticipant().getMember().getName() // Member Name
+                ))
+                .collect(Collectors.toList());
     }
 }

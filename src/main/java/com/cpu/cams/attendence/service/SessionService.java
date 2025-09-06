@@ -168,13 +168,12 @@ public class SessionService {
         }
     }
 
-    // 3분 지난 세션 FINISHED로 변경
-    @Scheduled(cron = "0 * * * * *") // 1분마다 실행
+    // 세션 자동 종료 스케줄러 (매 분 0초에 실행)
+    @Scheduled(cron = "0 * * * * *")
     @Transactional
     public void autoFinishSessions() {
         log.info("Checking for sessions to auto-finish at {}", LocalDateTime.now());
-        LocalDateTime finishedDuration = LocalDateTime.now().minusMinutes(3);
-        //LocalDateTime finishedDuration = LocalDateTime.now().minusHours(3); // todo: 3시간으로 변경해야 함!
+        LocalDateTime finishedDuration = LocalDateTime.now().minusHours(2); // 생성된 지 2시간 뒤 자동 종료
         List<Session> sessionsToFinish = sessionRepository.findByStatusNotAndCreatedAtBefore(SessionStatus.FINISHED, finishedDuration);
 
         if (!sessionsToFinish.isEmpty()) {

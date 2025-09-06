@@ -33,13 +33,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
 
     Optional<Attendance> findBySessionAndParticipant(Session session, ActivityParticipant activityParticipant);
 
-    // 내가 개설한 활동 전체 출결 조회하기
-//    @Query(
-//            "select m.createdActivities from Member m " +
-//                    "join m.participatedActivities pa " +
-//                    "join pa.activity a " +
-//                    "join a.sessions s " +
-//                    "where m.id = :memberId"
-//    )
-//    Activity findMyCreateActivityAttendances(@Param("memberId") Long memberId, PageRequest of);
+    @Query("SELECT a FROM Attendance a JOIN FETCH a.participant p JOIN FETCH p.member WHERE a.session.id = :sessionId")
+    List<Attendance> findBySessionIdWithParticipantAndMember(@Param("sessionId") Long sessionId);
 }
+

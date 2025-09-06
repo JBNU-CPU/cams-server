@@ -2,6 +2,7 @@ package com.cpu.cams.attendence.controller;
 
 import com.cpu.cams.attendence.dto.response.CreateActivityAttendanceResponse;
 import com.cpu.cams.attendence.dto.response.ParticipantActivityAttendanceResponse;
+import com.cpu.cams.attendence.dto.response.SessionAttendanceResponse;
 import com.cpu.cams.attendence.service.AttendanceService;
 import com.cpu.cams.member.dto.response.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
@@ -74,5 +75,14 @@ public class AttendanceController {
         CreateActivityAttendanceResponse myCreateActivityAttendances = attendanceService.getAttendance(activityId, userDetails.getUsername());
 
         return ResponseEntity.ok(myCreateActivityAttendances);
+    }
+    
+    // 특정 세션 전체 출결 데이터 리스트 조회하기
+    @GetMapping("/{sessionId}")
+    public ResponseEntity<List<SessionAttendanceResponse>> getSessionAttendances(
+            @PathVariable Long sessionId,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        List<SessionAttendanceResponse> sessionAttendances = attendanceService.getSessionAttendances(sessionId, userDetails.getUsername());
+        return ResponseEntity.ok(sessionAttendances);
     }
 }
