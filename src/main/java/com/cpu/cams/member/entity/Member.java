@@ -88,7 +88,7 @@ public class Member {
         member.email = "example@gmail.com";
         member.phone = "010-0000-0000";
         member.department = "ex) 컴인지";
-        member.role = Role.ROLE_ADMIN;
+        member.role = Role.ROLE_USER;
         member.cohort = 0
         ;
         return member;
