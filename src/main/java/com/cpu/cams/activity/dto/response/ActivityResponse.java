@@ -18,6 +18,7 @@ public class ActivityResponse {
     private String title;
     private String description;
     private String createdBy;
+    private Long creatorId;
     private Integer participantCount;
     private Integer maxParticipants;
     private String activityType;
