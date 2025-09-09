@@ -9,6 +9,7 @@ import com.cpu.cams.attendence.entity.Attendance;
 import com.cpu.cams.attendence.entity.Session;
 import com.cpu.cams.attendence.entity.SessionStatus;
 import com.cpu.cams.attendence.repository.SessionRepository;
+import com.cpu.cams.exception.CustomException;
 import com.cpu.cams.member.entity.Member;
 import com.cpu.cams.member.repository.MemberRepository;
 //import com.cpu.cams.notification.NotificationPayload;
@@ -19,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -185,12 +187,17 @@ public class SessionService {
         }
     }
 
+    // 세션 조회
+    public Session findById(Long id) {
+        return sessionRepository.findById(id).orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "세션을 찾을 수 없습니다."));
+    }
+
     // 세션 소유자 확인 메서드
     private Session isOwner(String username, Long sessionId) {
-        Session session = sessionRepository.findById(sessionId).orElseThrow(() -> new RuntimeException("세션을 찾을 수 없습니다."));
+        Session session = findById(sessionId);
 
         if (!session.getActivity().getCreatedBy().getUsername().equals(username)) {
-            throw new RuntimeException("세션에 대한 권한이 없습니다.");
+            throw new CustomException(HttpStatus.FORBIDDEN, "권한이 없습니다.");
         }
         return session;
     }
