@@ -24,6 +24,7 @@ public class ActivityRequest {
     private ActivityType activityType;
     @NotNull(message = "최대 참여 인원은 필수입니다.")
     private Integer maxParticipants;
+    @NotBlank(message = "장소 설명은 필수입니다.")
     private String location;
     private String notes;
     // TODO: recurringSchedules, eventSchedule, curriculums validation 추가 필요

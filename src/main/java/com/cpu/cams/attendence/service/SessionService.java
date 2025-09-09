@@ -11,8 +11,8 @@ import com.cpu.cams.attendence.entity.SessionStatus;
 import com.cpu.cams.attendence.repository.SessionRepository;
 import com.cpu.cams.member.entity.Member;
 import com.cpu.cams.member.repository.MemberRepository;
-import com.cpu.cams.notification.NotificationPayload;
-import com.cpu.cams.notification.NotificationService;
+//import com.cpu.cams.notification.NotificationPayload;
+//import com.cpu.cams.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -37,7 +37,7 @@ public class SessionService {
     private final ActivityRepository activityRepository;
     private final SessionRepository sessionRepository;
     private final MemberRepository memberRepository;
-    private final NotificationService notificationService;
+//    private final NotificationService notificationService;
 
     // 세션 만들기
     public Long createSession(Long activityId, SessionRequest request, String username) {
@@ -65,11 +65,11 @@ public class SessionService {
         // 4. Activity 세션 수 증가
         activity.addSession();
 
-        // 5. 활동 참가자들에게 알림
-        NotificationPayload notificationPayload = new NotificationPayload("출석 열림", activity.getTitle() + " 출석이 열렸습니다.", "~~~링크 참조");
-        activity.getParticipants().forEach( activityParticipant -> {
-            notificationService.createAndSend(activityParticipant.getMember().getId(), notificationPayload);
-        });
+//        // 5. 활동 참가자들에게 알림
+//        NotificationPayload notificationPayload = new NotificationPayload("출석 열림", activity.getTitle() + " 출석이 열렸습니다.", "~~~링크 참조");
+//        activity.getParticipants().forEach( activityParticipant -> {
+//            notificationService.createAndSend(activityParticipant.getMember().getId(), notificationPayload);
+//        });
 
         return session.getId();
     }
