@@ -4,6 +4,7 @@ import com.cpu.cams.announcement.dto.request.AnnouncementRequest;
 import com.cpu.cams.announcement.dto.response.AnnouncementResponse;
 import com.cpu.cams.announcement.entity.Announcement;
 import com.cpu.cams.announcement.repository.AnnouncementRepository;
+import com.cpu.cams.exception.CustomException;
 import com.cpu.cams.member.dto.response.CustomUserDetails;
 import com.cpu.cams.member.entity.Member;
 import com.cpu.cams.member.repository.MemberRepository;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -87,13 +89,13 @@ public class AnnouncementService {
                 .anyMatch(a -> "ROLE_ADMIN".equals(a.getAuthority())); // 또는 Role.ROLE_ADMIN.name()
 
         if (!isAdmin) {
-            throw new RuntimeException("너 관리자 아니구나?");
+            throw new CustomException(HttpStatus.FORBIDDEN, "권한이 없습니다.");
         }
     }
     
     // 공지 확인하는 로직
     private Announcement findOne(Long announcementId){
-        return announcementRepository.findById(announcementId).orElseThrow(() -> new RuntimeException("공지 없음"));
+        return announcementRepository.findById(announcementId).orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "게시글을 찾을 수 없습니다."));
     }
 
 }
