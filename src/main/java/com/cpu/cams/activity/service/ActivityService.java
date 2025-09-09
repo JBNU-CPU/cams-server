@@ -44,7 +44,7 @@ public class ActivityService {
     // 개설하기
     public Long createActivity(ActivityRequest activityRequest, String username) {
 
-        Member findMember = memberRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("멤버없음"));
+        Member findMember = memberRepository.findByUsername(username).orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
         Activity activity = Activity.create(activityRequest, findMember);
 
         List<RecurringScheduleDTO> recurringSchedules = activityRequest.getRecurringSchedules();
@@ -177,16 +177,16 @@ public class ActivityService {
     // 활동 신청 마감
     public String updateStatus(Long activityId, String status, CustomUserDetails userDetails) {
         if (!isOwnerOrAdmin(userDetails, activityId)) {
-            throw new AccessDeniedException("상태 변경 권한이 없습니다.");
+            throw new CustomException(HttpStatus.FORBIDDEN, "권한이 없습니다.");
         }
-        Activity activity = activityRepository.findById(activityId).orElseThrow(() -> new RuntimeException("에러"));
+        Activity activity = activityRepository.findById(activityId).orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "활동을 찾을 수 없습니다."));
         activity.updateActivityStatus(status);
         return status;
     }
 
     public Long deleteActivity(Long activityId, CustomUserDetails userDetails) {
         if (!isOwnerOrAdmin(userDetails, activityId)) {
-            throw new AccessDeniedException("삭제 권한이 없습니다.");
+            throw new CustomException(HttpStatus.FORBIDDEN, "권한이 없습니다.");
         }
         
         Member findMember = memberRepository.findByUsername(userDetails.getUsername()).orElseThrow(() -> new RuntimeException("멤버없음"));
@@ -239,7 +239,7 @@ public class ActivityService {
         }
 
         // 활동 소유자 확인
-        Activity activity = activityRepository.findById(activityId).orElseThrow(() -> new RuntimeException("활동이 없습니다."));
+        Activity activity = activityRepository.findById(activityId).orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "활동을 찾을 수 없습니다."));
         return activity.getCreatedBy().getUsername().equals(userDetails.getUsername());
     }
 }
