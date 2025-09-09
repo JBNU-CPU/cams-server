@@ -239,7 +239,13 @@ public class ActivityService {
         }
 
         // 활동 소유자 확인
-        Activity activity = activityRepository.findById(activityId).orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "활동을 찾을 수 없습니다."));
+        Activity activity = findById(activityId);
         return activity.getCreatedBy().getUsername().equals(userDetails.getUsername());
     }
+    
+    // Activity 엔티티 응답
+    public Activity findById(Long activityId) {
+        return activityRepository.findById(activityId).orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "활동을 찾을 수 없습니다."));
+    }
+    
 }
