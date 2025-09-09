@@ -48,7 +48,6 @@ public class MemberController {
     // 내 프로필 조회
     @GetMapping("/me")
     public ResponseEntity<ProfileResponse> getMyProfile(@AuthenticationPrincipal UserDetails userDetails) {
-
         ProfileResponse myProfile = memberService.getMyProfile(userDetails.getUsername());
         return ResponseEntity.ok(myProfile);
     }
