@@ -5,11 +5,13 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class SignupRequest {
     @NotBlank(message = "학번은 필수입니다.")
     @Pattern(regexp = "^[0-9]{9}$", message = "학번은 9자리 숫자여야 합니다.")
