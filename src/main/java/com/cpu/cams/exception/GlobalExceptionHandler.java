@@ -38,16 +38,19 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
         log.warn("MethodArgumentNotValidException occurred: {}", ex.getMessage());
 
+        // 3. 어떤 필드에서 어떤 오류가 발생했는지 추출
         String errorMessages = ex.getBindingResult().getFieldErrors().stream()
                 .map(fieldError -> fieldError.getField() + ": " + fieldError.getDefaultMessage())
-                .collect(Collectors.joining(", "));
+                .collect(Collectors.joining(", ")); // 4. 여러 오류를 쉼표로 연결
 
+        // 5. 우리가 정의한 ErrorResponse 형식으로 변환
         ErrorResponse errorResponse = ErrorResponse.of(
                 (HttpStatus) status,
                 errorMessages,
                 request.getDescription(false).replace("uri=", "")
         );
 
+        // 6. 최종 ResponseEntity 객체로 감싸서 반환
         return new ResponseEntity<>(errorResponse, headers, status);
     }
 

@@ -13,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -29,11 +28,8 @@ public class MemberController {
 
     // 회원가입
     @PostMapping
-    public ResponseEntity<Long> signup(@Valid @RequestBody SignupRequest signupRequest, BindingResult bindingResult) {
-        if(bindingResult.hasErrors()){
-            log.error("valid 에러 = {}", bindingResult.getAllErrors());
-            throw new IllegalArgumentException(bindingResult.getAllErrors().get(0).getDefaultMessage());
-        }
+    public ResponseEntity<Long> signup(@Valid @RequestBody SignupRequest signupRequest) {
+
         Long memberId = memberService.signup(signupRequest);
         return ResponseEntity.ok().body(memberId);
     }
