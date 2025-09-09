@@ -10,6 +10,7 @@ import com.cpu.cams.activity.entity.Curriculum;
 import com.cpu.cams.activity.entity.EventSchedule;
 import com.cpu.cams.activity.entity.RecurringSchedule;
 import com.cpu.cams.activity.repository.ActivityRepository;
+import com.cpu.cams.exception.CustomException;
 import com.cpu.cams.member.dto.response.CustomUserDetails;
 import com.cpu.cams.member.entity.Member;
 import com.cpu.cams.member.repository.MemberRepository;
@@ -23,6 +24,7 @@ import com.cpu.cams.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -113,7 +115,8 @@ public class ActivityService {
 
     // 활동 세부 정보 조회
     public ActivityResponse getActivity(Long activityId) {
-        Activity activity = activityRepository.findById(activityId).orElseThrow(() -> new RuntimeException("활동 없음"));
+        Activity activity = activityRepository.findById(activityId).orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "활동을 찾을 수 없습니다."));
+
         return ActivityResponse.builder()
                 .creatorId(activity.getCreatedBy().getId())
                 .location(activity.getLocation())
@@ -142,7 +145,7 @@ public class ActivityService {
             throw new AccessDeniedException("수정 권한이 없습니다.");
         }
         
-        Activity activity = activityRepository.findById(activityId).orElseThrow(() -> new RuntimeException("운동 없음"));
+        Activity activity = activityRepository.findById(activityId).orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "활동을 찾을 수 없습니다."));
 
         activity.updateActivity(activityRequest);
 
