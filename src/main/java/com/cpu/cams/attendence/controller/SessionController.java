@@ -4,6 +4,7 @@ import com.cpu.cams.attendence.dto.request.SessionRequest;
 import com.cpu.cams.attendence.dto.response.OpenSessionResponse;
 import com.cpu.cams.attendence.dto.response.SessionInfoResponse;
 import com.cpu.cams.attendence.service.SessionService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -22,7 +23,7 @@ public class SessionController {
 
     // 세션 생성
     @PostMapping("/{activityId}")
-    public ResponseEntity<Long> createAttendance(@PathVariable Long activityId, @RequestBody SessionRequest sessionRequest, @AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<Long> createAttendance(@PathVariable Long activityId, @Valid @RequestBody SessionRequest sessionRequest, @AuthenticationPrincipal UserDetails userDetails) {
 
         Long sessionId = sessionService.createSession(activityId, sessionRequest, userDetails.getUsername());
 
@@ -52,7 +53,7 @@ public class SessionController {
     public ResponseEntity<Long> updateSessionInfo
     (
             @PathVariable Long sessionId,
-            @RequestBody SessionRequest request,
+            @Valid @RequestBody SessionRequest request,
             @AuthenticationPrincipal UserDetails userDetails
     ) {
         Long id = sessionService.updateSessionInfo(sessionId, request, userDetails.getUsername());

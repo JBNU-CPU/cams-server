@@ -2,6 +2,7 @@ package com.cpu.cams.notification;
 
 import com.cpu.cams.member.dto.response.CustomUserDetails;
 import com.cpu.cams.member.repository.MemberRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -41,7 +42,7 @@ public class NotificationController {
     /** 알림 생성 + 즉시 푸시 (예: 서버 내부/관리자/테스트) */
     @PostMapping("/send/{userId}")
     public NotificationResponse send(@PathVariable Long userId,
-                                     @RequestBody NotificationPayload payload) {
+                                     @Valid @RequestBody NotificationPayload payload) {
         return notificationService.createAndSend(userId, payload);
     }
 
@@ -65,7 +66,7 @@ public class NotificationController {
 
     // 전체 공지
     @PostMapping("/broadcast")
-    public BroadcastResult broadcast(@RequestBody NotificationPayload payload) {
+    public BroadcastResult broadcast(@Valid @RequestBody NotificationPayload payload) {
         return notificationService.broadcastToAll(payload);
     }
 
