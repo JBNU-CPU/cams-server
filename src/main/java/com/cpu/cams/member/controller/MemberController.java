@@ -40,14 +40,14 @@ public class MemberController {
 
     // 비밀번호 찾기
     @PostMapping("/password")
-    public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) {
+    public ResponseEntity<?> resetPassword(@Valid @RequestBody ResetPasswordRequest resetPasswordRequest) {
         // todo : 이메일 인증으로 구현
         return ResponseEntity.status(200).body("성공");
     }
 
     // 회원 탈퇴
     @DeleteMapping("/{memberId}")
-    public ResponseEntity<?> deleteMemberInfo(@RequestBody WithdrawalRequest withdrawalRequest) {
+    public ResponseEntity<?> deleteMemberInfo(@Valid @RequestBody WithdrawalRequest withdrawalRequest) {
         // todo : 이메일 인증으로 구현
         return ResponseEntity.status(200).body("성공");
     }
@@ -62,7 +62,7 @@ public class MemberController {
 
     // 내 프로필 편집
     @PutMapping("/me")
-    public ResponseEntity<Long> updateMyProfile(@RequestBody ProfileRequest profileRequest, @AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<Long> updateMyProfile(@Valid @RequestBody ProfileRequest profileRequest, @AuthenticationPrincipal UserDetails userDetails) {
 
         Long result = memberService.updateMyProfile(profileRequest, userDetails.getUsername());
         return ResponseEntity.ok(result);
