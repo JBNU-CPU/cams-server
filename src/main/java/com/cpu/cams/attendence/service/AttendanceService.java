@@ -4,6 +4,7 @@ import com.cpu.cams.activity.entity.Activity;
 import com.cpu.cams.activity.entity.ActivityParticipant;
 import com.cpu.cams.activity.repository.ActivityParticipantRepository;
 import com.cpu.cams.activity.repository.ActivityRepository;
+import com.cpu.cams.activity.service.ActivityService;
 import com.cpu.cams.attendence.dto.response.CreateActivityAttendanceResponse;
 import com.cpu.cams.attendence.dto.response.SessionAttendanceResponse;
 import com.cpu.cams.attendence.entity.SessionStatus;
@@ -13,6 +14,7 @@ import com.cpu.cams.attendence.entity.Attendance;
 import com.cpu.cams.attendence.entity.AttendanceStatus;
 import com.cpu.cams.attendence.entity.Session;
 import com.cpu.cams.attendence.repository.AttendanceRepository;
+import com.cpu.cams.exception.CustomException;
 import com.cpu.cams.member.dto.response.CustomUserDetails;
 import com.cpu.cams.member.entity.Member;
 import com.cpu.cams.member.repository.MemberRepository;
@@ -26,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.stream.Collectors;
@@ -44,15 +47,17 @@ public class AttendanceService {
     private final MemberRepository memberRepository;
     private final ActivityRepository activityRepository;
     private final MemberService memberService;
+    private final ActivityService activityService;
+    private final SessionService sessionService;
 
     // 출석하기
     public Long attendance(Long sessionId, String attendancesCode, String username) {
 
-        Member findMember = memberRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("멤버없음"));
-        Session session = sessionRepository.findById(sessionId).orElseThrow(() -> new RuntimeException("없는 세션입니다."));
+        Member findMember = memberService.findByUsername(username);
+        Session session = sessionRepository.findById(sessionId).orElseThrow(() -> new CustomException(HttpStatus.FORBIDDEN, "권한이 없습니다."));
 
         if(session.getStatus().equals(SessionStatus.CLOSED)) {
-            throw new RuntimeException("출석이 열리지 않았습니다.");
+            throw new CustomException(HttpStatus.BAD_REQUEST, "출석이 열리지 않았습니다.");
         }
 
         ActivityParticipant activityParticipant = activityParticipantRepository.findByMemberAndActivity(findMember, session.getActivity()).orElseThrow(() -> new RuntimeException("참여자 없음"));
@@ -61,7 +66,7 @@ public class AttendanceService {
         if(attendancesCode.equals(session.getAttendancesCode())){
             attendance.changeStatus(AttendanceStatus.PRESENT);
         } else {
-            throw new RuntimeException("출석코드 틀림");
+            throw new CustomException(HttpStatus.BAD_REQUEST, "출석코드가 정확하지 않습니다.");
         }
 
         PointRequest pointRequest = PointRequest.builder()
@@ -80,11 +85,12 @@ public class AttendanceService {
     // 출석 ON/OFF 관리
     public Long updateAttendancesStatus(Long sessionId, Long participantId, String attendanceStatus, CustomUserDetails customUserDetails) {
 
-        // 팀장인지 확인하는 작업
-        Attendance attendance = attendanceRepository.findBySessionIdAndParticipantId(sessionId, participantId).orElseThrow(() -> new RuntimeException("없는 출석"));
 
+        Attendance attendance = attendanceRepository.findBySessionIdAndParticipantId(sessionId, participantId).orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "출석을 찾을 수 없습니다."));
+
+        // 팀장인지 확인하는 작업
         if(!attendance.getSession().getActivity().getCreatedBy().getUsername().equals(customUserDetails.getUsername()) && !checkAdmin(customUserDetails)){
-            throw new RuntimeException("당신 누구야??");
+            throw new CustomException(HttpStatus.FORBIDDEN, "권한이 없습니다.");
         }
 
         attendance.changeStatus(AttendanceStatus.valueOf(attendanceStatus));
@@ -103,7 +109,7 @@ public class AttendanceService {
     //todo: 코드 고쳐야함
     public List<CreateActivityAttendanceResponse> getMyCreateActivityAttendances(String username) {
 
-        Member findMember = memberRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("멤버없음"));
+        Member findMember = memberService.findByUsername(username);
         List<Activity> activities = activityRepository.findByCreatedBy(findMember);
 
         List<CreateActivityAttendanceResponse> result = new ArrayList<>();
@@ -197,18 +203,18 @@ public class AttendanceService {
                 .anyMatch(a -> "ROLE_ADMIN".equals(a.getAuthority())); // 또는 Role.ROLE_ADMIN.name()
 
         if (!isAdmin) {
-            throw new RuntimeException("너 관리자 아니구나?");
+            throw new CustomException(HttpStatus.FORBIDDEN, "권한이 없습니다.");
         }
         return true;
     }
 
     // 내가 개설한 특정 활동 출석 현황 조회
     public CreateActivityAttendanceResponse getAttendance(Long activityId, String username) {
-        Member findMember = memberRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("멤버없음"));
-        Activity activity = activityRepository.findById(activityId).orElseThrow(() -> new RuntimeException("활동 없음"));
+        Member findMember = memberService.findByUsername(username);
+        Activity activity = activityService.findById(activityId);
 
         if (!activity.getCreatedBy().equals(findMember)) {
-            throw new RuntimeException("해당 활동을 개설한 멤버가 아닙니다.");
+            throw new CustomException(HttpStatus.FORBIDDEN, "권한이 없습니다.");
         }
 
         List<CreateActivityAttendanceResponse.WeeklySummary> weeklySummaries = new ArrayList<>();
@@ -290,13 +296,12 @@ public class AttendanceService {
     // 특정 세션 전체 출결 데이터 리스트 조회
     public List<SessionAttendanceResponse> getSessionAttendances(Long sessionId, String username) {
         // 1. 세션 조회
-        Session session = sessionRepository.findById(sessionId)
-                .orElseThrow(() -> new RuntimeException("세션을 찾을 수 없습니다."));
+        Session session = sessionService.findById(sessionId);
 
         // 2. 활동 개설자 확인 (권한 체크)
         // 현재 로그인한 사용자가 해당 세션이 속한 활동의 개설자인지 확인
         if (!session.getActivity().getCreatedBy().getUsername().equals(username)) {
-            throw new RuntimeException("해당 세션의 출결 정보를 조회할 권한이 없습니다.");
+            throw new CustomException(HttpStatus.FORBIDDEN, "권한이 없습니다.");
         }
 
         // 3. 해당 세션의 모든 출결 데이터 조회 (참가자 정보 포함)
@@ -316,19 +321,18 @@ public class AttendanceService {
 
     // 특정 멤버의 특정 활동에 대한 전체 출결 데이터 리스트 조회
     public List<ParticipantActivityAttendanceResponse> getMemberActivityAttendances(Long activityId, Long memberId, String username) {
-        Activity activity = activityRepository.findById(activityId)
-                .orElseThrow(() -> new RuntimeException("활동을 찾을 수 없습니다."));
+        Activity activity = activityService.findById(activityId);
 
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new RuntimeException("멤버를 찾을 수 없습니다."));
 
         // 권한 확인: 활동 개설자 또는 관리자만 조회 가능
         if (!activity.getCreatedBy().getUsername().equals(username) && !memberService.checkAdmin(username)) {
-            throw new RuntimeException("해당 활동의 출결 정보를 조회할 권한이 없습니다.");
+            throw new CustomException(HttpStatus.FORBIDDEN, "권한이 없습니다.");
         }
 
         ActivityParticipant activityParticipant = activityParticipantRepository.findByMemberAndActivity(member, activity)
-                .orElseThrow(() -> new RuntimeException("해당 활동에 참여하지 않은 멤버입니다."));
+                .orElseThrow(() -> new CustomException(HttpStatus.BAD_REQUEST, "활동에 참여하지 않은 사용자입니다."));
 
         List<Session> sessions = sessionRepository.findByActivity(activity);
 

@@ -5,6 +5,7 @@ import com.cpu.cams.activity.entity.Activity;
 import com.cpu.cams.activity.entity.ActivityParticipant;
 import com.cpu.cams.activity.repository.ActivityParticipantRepository;
 import com.cpu.cams.activity.repository.ActivityRepository;
+import com.cpu.cams.exception.CustomException;
 import com.cpu.cams.member.dto.response.CustomUserDetails;
 import com.cpu.cams.member.entity.Member;
 import com.cpu.cams.member.repository.MemberRepository;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,19 +35,19 @@ public class ParticipantService {
     // 활동 참가 신청하기
     public void addParticipant(Long activityId, String username) {
 
-        Member member = memberRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("멤버없음"));
-        Activity activity = activityRepository.findById(activityId).orElseThrow(() -> new RuntimeException("활동 없음"));
+        Member member = memberService.findByUsername(username);
+        Activity activity = activityRepository.findById(activityId).orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "활동을 찾을 수 없습니다."));
 
         // 중복 참가 방지
         boolean duplicated = activity.getParticipants().stream()
                 .anyMatch(participant -> participant.getMember().getId().equals(member.getId()));
         if(duplicated){
-            throw new RuntimeException("당신 중복 참가자임");
+            throw new CustomException(HttpStatus.BAD_REQUEST, "이미 참가한 사용자는 참가 신청을 할 수 없습니다.");
         }
 
         // 팀장 참가 금지
         if(username.equals(activity.getCreatedBy().getUsername())){
-            throw new RuntimeException("너가 만든걸 너가 신청할려고?");
+            throw new CustomException(HttpStatus.BAD_REQUEST, "팀장은 참가 신청을 할 수 없습니다.");
         }
 
         ActivityParticipant.create(activity, member);
@@ -60,10 +62,10 @@ public class ParticipantService {
     // 활동 참가자 목록 조회하기
     public Page<ParticipantResponse> getActivityParticipants(Long activityId, CustomUserDetails customUserDetails, int page, int size){
 
-        Activity activity = activityRepository.findById(activityId).orElseThrow(() -> new RuntimeException("활동 없음"));
+        Activity activity = activityRepository.findById(activityId).orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "활동을 찾을 수 없습니다."));
 
         if(!activity.getCreatedBy().getUsername().equals(customUserDetails.getUsername()) && !checkAdmin(customUserDetails)){
-            throw new RuntimeException("당신 팀장 맞아?");
+            throw new CustomException(HttpStatus.FORBIDDEN, "권한이 없습니다.");
         }
 
         Page<ActivityParticipant> participants = activityParticipantRepository.findByActivity(activity, PageRequest.of(page, size));
@@ -86,7 +88,7 @@ public class ParticipantService {
     public void deleteParticipant(Long activityId, CustomUserDetails customUserDetails){
 
         // 멤버가 실제 참가했었는지 확인
-        Activity activity = activityRepository.findById(activityId).orElseThrow(() -> new RuntimeException("활동 없음"));
+        Activity activity = activityRepository.findById(activityId).orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "활동을 찾을 수 없습니다."));
 
         String username = customUserDetails.getUsername();
         activity.getParticipants().stream().filter((participant -> participant.getMember().getUsername().equals(username))).findFirst().orElseThrow(() -> new RuntimeException("당신 참가자 아닌거같음"));
@@ -116,12 +118,12 @@ public class ParticipantService {
     public void deleteParticipantByReader(Long activityId, Long participantId, CustomUserDetails customUserDetails) {
 
         Activity activity = activityRepository.findById(activityId)
-                .orElseThrow(() -> new RuntimeException("활동 없음"));
+                .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "활동을 찾을 수 없습니다."));
 
         // 권한 체크 (팀장 or 관리자만 가능)
         if (!activity.getCreatedBy().getUsername().equals(customUserDetails.getUsername())
                 && !checkAdmin(customUserDetails)) {
-            throw new RuntimeException("당신 팀장 맞아?");
+            throw new CustomException(HttpStatus.FORBIDDEN, "권한이 없습니다.");
         }
 
         // 해당 멤버 참가자 찾아 삭제
