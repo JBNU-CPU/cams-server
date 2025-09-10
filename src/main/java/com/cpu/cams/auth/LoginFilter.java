@@ -21,6 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.util.StreamUtils;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Date;
@@ -87,9 +88,23 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     //로그인 실패시 실행하는 메소드
     @Override
-    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) {
+    protected void unsuccessfulAuthentication(HttpServletRequest request,
+                                              HttpServletResponse response,
+                                              AuthenticationException failed) throws IOException {
+
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType("application/json; charset=UTF-8");
+
+        String body = """
+        {
+          "code": "UNAUTHORIZED",
+          "message": "%s"
+        }
+        """.formatted(failed.getMessage());
+
+        response.getWriter().write(body);
     }
+
 
     // 쿠키 생성 메서드
     private Cookie createCookie(String key, String value) {

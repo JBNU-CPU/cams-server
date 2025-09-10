@@ -4,6 +4,7 @@ import com.cpu.cams.activity.dto.request.ActivityRequest;
 import com.cpu.cams.activity.dto.response.ActivityResponse;
 import com.cpu.cams.activity.service.ActivityService;
 import com.cpu.cams.member.dto.response.CustomUserDetails;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ public class ActivityController {
     // 개설하기
     @PostMapping
     public ResponseEntity<Long> createActivity(
-            @RequestBody ActivityRequest activityRequest,
+            @Valid @RequestBody ActivityRequest activityRequest,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         Long activityId = activityService.createActivity(activityRequest, userDetails.getUsername());
@@ -46,7 +47,7 @@ public class ActivityController {
     @PutMapping("/{activityId}")
     public ResponseEntity<Long> updateActivity(
             @PathVariable Long activityId,
-            @RequestBody ActivityRequest activityRequest,
+            @Valid @RequestBody ActivityRequest activityRequest,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         Long updateActivityId = activityService.updateActivity(activityId, activityRequest, userDetails);

@@ -5,6 +5,7 @@ import com.cpu.cams.announcement.dto.response.AnnouncementResponse;
 import com.cpu.cams.announcement.service.AnnouncementService;
 import com.cpu.cams.member.dto.response.CustomUserDetails;
 import com.cpu.cams.member.entity.Role;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -27,7 +28,7 @@ public class AnnouncementController {
     // 공지 등록
     @PostMapping()
     public ResponseEntity<Long> createAnnouncement(
-            @RequestBody AnnouncementRequest announcementRequest,
+            @Valid @RequestBody AnnouncementRequest announcementRequest,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ){
         
@@ -58,7 +59,7 @@ public class AnnouncementController {
     @PutMapping("/{announcementId}")
     public void updateAnnouncement(
             @PathVariable Long announcementId,
-            @RequestBody AnnouncementRequest announcementRequest,
+            @Valid @RequestBody AnnouncementRequest announcementRequest,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ){
         announcementService.updateAnnouncement(announcementId, announcementRequest, customUserDetails);
