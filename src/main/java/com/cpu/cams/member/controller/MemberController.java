@@ -6,10 +6,13 @@ import com.cpu.cams.member.dto.request.SignupRequest;
 import com.cpu.cams.member.dto.request.WithdrawalRequest;
 import com.cpu.cams.member.dto.response.ProfileResponse;
 import com.cpu.cams.member.entity.Member;
+import com.cpu.cams.member.service.MailService;
 import com.cpu.cams.member.service.MemberService;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,6 +28,7 @@ import java.util.Map;
 public class MemberController {
 
     private final MemberService memberService;
+    private final MailService mailService;
 
     // 회원가입
     @PostMapping
@@ -71,5 +75,22 @@ public class MemberController {
         Map<String, String> result = new HashMap<>();
         result.put("name", member.getName());
         return ResponseEntity.ok(result);
+    }
+
+    // 이메일 인증 코드 전송 요청
+    @GetMapping("/email/auth")
+    public ResponseEntity<String> requestAuthcode(@RequestParam(name = "email") String email) throws MessagingException {
+        boolean isSend = memberService.sendAuthcode(email);
+        return isSend ? ResponseEntity.status(HttpStatus.OK).body("인증 코드가 전송되었습니다.") :
+                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("인증 코드 전송이 실패하였습니다.");
+    }
+    
+    // 이메일 인증
+    @PostMapping("/email/auth")
+    public ResponseEntity<String> validateAuthcode(@RequestParam(name = "email")String email,
+                                                   @RequestParam(name = "auth")String authCode) {
+        boolean isSuccess = memberService.validationAuthcode(email, authCode);
+        return isSuccess ? ResponseEntity.status(HttpStatus.OK).body("이메일 인증에 성공하였습니다.") :
+                ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이메일 인증에 실패하였습니다.");
     }
 }
