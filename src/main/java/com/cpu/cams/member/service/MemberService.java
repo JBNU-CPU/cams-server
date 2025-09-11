@@ -4,8 +4,11 @@ import com.cpu.cams.exception.CustomException;
 import com.cpu.cams.member.dto.request.ProfileRequest;
 import com.cpu.cams.member.dto.request.SignupRequest;
 import com.cpu.cams.member.dto.response.ProfileResponse;
+import com.cpu.cams.member.entity.EmailAuth;
 import com.cpu.cams.member.entity.Member;
+import com.cpu.cams.member.repository.EmailAuthRepository;
 import com.cpu.cams.member.repository.MemberRepository;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -19,6 +22,8 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final MailService mailService;
+    private final EmailAuthRepository emailAuthRepository;
 
     public Long signup(SignupRequest signupRequest) {
         signupRequest.setPassword(bCryptPasswordEncoder.encode(signupRequest.getPassword()));
@@ -54,5 +59,30 @@ public class MemberService {
     public boolean checkAdmin(String username) {
         Member findMember = memberRepository.findByUsername(username).orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
         return findMember.getRole().equals(com.cpu.cams.member.entity.Role.ROLE_ADMIN);
+    }
+
+    // 인증 코드 발급
+    @Transactional
+    public boolean sendAuthcode(String email) throws MessagingException {
+        String authCode = mailService.sendSimpleMessage(email);
+        if(authCode != null){
+            EmailAuth auth = emailAuthRepository.findByEmail(email);
+            if(auth == null)
+                emailAuthRepository.save(new EmailAuth(email, authCode));
+            else
+                auth.patch(authCode);
+            return true;
+        }
+        return false;
+    }
+
+    // 이메일 / 인증 코드 검증
+    public boolean validationAuthcode(String email, String authCode) {
+        EmailAuth auth = emailAuthRepository.findByEmail(email);
+        if(auth != null && auth.getAuthCode().equals(authCode)){
+            emailAuthRepository.delete(auth);
+            return true;
+        }
+        return false;
     }
 }

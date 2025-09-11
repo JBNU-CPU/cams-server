@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Random;
 
@@ -17,7 +18,6 @@ import java.util.Random;
 public class MailService {
 
     private final JavaMailSender javaMailSender;
-
     @Value("${spring.mail.username}")
     private String senderEmail;
 
@@ -52,16 +52,16 @@ public class MailService {
     }
 
     // 메일 발송
-    public boolean sendSimpleMessage(String sendEmail) throws MessagingException {
+    public String sendSimpleMessage(String sendEmail) throws MessagingException {
         String authCode = createCode(); // 랜덤 인증번호 생성
 
         MimeMessage message = createMail(sendEmail, authCode); // 메일 생성
         try {
             javaMailSender.send(message); // 메일 발송
-            return true;
+            return authCode;
         } catch (MailException e) {
             log.error("Failed to send email", e);
-            return false;
+            return null;
         }
     }
 }
