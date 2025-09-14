@@ -33,7 +33,7 @@ public class MemberController {
     // 회원가입
     @PostMapping
     public ResponseEntity<Long> signup(@Valid @RequestBody SignupRequest signupRequest) {
-
+        System.out.println("코드 바뀌는 거 확인용!");
         Long memberId = memberService.signup(signupRequest);
         return ResponseEntity.ok().body(memberId);
     }
