@@ -86,4 +86,14 @@ public class MemberService {
         }
         return false;
     }
+
+    @Transactional(readOnly = true)
+    public boolean checkEmailDuplication(String email) {
+        return memberRepository.existsByEmail(email);
+    }
+
+    @Transactional(readOnly = true)
+    public boolean checkUsernameDuplication(String username) {
+        return memberRepository.existsByUsername(username);
+    }
 }
