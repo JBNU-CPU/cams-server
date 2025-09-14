@@ -40,16 +40,16 @@ public class MemberController {
 
     // 비밀번호 찾기
     @PostMapping("/password")
-    public ResponseEntity<?> resetPassword(@Valid @RequestBody ResetPasswordRequest resetPasswordRequest) {
-        // todo : 이메일 인증으로 구현
-        return ResponseEntity.status(200).body("성공");
+    public ResponseEntity<String> resetPassword(@Valid @RequestBody ResetPasswordRequest resetPasswordRequest) {
+        memberService.resetPassword(resetPasswordRequest);
+        return ResponseEntity.ok().body("비밀번호가 재설정되었습니다.");
     }
 
     // 회원 탈퇴
-    @DeleteMapping("/{memberId}")
-    public ResponseEntity<?> deleteMemberInfo(@Valid @RequestBody WithdrawalRequest withdrawalRequest) {
-        // todo : 이메일 인증으로 구현
-        return ResponseEntity.status(200).body("성공");
+    @DeleteMapping("/me")
+    public ResponseEntity<String> deleteMemberInfo(@Valid @RequestBody WithdrawalRequest withdrawalRequest, @AuthenticationPrincipal UserDetails userDetails) {
+        memberService.withdrawal(withdrawalRequest, userDetails);
+        return ResponseEntity.ok().body("회원 탈퇴가 완료되었습니다.");
     }
 
 

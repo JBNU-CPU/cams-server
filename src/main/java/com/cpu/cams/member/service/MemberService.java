@@ -2,6 +2,7 @@ package com.cpu.cams.member.service;
 
 import com.cpu.cams.exception.CustomException;
 import com.cpu.cams.member.dto.request.ProfileRequest;
+import com.cpu.cams.member.dto.request.ResetPasswordRequest;
 import com.cpu.cams.member.dto.request.SignupRequest;
 import com.cpu.cams.member.dto.response.ProfileResponse;
 import com.cpu.cams.member.entity.EmailAuth;
@@ -13,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import com.cpu.cams.member.dto.request.WithdrawalRequest;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -30,6 +33,12 @@ public class MemberService {
         Member member = Member.create(signupRequest);
         memberRepository.save(member);
         return member.getId();
+    }
+
+    public void resetPassword(ResetPasswordRequest resetPasswordRequest) {
+        Member member = memberRepository.findByUsername(resetPasswordRequest.getUsername())
+                .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
+        member.updatePassword(bCryptPasswordEncoder.encode(resetPasswordRequest.getPassword()));
     }
 
     public ProfileResponse getMyProfile(String username) {
@@ -95,5 +104,16 @@ public class MemberService {
     @Transactional(readOnly = true)
     public boolean checkUsernameDuplication(String username) {
         return memberRepository.existsByUsername(username);
+    }
+
+    public void withdrawal(WithdrawalRequest withdrawalRequest, UserDetails userDetails) {
+        Member member = memberRepository.findByUsername(userDetails.getUsername())
+                .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
+
+        if (!bCryptPasswordEncoder.matches(withdrawalRequest.getPassword(), member.getPassword())) {
+            throw new CustomException(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다.");
+        }
+
+        memberRepository.delete(member);
     }
 }
