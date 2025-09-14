@@ -65,7 +65,7 @@ public class SecurityConfig {
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/login", "/", "/reissue", "/swagger-ui/**", "/v3/api-docs/**", "/api/member","/api/member/**", "/api/activities", "/api/activities/**", "/api/**").permitAll()
+                        .requestMatchers("/","/api/login",  "/reissue", "/swagger-ui/**", "/v3/api-docs/**", "/api/member","/api/member/**", "/api/activities", "/api/activities/**").permitAll()
 //                        .requestMatchers("/api/admin", "/api/admin/**", "/api/admin/activities/**").hasRole("ADMIN")
                         .anyRequest().authenticated());
 
@@ -76,7 +76,7 @@ public class SecurityConfig {
 
                         CorsConfiguration configuration = new CorsConfiguration();
 
-                        configuration.setAllowedOrigins(List.of("http://localhost:5173/","http://175.123.55.182", "http://localhost:3000", "https://jbnucpu.co.kr", "http://jbnucpu.co.kr", "https://cams.jbnucpu.co.kr", "http://jbnucpu.co.kr"));
+                        configuration.setAllowedOrigins(List.of("http://localhost:5173","http://175.123.55.182", "http://localhost:3000", "https://jbnucpu.co.kr", "http://jbnucpu.co.kr", "https://cams.jbnucpu.co.kr", "http://jbnucpu.co.kr"));
                         configuration.setAllowedMethods(Collections.singletonList("*"));
                         configuration.setAllowCredentials(true);
                         configuration.setAllowedHeaders(Collections.singletonList("*"));
@@ -89,8 +89,10 @@ public class SecurityConfig {
                 }));
 
         //필터 추가 LoginFilter()는 인자를 받음 (AuthenticationManager() 메소드에 authenticationConfiguration 객체를 넣어야 함) 따라서 등록 필요
+        LoginFilter loginFilter = new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, refreshRepository);
+        loginFilter.setFilterProcessesUrl("/api/login"); // 로그인 api 경로 login -> /api/login으로 수정
         http
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, refreshRepository), UsernamePasswordAuthenticationFilter.class);
+                .addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class);
 
         http
                 .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
