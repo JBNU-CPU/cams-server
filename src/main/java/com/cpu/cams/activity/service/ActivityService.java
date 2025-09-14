@@ -11,6 +11,7 @@ import com.cpu.cams.activity.entity.EventSchedule;
 import com.cpu.cams.activity.entity.RecurringSchedule;
 import com.cpu.cams.activity.repository.ActivityRepository;
 import com.cpu.cams.exception.CustomException;
+import com.cpu.cams.member.dto.response.AdminActivityResponse;
 import com.cpu.cams.member.dto.response.CustomUserDetails;
 import com.cpu.cams.member.entity.Member;
 import com.cpu.cams.member.repository.MemberRepository;
@@ -247,5 +248,10 @@ public class ActivityService {
     public Activity findById(Long activityId) {
         return activityRepository.findById(activityId).orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "활동을 찾을 수 없습니다."));
     }
-    
+
+    public List<AdminActivityResponse> findAll() {
+        List<Activity> all = activityRepository.findAll();
+        List<AdminActivityResponse> list = all.stream().map(activity -> AdminActivityResponse.entityToResponse(activity)).toList();
+        return list;
+    }
 }

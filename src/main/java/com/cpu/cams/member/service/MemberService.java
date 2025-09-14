@@ -4,6 +4,7 @@ import com.cpu.cams.exception.CustomException;
 import com.cpu.cams.member.dto.request.ProfileRequest;
 import com.cpu.cams.member.dto.request.ResetPasswordRequest;
 import com.cpu.cams.member.dto.request.SignupRequest;
+import com.cpu.cams.member.dto.response.AdminMemberResponse;
 import com.cpu.cams.member.dto.response.ProfileResponse;
 import com.cpu.cams.member.entity.EmailAuth;
 import com.cpu.cams.member.entity.Member;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Service;
 import com.cpu.cams.member.dto.request.WithdrawalRequest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional
@@ -115,5 +118,13 @@ public class MemberService {
         }
 
         memberRepository.delete(member);
+    }
+
+    public List<AdminMemberResponse> findAll() {
+        List<Member> all = memberRepository.findAll();
+        List<AdminMemberResponse> result = all.stream()
+                .map((member) -> AdminMemberResponse.entityToResponse(member)).toList();
+
+        return result;
     }
 }
