@@ -34,5 +34,10 @@ spring:
           writetimeout: 5000
     auth-code-expiration-millis: 300000
 
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.web.cors: TRACE # CORS 관련 문제는 TRACE 레벨로 더 상세하게 확인
+
 server:
   port: 8080
