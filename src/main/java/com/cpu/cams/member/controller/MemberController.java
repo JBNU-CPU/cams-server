@@ -82,7 +82,7 @@ public class MemberController {
     public ResponseEntity<String> requestAuthcode(@RequestParam(name = "email") String email) throws MessagingException {
         boolean isSend = memberService.sendAuthcode(email);
         return isSend ? ResponseEntity.status(HttpStatus.OK).body("인증 코드가 전송되었습니다.") :
-                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("인증 코드 전송이 실패하였습니다.");
+                ResponseEntity.status(HttpStatus.BAD_REQUEST).body("인증 코드 전송이 실패하였습니다.");
     }
     
     // 이메일 인증
@@ -92,5 +92,23 @@ public class MemberController {
         boolean isSuccess = memberService.validationAuthcode(email, authCode);
         return isSuccess ? ResponseEntity.status(HttpStatus.OK).body("이메일 인증에 성공하였습니다.") :
                 ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이메일 인증에 실패하였습니다.");
+    }
+
+    // 이메일 중복 확인
+    @GetMapping("/check-email")
+    public ResponseEntity<Void> checkEmail(@RequestParam String email) {
+        if (memberService.checkEmailDuplication(email)) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok().build();
+    }
+
+    // 학번 중복 확인
+    @GetMapping("/check-username")
+    public ResponseEntity<Void> checkUsername(@RequestParam String username) {
+        if (memberService.checkUsernameDuplication(username)) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok().build();
     }
 }
