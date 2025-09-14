@@ -122,6 +122,10 @@ public class Member {
         return this.role;
     }
 
+    public void updatePassword(String password) {
+        this.password = password;
+    }
+
     public void updateTotalPoints(Integer pointAmount) {
         if (this.totalPoints + pointAmount < 0) {
             throw new RuntimeException("포인트가 이상해요");
