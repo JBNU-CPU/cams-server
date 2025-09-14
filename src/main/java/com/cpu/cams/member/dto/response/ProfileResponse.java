@@ -16,4 +16,5 @@ public class ProfileResponse {
     private String department;
     private Integer cohort;
     private Integer totalPoints;
+    private String introduce;
 }
