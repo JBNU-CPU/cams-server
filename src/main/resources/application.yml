@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: cams
+  # ✅ 이 부분이 핵심! PROFILE 환경 변수 값에 따라 dev, prod 설정을 불러옵니다.
+  #    환경 변수가 없으면 기본값(default)으로 dev를 사용합니다.
+  profiles:
+    active: ${PROFILE:dev}
+
+  jpa:
+    show-sql: true
+    database-platform: org.hibernate.dialect.MySQLDialect
+    properties:
+      hibernate:
+        format_sql: true
+
+  # 🤫 JWT와 Mail의 민감 정보는 환경 변수로 받습니다.
+  jwt:
+    secret: ${JWT_SECRET}
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+    auth-code-expiration-millis: 300000
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.web.cors: TRACE # CORS 관련 문제는 TRACE 레벨로 더 상세하게 확인
+
+server:
+  port: 8080

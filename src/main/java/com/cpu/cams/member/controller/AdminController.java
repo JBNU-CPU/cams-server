@@ -19,7 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/admin")
 public class AdminController {
-
+    //임시
     private final AdminService adminService;
     private final MemberService memberService;
     private final ActivityService activityService;

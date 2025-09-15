@@ -1,0 +1,41 @@
+name: "BE-DEV :: Build and Deploy to Dev Server"
+
+on:
+  push:
+    # dev 브랜치에 푸시될 때 실행
+    branches:
+      - dev
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ehgus8910/cams-backend:latest-dev
+
+      - name: Deploy to Server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DEPLOY_SERVER_HOST }}
+          username: ${{ secrets.DEPLOY_SERVER_USERNAME }}
+          password: ${{ secrets.DEPLOY_SERVER_PASSWORD }}
+          script: |
+            cd /home/cpu/app
+
+            # 1) Docker Hub에서 최신 백엔드 이미지를 명시적으로 pull
+            docker-compose -f docker-compose.dev.yml pull cams-backend-dev
+
+            # 2) --force-recreate 옵션으로 컨테이너 재생성/실행
+            docker-compose -f docker-compose.dev.yml up -d --force-recreate cams-backend-dev
