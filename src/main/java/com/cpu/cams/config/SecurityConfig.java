@@ -76,7 +76,7 @@ public class SecurityConfig {
 
                         CorsConfiguration configuration = new CorsConfiguration();
 
-                        configuration.setAllowedOrigins(List.of("http://localhost:5173","http://175.123.55.182", "http://175.123.55.182:3001", "http://localhost:3000", "https://jbnucpu.co.kr", "http://jbnucpu.co.kr", "https://cams.jbnucpu.co.kr", "http://jbnucpu.co.kr"));
+                        configuration.setAllowedOrigins(List.of("http://localhost:5173","http://175.123.55.182", "http://175.123.55.182:3001","http://175.123.55.182:81", "http://localhost:3000", "https://jbnucpu.co.kr", "http://jbnucpu.co.kr", "https://cams.jbnucpu.co.kr", "http://jbnucpu.co.kr"));
                         configuration.setAllowedMethods(Collections.singletonList("*"));
                         configuration.setAllowCredentials(true);
                         configuration.setAllowedHeaders(Collections.singletonList("*"));
