@@ -6,6 +6,7 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     # Docker Compose로 띄울 컨테이너 이름(dev-db)으로 접속
-    url: jdbc:mysql://dev-db:3306/cams?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    # env 파일에서 덮어쓰기 됨!
+    url: jdbc:mysql://cams-db-dev:3306/cams?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: root
     password: ${DEV_DB_PASSWORD} # 개발용 DB 비밀번호
