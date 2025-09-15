@@ -24,6 +24,8 @@ FROM eclipse-temurin:17-jre-jammy
 
 WORKDIR /app
 
+ENV JAVA_OPTS="-Duser.timezone=Asia/Seoul"
+
 # 빌드 산출물 복사 (필요에 맞게 패턴 조정)
 # 예) Spring Boot: build/libs/*-SNAPSHOT.jar 또는 *-plain.jar 제외 필요
 # 가장 단순하게 하나만 존재한다고 가정하고 *.jar -> app.jar 로 복사

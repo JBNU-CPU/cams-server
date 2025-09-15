@@ -5,6 +5,8 @@ spring:
   #    환경 변수가 없으면 기본값(default)으로 dev를 사용합니다.
   profiles:
     active: ${PROFILE:dev}
+  jackson:
+    time-zone: Asia/Seoul
 
   jpa:
     show-sql: true
@@ -38,6 +40,7 @@ logging:
   level:
     org.springframework.security: DEBUG
     org.springframework.web.cors: TRACE # CORS 관련 문제는 TRACE 레벨로 더 상세하게 확인
+
 
 server:
   port: 8080
