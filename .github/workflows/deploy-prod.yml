@@ -35,7 +35,7 @@ jobs:
             cd /home/cpu/app
 
             # 1) Docker Hub에서 최신 백엔드 이미지를 명시적으로 pull
-            docker-compose -f docker-compose.dev.yml pull cams-backend-prod
+            docker-compose -f docker-compose.prod.yml pull cams-backend-prod
 
             # 2) --force-recreate 옵션으로 컨테이너 재생성/실행
-            docker-compose -f docker-compose.dev.yml up -d --force-recreate cams-backend-prod
+            docker-compose -f docker-compose.prod.yml up -d --force-recreate cams-backend-prod
