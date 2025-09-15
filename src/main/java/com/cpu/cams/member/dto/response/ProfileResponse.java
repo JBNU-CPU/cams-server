@@ -20,5 +20,5 @@ public class ProfileResponse {
     private Integer cohort;
     private Integer totalPoints;
     private String introduce;
-    private List<Interesting> interests;
+    private List<Interesting> interesting;
 }
