@@ -2,7 +2,7 @@ spring:
   jpa:
     # 개발 시에는 테이블 자동 변경/생성을 허용
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     # Docker Compose로 띄울 컨테이너 이름(dev-db)으로 접속
