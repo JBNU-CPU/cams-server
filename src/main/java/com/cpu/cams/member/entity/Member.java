@@ -38,10 +38,10 @@ public class Member {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     private String phone;
 
-    @Column(nullable = false)
+    @Column()
     private String department;
 
     @Column
@@ -51,7 +51,7 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Column(nullable = false)
+    @Column()
     private Integer cohort;
 
     @Column
@@ -86,8 +86,6 @@ public class Member {
         member.password = signupRequest.getPassword();
         member.name = signupRequest.getName();
         member.email = signupRequest.getEmail();
-        member.phone = "";
-        member.department = "";
         member.role = Role.ROLE_USER;
         member.cohort = 0;
         return member;
