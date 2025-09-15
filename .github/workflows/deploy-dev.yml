@@ -33,9 +33,11 @@ jobs:
           password: ${{ secrets.DEPLOY_SERVER_PASSWORD }}
           script: |
             cd /home/cpu/app
+            
+            # up 명령어에 --pull always 옵션을 추가하여 항상 최신 이미지를 받아오도록 강제합니다.
+            # --force-recreate 옵션과 함께 사용하면 완벽하게 새로운 컨테이너로 교체됩니다.
+            docker-compose -f docker-compose.dev.yml up -d --force-recreate --pull always cams-backend-dev
+            
+            # 사용하지 않는 옛날 이미지가 서버에 쌓이는 것을 방지하기 위해 이미지 정리 명령어를 추가하면 좋습니다.
+            docker image prune -f
 
-            # 1) Docker Hub에서 최신 백엔드 이미지를 명시적으로 pull
-            docker-compose -f docker-compose.dev.yml pull cams-backend-dev
-
-            # 2) --force-recreate 옵션으로 컨테이너 재생성/실행
-            docker-compose -f docker-compose.dev.yml up -d --force-recreate cams-backend-dev
