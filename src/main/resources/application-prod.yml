@@ -1,6 +1,6 @@
 spring:
   jpa:
-    # ⚠️ 운영에서는 절대 create, update를 사용하지 않습니다.
+    # 운영에서는 절대 create, update를 사용하지 않습니다.
     #    JPA 엔티티와 DB 스키마가 일치하는지 검증만 하도록 설정합니다.
     hibernate:
       ddl-auto: validate
