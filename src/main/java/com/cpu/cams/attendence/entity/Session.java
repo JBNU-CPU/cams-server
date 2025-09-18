@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,7 +65,11 @@ public class Session {
         session.status = SessionStatus.OPEN; // 세션 생성 시 바로 출석 오픈
 
         if (closableAfterMinutes != null) {
-            session.closedAt = LocalDateTime.now().plusMinutes(closableAfterMinutes); //마감 시간 현재 시간 + 세션 만료 시간으로 설정
+            if(closableAfterMinutes == 1987){
+                session.closedAt = LocalDateTime.now().toLocalDate().atTime(LocalTime.MAX);
+            }else {
+                session.closedAt = LocalDateTime.now().plusMinutes(closableAfterMinutes); //마감 시간 현재 시간 + 세션 만료 시간으로 설정
+            }
         }
 
         return session;
