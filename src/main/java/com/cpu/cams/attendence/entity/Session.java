@@ -92,6 +92,7 @@ public class Session {
         if (deadline != null && deadline.isBefore(LocalDateTime.now())) {
             throw new IllegalArgumentException("마감 기한은 현재 시간 이후로만 설정할 수 있습니다.");
         }
+
         this.closedAt = deadline;
     }
 }

@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -123,8 +124,13 @@ public class SessionService {
             if (request.getClosableAfterMinutes() <= 0) {
                 throw new IllegalArgumentException("마감 시간은 0보다 커야 합니다.");
             }
-            LocalDateTime newDeadline = LocalDateTime.now().plusMinutes(request.getClosableAfterMinutes());
-            session.updateDeadline(newDeadline);
+            if(request.getClosableAfterMinutes() == 1987){
+                LocalDateTime newDeadline = LocalDateTime.now().toLocalDate().atTime(LocalTime.MAX);
+                session.updateDeadline(newDeadline);
+            }else{
+                LocalDateTime newDeadline = LocalDateTime.now().plusMinutes(request.getClosableAfterMinutes());
+                session.updateDeadline(newDeadline);
+            }
         }
 
         session.setStatus(SessionStatus.OPEN); // 재오픈
