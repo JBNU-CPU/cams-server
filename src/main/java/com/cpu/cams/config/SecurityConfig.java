@@ -66,7 +66,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/","/api/login",  "/reissue", "/swagger-ui/**", "/v3/api-docs/**", "/api/member","/api/member/**", "/api/activities", "/api/activities/**").permitAll()
-//                        .requestMatchers("/api/admin", "/api/admin/**", "/api/admin/activities/**").hasRole("ADMIN")
+                        .requestMatchers("/api/admin", "/api/admin/**", "/api/admin/activities/**").hasRole("ADMIN")
                         .anyRequest().authenticated());
 
         http
@@ -76,7 +76,7 @@ public class SecurityConfig {
 
                         CorsConfiguration configuration = new CorsConfiguration();
 
-                        configuration.setAllowedOrigins(List.of("http://localhost:5173","https://dev.jbnucpu.co.kr", "https://api-dev.jbnucpu.co.kr","https://api.jbnucpu.co.kr", "http://localhost:3000", "https://jbnucpu.co.kr", "http://jbnucpu.co.kr"));
+                        configuration.setAllowedOrigins(List.of("https://admin-tau-ebon.vercel.app","http://localhost:5173","https://dev.jbnucpu.co.kr", "https://api-dev.jbnucpu.co.kr","https://api.jbnucpu.co.kr", "http://localhost:3000", "https://jbnucpu.co.kr", "http://jbnucpu.co.kr"));
                         configuration.setAllowedMethods(Collections.singletonList("*"));
                         configuration.setAllowCredentials(true);
                         configuration.setAllowedHeaders(Collections.singletonList("*"));
